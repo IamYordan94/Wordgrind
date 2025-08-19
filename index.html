@@ -836,6 +836,8 @@
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
+            display: block !important;
+            visibility: visible !important;
         }
 
         .level-selector h3 {
@@ -1075,7 +1077,14 @@
                 
                 // Current active category and unlocked categories
                 this.currentCategory = 'general';
-                this.unlockedCategories = { general: true };
+                this.unlockedCategories = {
+                    general: true,
+                    food: true,
+                    animals: true,
+                    movies: true,
+                    sports: true,
+                    science: true
+                };
                 
                 // Get current word lists based on active category
                 this.wordLists = this.categoryWordLists[this.currentCategory];
@@ -1139,7 +1148,14 @@
                         this.attemptedWords = data.attemptedWords || {};
                         this.gameProgress = data.gameProgress || {};
                         this.currentCategory = data.currentCategory || 'general';
-                        this.unlockedCategories = data.unlockedCategories || { general: true };
+                        this.unlockedCategories = data.unlockedCategories || {
+                            general: true,
+                            food: true,
+                            animals: true,
+                            movies: true,
+                            sports: true,
+                            science: true
+                        };
                         this.gameStats = data.gameStats || this.gameStats;
                         this.hintsUsed = data.hintsUsed || {};
                         
@@ -2076,26 +2092,13 @@
                     option.className = 'category-option';
                     option.textContent = this.categories[categoryKey];
                     
-                    if (!this.unlockedCategories[categoryKey] && categoryKey !== 'general') {
-                        option.classList.add('locked');
-                        option.innerHTML = `${this.categories[categoryKey]} <span>🔒</span>`;
-                        option.addEventListener('click', () => {
-                            this.showMessage('Watch an ad to unlock this category!', 'info');
-                            this.simulateAd(() => {
-                                this.unlockedCategories[categoryKey] = true;
-                                this.createCategoryDropdown();
-                                this.saveGameState();
-                            });
-                            this.elements.categoryOptions.classList.remove('show');
-                        });
-                    } else {
-                        option.addEventListener('click', () => {
-                            if (categoryKey !== this.currentCategory) {
-                                this.switchCategory(categoryKey);
-                            }
-                            this.elements.categoryOptions.classList.remove('show');
-                        });
-                    }
+                    // All categories are now free - no ads required
+                    option.addEventListener('click', () => {
+                        if (categoryKey !== this.currentCategory) {
+                            this.switchCategory(categoryKey);
+                        }
+                        this.elements.categoryOptions.classList.remove('show');
+                    });
                     
                     this.elements.categoryOptions.appendChild(option);
                 });
