@@ -1,0 +1,106 @@
+Instruction / Prompt
+
+Project Title: Progressive Wordle Grind
+
+Idea / Concept:
+We want to create a Wordle-inspired “grind” game where the player starts with 2-letter words and progresses to longer words (3-letter, 4-letter, etc.) as they complete all words of the current length. The goal is to provide an endless, level-based word puzzle experience with progression, feedback, and tracking.
+
+Core Features:
+
+Word Levels:
+
+Level 1: 2-letter words
+
+Level 2: 3-letter words
+
+Level 3: 4-letter words
+
+…and so on, up to a reasonable max (e.g., 7 letters).
+
+Gameplay Mechanics:
+
+Player guesses words like Wordle.
+
+Feedback:
+
+Green = correct letter in correct place
+
+Yellow = correct letter in wrong place
+
+Gray = letter not in word
+
+Player continues until they find all words of the current length.
+
+Progression System:
+
+Tracks found words per level
+
+Once all words of a level are found → unlocks next level
+
+Shows progress bar / percentage completed
+
+UI Requirements:
+
+Input box for guesses
+
+Feedback displayed dynamically (color-coded like Wordle)
+
+Progress panel showing found words and current level
+
+Optional: hint button, restart level button
+
+Data / Words:
+
+Use pre-defined lists of words by length
+
+Level 2 → all valid 2-letter English words (~100–150)
+
+Level 3 → all valid 3-letter words (~400–500)
+
+Level 4 → all valid 4-letter words (~1,000+)
+
+Words stored in JSON or JS arrays
+
+Optional Features for MVP:
+
+Daily challenge mode (optional)
+
+Timer or streak counter (optional)
+
+Basic CSS for readability, but not final polish
+
+Technical Requirements:
+
+Must be fully in HTML/CSS/JS
+
+Works in Replit with copy-paste only
+
+Fully interactive in the browser
+
+No backend required, store words and progress in local JS arrays or localStorage
+
+Output Expectation from Replit AI:
+
+Full HTML file with embedded CSS and JS (or separate CSS/JS files if preferred)
+
+Implements:
+
+Level-based Wordle grind
+
+Color-coded feedback
+
+Progress tracker for words per level
+
+Unlocking mechanism for next level
+
+Testable directly by opening the HTML in browser
+
+Tone / Style for Code:
+
+Clean, readable, and copy-paste ready
+
+Functional MVP first; styling minimal but usable
+
+Comment code to explain logic
+
+Prompt to Feed:
