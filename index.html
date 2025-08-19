@@ -314,6 +314,60 @@
             font-style: italic;
             font-size: 0.9rem;
             margin-right: 10px;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .grammar-info {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background-color: #6aaa64;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 14px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 5px;
+            cursor: help;
+            position: relative;
+        }
+
+        .grammar-tooltip {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1a1a1a;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1001;
+            border: 1px solid #6aaa64;
+            font-style: normal;
+            font-weight: normal;
+        }
+
+        .grammar-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #6aaa64;
+        }
+
+        .grammar-info:hover .grammar-tooltip {
+            opacity: 1;
+            visibility: visible;
         }
 
         .definition-loading {
@@ -1026,6 +1080,37 @@
                 }
             }
 
+            // Grammar explanations
+            getGrammarExplanations() {
+                return {
+                    'noun': 'A word that names a person, place, thing, or idea',
+                    'verb': 'A word that describes an action, state, or occurrence',
+                    'adjective': 'A word that describes or modifies a noun',
+                    'adverb': 'A word that modifies a verb, adjective, or other adverb',
+                    'pronoun': 'A word that takes the place of a noun',
+                    'preposition': 'A word that shows relationship between words',
+                    'conjunction': 'A word that connects words, phrases, or clauses',
+                    'interjection': 'A word or phrase that expresses emotion',
+                    'determiner': 'A word that introduces a noun',
+                    'exclamation': 'A word or phrase expressing strong emotion',
+                    'prefix': 'A word part added to the beginning of a word',
+                    'suffix': 'A word part added to the end of a word'
+                };
+            }
+
+            // Create grammar info icon with tooltip
+            createGrammarInfo(partOfSpeech) {
+                const explanations = this.getGrammarExplanations();
+                const explanation = explanations[partOfSpeech.toLowerCase()] || 'A grammatical category';
+                
+                return `
+                    <span class="grammar-info">
+                        !
+                        <div class="grammar-tooltip">${explanation}</div>
+                    </span>
+                `;
+            }
+
             // Display definition data
             displayDefinition(data) {
                 let html = '';
@@ -1037,9 +1122,13 @@
                     meanings.forEach(meaning => {
                         if (meaning.definitions && meaning.definitions.length > 0) {
                             const definition = meaning.definitions[0]; // Show first definition
+                            const grammarInfo = this.createGrammarInfo(meaning.partOfSpeech);
                             html += `
                                 <div class="definition-meaning">
-                                    <span class="definition-part">${meaning.partOfSpeech}</span>
+                                    <span class="definition-part">
+                                        ${meaning.partOfSpeech}
+                                        ${grammarInfo}
+                                    </span>
                                     ${definition.definition}
                                 </div>
                             `;
