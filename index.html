@@ -228,75 +228,6 @@
             }
         }
 
-        /* Ad Monetization Styles */
-        .banner-ad {
-            width: 100%;
-            text-align: center;
-            padding: 15px;
-            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
-            border: 2px dashed #6aaa64;
-            border-radius: 8px;
-            margin: 20px 0;
-            color: #6aaa64;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .ad-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .hint-btn {
-            background: linear-gradient(135deg, #c9b458, #d4c76a);
-            color: #1a1a1a;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hint-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(201, 180, 88, 0.4);
-        }
-
-        .hint-btn:disabled {
-            background: #3a3a3a;
-            color: #666;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .hint-display {
-            background-color: rgba(201, 180, 88, 0.1);
-            border: 1px solid #c9b458;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: center;
-            color: #c9b458;
-            font-weight: bold;
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .ad-controls {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
-
         .words-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -310,144 +241,6 @@
             text-align: center;
             text-transform: uppercase;
             font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            position: relative;
-        }
-
-        .found-word:hover {
-            background-color: #4a4a4a;
-        }
-
-        .definition-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .definition-content {
-            background-color: #2a2a2a;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            border: 2px solid #6aaa64;
-        }
-
-        .definition-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .definition-close:hover {
-            color: #ff6b6b;
-        }
-
-        .definition-word {
-            color: #6aaa64;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .definition-meaning {
-            color: #ffffff;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-
-        .definition-part {
-            color: #c9b458;
-            font-style: italic;
-            font-size: 0.9rem;
-            margin-right: 10px;
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .grammar-info {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            background-color: #6aaa64;
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 14px;
-            font-size: 10px;
-            font-weight: bold;
-            margin-left: 5px;
-            cursor: help;
-            position: relative;
-        }
-
-        .grammar-tooltip {
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #1a1a1a;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            z-index: 1001;
-            border: 1px solid #6aaa64;
-            font-style: normal;
-            font-weight: normal;
-        }
-
-        .grammar-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: #6aaa64;
-        }
-
-        .grammar-info:hover .grammar-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .definition-loading {
-            text-align: center;
-            color: #c9b458;
-            font-style: italic;
-        }
-
-        .definition-error {
-            text-align: center;
-            color: #ff6b6b;
         }
 
         .message {
@@ -468,12 +261,6 @@
             background-color: rgba(255, 0, 0, 0.2);
             border: 1px solid #ff0000;
             color: #ff0000;
-        }
-
-        .warning {
-            background-color: rgba(201, 180, 88, 0.2);
-            border: 1px solid #c9b458;
-            color: #c9b458;
         }
 
         .level-complete {
@@ -577,11 +364,6 @@
     <div class="container">
         <h1>Progressive Wordle Grind</h1>
         
-        <!-- Banner Ad Placeholder -->
-        <div id="banner-ad" class="banner-ad">
-            📺 Banner Ad Placeholder - Monetization Ready 📺
-        </div>
-        
         <div class="level-selector" id="levelSelector">
             <h3>Select Level</h3>
             <div class="level-buttons" id="levelButtons"></div>
@@ -606,13 +388,6 @@
             <button class="submit-btn" id="submitBtn">Submit</button>
         </div>
 
-        <!-- Ad Controls and Hint System -->
-        <div class="ad-controls">
-            <button id="rewarded-ad-btn" class="hint-btn">🎬 Watch Ad for Hint</button>
-        </div>
-        
-        <div class="hint-display" id="hintDisplay"></div>
-
         <div class="feedback" id="feedback"></div>
         <div class="message" id="message"></div>
 
@@ -632,15 +407,6 @@
         <div class="controls">
             <button class="control-btn" id="resetLevelBtn">Reset Current Level</button>
             <button class="control-btn" id="resetGameBtn">Reset Entire Game</button>
-        </div>
-    </div>
-
-    <!-- Definition Modal -->
-    <div class="definition-modal" id="definitionModal">
-        <div class="definition-content">
-            <button class="definition-close" id="definitionClose">&times;</button>
-            <div class="definition-word" id="definitionWord"></div>
-            <div id="definitionBody"></div>
         </div>
     </div>
 
@@ -675,7 +441,6 @@
                 this.bindEvents();
                 this.updateDisplay();
                 this.updateAttemptedWordsDisplay();
-                this.initializeDefinitionModal();
             }
 
             // Load game state from localStorage
@@ -734,9 +499,7 @@
                     attemptedWordsList: document.getElementById('attemptedWordsList'),
                     resetLevelBtn: document.getElementById('resetLevelBtn'),
                     resetGameBtn: document.getElementById('resetGameBtn'),
-                    levelButtons: document.getElementById('levelButtons'),
-                    rewardedAdBtn: document.getElementById('rewarded-ad-btn'),
-                    hintDisplay: document.getElementById('hintDisplay')
+                    levelButtons: document.getElementById('levelButtons')
                 };
 
                 this.createLevelButtons();
@@ -874,10 +637,6 @@
                 this.elements.resetGameBtn.addEventListener('click', () => {
                     this.resetEntireGame();
                 });
-
-                this.elements.rewardedAdBtn.addEventListener('click', () => {
-                    this.watchAdForHint();
-                });
             }
 
             // Submit a word guess
@@ -917,7 +676,7 @@
 
                 // Check if word was already found
                 if (foundInLevel.includes(guess)) {
-                    this.showMessage('Word already found!', 'warning');
+                    this.showMessage('Word already found!', 'error');
                     // Show yellow feedback for already tried words
                     this.showFeedback(guess, guess, 'yellow');
                     this.addAttemptedWord(guess);
@@ -1059,13 +818,6 @@
                     const wordDiv = document.createElement('div');
                     wordDiv.className = 'found-word';
                     wordDiv.textContent = word.toUpperCase();
-                    wordDiv.title = 'Click to see definition';
-                    
-                    // Add click handler for definition
-                    wordDiv.addEventListener('click', () => {
-                        this.showDefinition(word);
-                    });
-                    
                     this.elements.foundWordsGrid.appendChild(wordDiv);
                 });
             }
@@ -1117,124 +869,6 @@
                 }
             }
 
-            // Initialize definition modal
-            initializeDefinitionModal() {
-                this.definitionModal = document.getElementById('definitionModal');
-                this.definitionWord = document.getElementById('definitionWord');
-                this.definitionBody = document.getElementById('definitionBody');
-                this.definitionClose = document.getElementById('definitionClose');
-
-                // Close modal when clicking the X or outside the modal
-                this.definitionClose.addEventListener('click', () => {
-                    this.closeDefinitionModal();
-                });
-
-                this.definitionModal.addEventListener('click', (e) => {
-                    if (e.target === this.definitionModal) {
-                        this.closeDefinitionModal();
-                    }
-                });
-
-                // Close modal with Escape key
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && this.definitionModal.style.display === 'flex') {
-                        this.closeDefinitionModal();
-                    }
-                });
-            }
-
-            // Show definition for a word
-            async showDefinition(word) {
-                this.definitionWord.textContent = word.toUpperCase();
-                this.definitionBody.innerHTML = '<div class="definition-loading">Loading definition...</div>';
-                this.definitionModal.style.display = 'flex';
-
-                try {
-                    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
-                    
-                    if (!response.ok) {
-                        throw new Error('Definition not found');
-                    }
-
-                    const data = await response.json();
-                    this.displayDefinition(data[0]);
-                } catch (error) {
-                    this.definitionBody.innerHTML = `
-                        <div class="definition-error">
-                            Sorry, no definition found for "${word}".
-                        </div>
-                    `;
-                }
-            }
-
-            // Grammar explanations
-            getGrammarExplanations() {
-                return {
-                    'noun': 'A word that names a person, place, thing, or idea',
-                    'verb': 'A word that describes an action, state, or occurrence',
-                    'adjective': 'A word that describes or modifies a noun',
-                    'adverb': 'A word that modifies a verb, adjective, or other adverb',
-                    'pronoun': 'A word that takes the place of a noun',
-                    'preposition': 'A word that shows relationship between words',
-                    'conjunction': 'A word that connects words, phrases, or clauses',
-                    'interjection': 'A word or phrase that expresses emotion',
-                    'determiner': 'A word that introduces a noun',
-                    'exclamation': 'A word or phrase expressing strong emotion',
-                    'prefix': 'A word part added to the beginning of a word',
-                    'suffix': 'A word part added to the end of a word'
-                };
-            }
-
-            // Create grammar info icon with tooltip
-            createGrammarInfo(partOfSpeech) {
-                const explanations = this.getGrammarExplanations();
-                const explanation = explanations[partOfSpeech.toLowerCase()] || 'A grammatical category';
-                
-                return `
-                    <span class="grammar-info">
-                        !
-                        <div class="grammar-tooltip">${explanation}</div>
-                    </span>
-                `;
-            }
-
-            // Display definition data
-            displayDefinition(data) {
-                let html = '';
-                
-                if (data.meanings && data.meanings.length > 0) {
-                    // Show first 3 meanings to keep it brief
-                    const meanings = data.meanings.slice(0, 3);
-                    
-                    meanings.forEach(meaning => {
-                        if (meaning.definitions && meaning.definitions.length > 0) {
-                            const definition = meaning.definitions[0]; // Show first definition
-                            const grammarInfo = this.createGrammarInfo(meaning.partOfSpeech);
-                            html += `
-                                <div class="definition-meaning">
-                                    <span class="definition-part">
-                                        ${meaning.partOfSpeech}
-                                        ${grammarInfo}
-                                    </span>
-                                    ${definition.definition}
-                                </div>
-                            `;
-                        }
-                    });
-                }
-
-                if (!html) {
-                    html = '<div class="definition-error">No definition available.</div>';
-                }
-
-                this.definitionBody.innerHTML = html;
-            }
-
-            // Close definition modal
-            closeDefinitionModal() {
-                this.definitionModal.style.display = 'none';
-            }
-
             // Update attempted words display
             updateAttemptedWordsDisplay() {
                 const attempted = this.attemptedWords[this.currentLevel] || [];
@@ -1277,49 +911,6 @@
                     wordDiv.textContent = word.toUpperCase() + (count > 1 ? ` (${count}x)` : '');
                     this.elements.attemptedWordsList.appendChild(wordDiv);
                 });
-            }
-
-            // Ad Monetization: Watch rewarded ad for hint
-            watchAdForHint() {
-                // Simulate watching an ad (placeholder functionality)
-                this.elements.rewardedAdBtn.disabled = true;
-                this.elements.rewardedAdBtn.textContent = '📺 Loading Ad...';
-                
-                // Simulate ad loading and playing
-                setTimeout(() => {
-                    // Show hint after "ad" completes
-                    this.showHint();
-                    
-                    // Re-enable button after cooldown
-                    setTimeout(() => {
-                        this.elements.rewardedAdBtn.disabled = false;
-                        this.elements.rewardedAdBtn.textContent = '🎬 Watch Ad for Hint';
-                    }, 30000); // 30 second cooldown
-                }, 2000); // 2 second "ad" duration
-            }
-
-            // Show hint to player
-            showHint() {
-                const availableWords = this.getAvailableWords(this.currentLevel);
-                const foundWords = this.foundWords[this.currentLevel];
-                const remainingWords = availableWords.filter(word => !foundWords.includes(word));
-                
-                if (remainingWords.length === 0) {
-                    this.elements.hintDisplay.innerHTML = '💡 <strong>Hint:</strong> You\'ve found all available words! Progress in previous levels to unlock more.';
-                } else {
-                    // Show a random unfound word as hint
-                    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
-                    this.elements.hintDisplay.innerHTML = `💡 <strong>Hint:</strong> Try the word "<span style="color: #6aaa64; text-transform: uppercase;">${randomWord}</span>"`;
-                }
-                
-                this.elements.hintDisplay.style.display = 'block';
-                
-                // Hide hint after 10 seconds
-                setTimeout(() => {
-                    this.elements.hintDisplay.style.display = 'none';
-                }, 10000);
-                
-                this.showMessage('Hint unlocked! Thanks for watching the ad! 🎉', 'success');
             }
         }
 
