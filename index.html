@@ -154,6 +154,16 @@
             color: #6aaa64;
         }
 
+        .unlock-info {
+            background-color: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-left: 3px solid #c9b458;
+            font-size: 0.9rem;
+            color: #c9b458;
+        }
+
         .words-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -319,6 +329,7 @@
 
         <div class="found-words">
             <h3>Found Words (<span id="foundWordsCount">0</span>)</h3>
+            <div class="unlock-info" id="unlockInfo"></div>
             <div class="words-grid" id="foundWordsGrid"></div>
         </div>
 
@@ -404,6 +415,7 @@
                     message: document.getElementById('message'),
                     foundWordsCount: document.getElementById('foundWordsCount'),
                     foundWordsGrid: document.getElementById('foundWordsGrid'),
+                    unlockInfo: document.getElementById('unlockInfo'),
                     resetLevelBtn: document.getElementById('resetLevelBtn'),
                     resetGameBtn: document.getElementById('resetGameBtn'),
                     levelButtons: document.getElementById('levelButtons')
@@ -448,10 +460,9 @@
                 }
             }
 
-            // Check if a level is unlocked
+            // Check if a level is unlocked (now all levels are always unlocked)
             isLevelUnlocked(level) {
-                if (level === 1) return true;
-                return this.isLevelCompleted(level - 1);
+                return true; // All levels are now accessible
             }
 
             // Check if a level is completed
@@ -459,6 +470,49 @@
                 const wordList = this.wordLists[level + 1]; // +1 because level 1 uses 2-letter words
                 const found = this.foundWords[level] || [];
                 return found.length === wordList.length;
+            }
+
+            // Calculate how many words should be available in a level based on previous progress
+            getAvailableWordsCount(level) {
+                const wordList = this.wordLists[level + 1]; // +1 because level 1 uses 2-letter words
+                const totalWords = wordList.length;
+                
+                if (level === 1) {
+                    // Level 1 has all words available from start
+                    return totalWords;
+                }
+                
+                // Calculate base percentage and unlock rate based on level
+                let basePercent, unlockRate;
+                if (level === 2) {
+                    basePercent = 20; // Start with 20% available
+                    unlockRate = 5;   // Unlock 5% more for every 10% progress in previous level
+                } else if (level === 3) {
+                    basePercent = 10; // Start with 10% available
+                    unlockRate = 5;   // Unlock 5% more for every 10% progress in previous level
+                } else {
+                    basePercent = 5;  // Start with 5% available for level 4+
+                    unlockRate = 3;   // Unlock 3% more for every 10% progress in previous level
+                }
+                
+                // Calculate progress in previous level
+                const prevLevel = level - 1;
+                const prevWordList = this.wordLists[prevLevel + 1];
+                const prevFound = this.foundWords[prevLevel] || [];
+                const prevProgress = prevWordList.length > 0 ? (prevFound.length / prevWordList.length) * 100 : 0;
+                
+                // Calculate additional unlocked percentage
+                const additionalPercent = Math.floor(prevProgress / 10) * unlockRate;
+                const totalPercent = Math.min(100, basePercent + additionalPercent);
+                
+                return Math.max(1, Math.floor((totalPercent / 100) * totalWords));
+            }
+
+            // Get the list of available words for a level (first N words based on available count)
+            getAvailableWords(level) {
+                const wordList = this.wordLists[level + 1]; // +1 because level 1 uses 2-letter words
+                const availableCount = this.getAvailableWordsCount(level);
+                return wordList.slice(0, availableCount);
             }
 
             // Switch to a different level
@@ -519,10 +573,18 @@
                     return;
                 }
 
-                // Check if word exists in current level's word list
-                const currentWordList = this.wordLists[wordLength];
-                if (!currentWordList.includes(guess)) {
+                // Check if word exists in current level's available word list
+                const availableWords = this.getAvailableWords(this.currentLevel);
+                const allWordsInLevel = this.wordLists[wordLength];
+                
+                if (!allWordsInLevel.includes(guess)) {
                     this.showMessage('Word not found in dictionary', 'error');
+                    this.showFeedback(guess, '');
+                    return;
+                }
+                
+                if (!availableWords.includes(guess)) {
+                    this.showMessage('Word not yet unlocked! Complete more words in previous levels.', 'error');
                     this.showFeedback(guess, '');
                     return;
                 }
@@ -543,9 +605,17 @@
                 this.updateDisplay();
                 this.createLevelButtons();
                 
-                // Check if level is completed
-                if (this.isLevelCompleted(this.currentLevel)) {
+                // Check if all available words in level are found
+                const availableWords = this.getAvailableWords(this.currentLevel);
+                const foundInLevel = this.foundWords[this.currentLevel];
+                const allAvailableFound = availableWords.every(word => foundInLevel.includes(word));
+                
+                if (allAvailableFound && availableWords.length === this.wordLists[wordLength].length) {
+                    // Only show completion if ALL words in the level are found
                     this.handleLevelCompletion();
+                } else if (allAvailableFound) {
+                    // Show progress message for completing available words
+                    this.showMessage('All available words found! Unlock more by progressing in previous levels.', 'success');
                 }
 
                 // Clear input
@@ -592,22 +662,17 @@
             handleLevelCompletion() {
                 this.showMessage(`Level ${this.currentLevel} completed! 🎉`, 'level-complete');
                 
-                // Auto-advance to next level if available
-                if (this.currentLevel < this.maxLevel) {
-                    setTimeout(() => {
-                        this.currentLevel++;
-                        this.updateInputMaxLength();
-                        this.updateDisplay();
-                        this.createLevelButtons();
-                        this.clearFeedback();
-                        this.showMessage(`Welcome to Level ${this.currentLevel}!`, 'success');
-                        this.saveGameState();
-                    }, 2000);
-                } else {
-                    setTimeout(() => {
+                // Don't auto-advance, let players choose their path
+                setTimeout(() => {
+                    if (this.currentLevel < this.maxLevel) {
+                        this.showMessage('Level completed! New words unlocked in higher levels!', 'success');
+                    } else {
                         this.showMessage('Congratulations! You completed all levels! 🏆', 'level-complete');
-                    }, 1000);
-                }
+                    }
+                    // Update all level buttons to reflect new unlocks
+                    this.createLevelButtons();
+                    this.updateDisplay();
+                }, 2000);
             }
 
             // Clear visual feedback
@@ -618,18 +683,19 @@
             // Update all display elements
             updateDisplay() {
                 const wordLength = this.currentLevel + 1;
-                const currentWordList = this.wordLists[wordLength];
+                const availableWords = this.getAvailableWords(this.currentLevel);
+                const totalWords = this.wordLists[wordLength].length;
                 const foundInLevel = this.foundWords[this.currentLevel].length;
-                const totalInLevel = currentWordList.length;
-                const progressPercent = totalInLevel > 0 ? (foundInLevel / totalInLevel) * 100 : 0;
+                const availableCount = availableWords.length;
+                const progressPercent = availableCount > 0 ? (foundInLevel / availableCount) * 100 : 0;
 
                 // Update level info
                 this.elements.currentLevel.textContent = this.currentLevel;
                 this.elements.wordLength.textContent = wordLength;
 
-                // Update progress info
+                // Update progress info to show available vs total
                 this.elements.foundCount.textContent = foundInLevel;
-                this.elements.totalCount.textContent = totalInLevel;
+                this.elements.totalCount.textContent = `${availableCount} (${totalWords} total)`;
                 this.elements.progressFill.style.width = `${progressPercent}%`;
 
                 // Update found words display
@@ -639,8 +705,26 @@
             // Update the found words grid
             updateFoundWordsDisplay() {
                 const foundInLevel = this.foundWords[this.currentLevel];
+                const availableWords = this.getAvailableWords(this.currentLevel);
+                const totalWords = this.wordLists[this.currentLevel + 1].length;
+                
                 this.elements.foundWordsCount.textContent = foundInLevel.length;
                 this.elements.foundWordsGrid.innerHTML = '';
+
+                // Update unlock info
+                if (this.currentLevel > 1) {
+                    const prevLevel = this.currentLevel - 1;
+                    const prevWordList = this.wordLists[prevLevel + 1];
+                    const prevFound = this.foundWords[prevLevel] || [];
+                    const prevProgress = prevWordList.length > 0 ? ((prevFound.length / prevWordList.length) * 100).toFixed(1) : 0;
+                    
+                    this.elements.unlockInfo.innerHTML = `
+                        <strong>Available:</strong> ${availableWords.length} / ${totalWords} words<br>
+                        <strong>Unlock more:</strong> Progress in Level ${prevLevel} (${prevProgress}% complete)
+                    `;
+                } else {
+                    this.elements.unlockInfo.innerHTML = `<strong>All ${totalWords} words available!</strong>`;
+                }
 
                 // Sort found words alphabetically
                 const sortedWords = [...foundInLevel].sort();
