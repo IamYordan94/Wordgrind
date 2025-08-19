@@ -228,6 +228,227 @@
             }
         }
 
+        /* Categories and Stats Styles */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .streak-display {
+            color: #6aaa64;
+            font-weight: bold;
+        }
+
+        .achievements {
+            display: flex;
+            gap: 10px;
+        }
+
+        .achievement-badge {
+            background: linear-gradient(135deg, #c9b458, #d4c76a);
+            color: #1a1a1a;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .category-selector {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .category-selector h3 {
+            margin-bottom: 10px;
+            color: #6aaa64;
+            text-align: center;
+        }
+
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .category-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .category-btn.active {
+            background-color: #6aaa64;
+            color: white;
+        }
+
+        .category-btn.unlocked {
+            background-color: #c9b458;
+            color: #1a1a1a;
+        }
+
+        .category-btn.locked {
+            background-color: #3a3a3a;
+            color: #666;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .category-btn.locked::after {
+            content: '🔒';
+            margin-left: 5px;
+        }
+
+        /* Enhanced Hint System Styles */
+        .hint-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .hint-btn-small {
+            background: linear-gradient(135deg, #c9b458, #d4c76a);
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .hint-btn-small:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(201, 180, 88, 0.4);
+        }
+
+        .hint-btn-small:disabled {
+            background: #3a3a3a;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .keyboard-display {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            max-width: 400px;
+            margin: 15px auto;
+        }
+
+        .keyboard-key {
+            background-color: #3a3a3a;
+            color: white;
+            border: none;
+            padding: 8px 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .keyboard-key.grayed {
+            background-color: #1a1a1a;
+            color: #666;
+        }
+
+        .keyboard-key.used {
+            background-color: #6aaa64;
+        }
+
+        .scramble-game {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .scrambled-letters {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .scrambled-letter {
+            background-color: #3a3a3a;
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .scrambled-letter:hover {
+            background-color: #4a4a4a;
+        }
+
+        .scrambled-letter.selected {
+            background-color: #6aaa64;
+        }
+
+        /* Leaderboard Styles */
+        .leaderboard {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .leaderboard h3 {
+            color: #6aaa64;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, #6aaa64, #5a9954);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(106, 170, 100, 0.4);
+        }
+
         /* Ad Monetization Styles */
         .banner-ad {
             width: 100%;
@@ -582,6 +803,25 @@
             📺 Banner Ad Placeholder - Monetization Ready 📺
         </div>
         
+        <!-- Stats and Streaks Bar -->
+        <div class="stats-bar">
+            <div class="streak-display">
+                🔥 Streak: <span id="currentStreak">0</span> days
+            </div>
+            <div class="achievements" id="achievements">
+                <!-- Achievement badges will be inserted here -->
+            </div>
+            <div class="leaderboard-info">
+                📊 Best Time: <span id="bestTime">--:--</span>
+            </div>
+        </div>
+        
+        <!-- Category Selection -->
+        <div class="category-selector">
+            <h3>🎯 Word Categories</h3>
+            <div class="category-buttons" id="categoryButtons"></div>
+        </div>
+        
         <div class="level-selector" id="levelSelector">
             <h3>Select Level</h3>
             <div class="level-buttons" id="levelButtons"></div>
@@ -606,12 +846,26 @@
             <button class="submit-btn" id="submitBtn">Submit</button>
         </div>
 
-        <!-- Ad Controls and Hint System -->
-        <div class="ad-controls">
-            <button id="rewarded-ad-btn" class="hint-btn">🎬 Watch Ad for Hint</button>
+        <!-- Enhanced Hint System -->
+        <div class="hint-controls">
+            <button id="letter-reveal-btn" class="hint-btn-small">📝 Reveal Letter</button>
+            <button id="keyboard-gray-btn" class="hint-btn-small">⌨️ Gray Keys</button>
+            <button id="scramble-game-btn" class="hint-btn-small">🔀 Scramble Game</button>
+            <button id="basic-hint-btn" class="hint-btn-small">💡 Basic Hint</button>
         </div>
         
         <div class="hint-display" id="hintDisplay"></div>
+        
+        <!-- Keyboard Display -->
+        <div class="keyboard-display" id="keyboardDisplay"></div>
+        
+        <!-- Scramble Mini-Game -->
+        <div class="scramble-game" id="scrambleGame">
+            <h3>🔀 Unscramble the Word!</h3>
+            <div class="scrambled-letters" id="scrambledLetters"></div>
+            <button id="scramble-submit" class="hint-btn-small">Submit Answer</button>
+            <button id="scramble-close" class="hint-btn-small">Close</button>
+        </div>
 
         <div class="feedback" id="feedback"></div>
         <div class="message" id="message"></div>
@@ -627,6 +881,13 @@
                 <h3>All Attempts</h3>
                 <div class="attempted-words-list" id="attemptedWordsList"></div>
             </div>
+        </div>
+        
+        <!-- Leaderboard -->
+        <div class="leaderboard" id="leaderboard">
+            <h3>🏆 Personal Best Times</h3>
+            <div id="leaderboardEntries"></div>
+            <button class="share-btn" id="shareBtn">📱 Share Progress</button>
         </div>
 
         <div class="controls">
@@ -648,8 +909,65 @@
         // Game state and data
         class ProgressiveWordleGame {
             constructor() {
-                // Word lists by length - comprehensive English word lists
-                this.wordLists = {
+                // Category-based word lists
+                this.categories = {
+                    'general': 'All Words',
+                    'food': 'Food & Drinks',
+                    'animals': 'Animals',
+                    'movies': 'Movies & TV',
+                    'sports': 'Sports',
+                    'science': 'Science & Tech'
+                };
+                
+                this.categoryWordLists = {
+                    general: {
+                        2: ['ad', 'ah', 'am', 'an', 'as', 'at', 'ax', 'ay', 'be', 'by', 'do', 'go', 'he', 'hi', 'if', 'in', 'is', 'it', 'me', 'my', 'no', 'of', 'on', 'or', 'so', 'to', 'up', 'us', 'we', 'ab', 'ag', 'al', 'ar', 'aw', 'ba', 'bo', 'ed', 'eh', 'el', 'em', 'en', 'er', 'es', 'ex', 'fa', 'gi', 'ha', 'ho', 'id', 'jo', 'ka', 'la', 'li', 'lo', 'ma', 'mi', 'mo', 'mu', 'na', 'ne', 'nu', 'od', 'oh', 'om', 'op', 'os', 'ow', 'ox', 'oy', 'pa', 'pi', 'qi', 're', 'sh', 'si', 'ta', 'ti', 'uh', 'um', 'un', 'ut', 'wo', 'xi', 'xu', 'ya', 'ye', 'yo', 'za'],
+                        3: ['ace', 'act', 'add', 'age', 'ago', 'aid', 'aim', 'air', 'all', 'and', 'ant', 'any', 'ape', 'app', 'arc', 'are', 'ark', 'arm', 'art', 'ash', 'ask', 'ate', 'bad', 'bag', 'ban', 'bar', 'bat', 'bay', 'bed', 'bee', 'bet', 'bid', 'big', 'bin', 'bit', 'bow', 'box', 'boy', 'bug', 'bus', 'but', 'buy', 'can', 'cap', 'car', 'cat', 'cod', 'cop', 'cow', 'cry', 'cup', 'cut', 'dad', 'day', 'den', 'dew', 'did', 'die', 'dig', 'dog', 'dot', 'dry', 'due', 'ear', 'eat', 'egg', 'elk', 'elm', 'end', 'era', 'eve', 'eye', 'fan', 'far', 'fat', 'few', 'fig', 'fin', 'fit', 'fix', 'fly', 'fog', 'for', 'fox', 'fun', 'fur', 'gap', 'gas', 'get', 'god', 'got', 'gun', 'guy', 'gym', 'had', 'ham', 'hat', 'hay', 'her', 'hid', 'him', 'hip', 'his', 'hit', 'hop', 'hot', 'how', 'hub', 'hug', 'hut', 'ice', 'ill', 'ink', 'inn', 'ion', 'its', 'ivy', 'jam', 'jar', 'jaw', 'jet', 'job', 'joy', 'key', 'kid', 'kit', 'lab', 'lap', 'law', 'lay', 'led', 'leg', 'let', 'lid', 'lie', 'lip', 'log', 'lot', 'low', 'mad', 'man', 'map', 'mat', 'max', 'may', 'men', 'met', 'mix', 'mob', 'mom', 'mud', 'nap', 'net', 'new', 'nod', 'nor', 'not', 'now', 'nut', 'oak', 'odd', 'off', 'oil', 'old', 'one', 'our', 'out', 'owl', 'own', 'pad', 'pan', 'pat', 'pay', 'pen', 'pet', 'pie', 'pig', 'pin', 'pit', 'pop', 'pot', 'put', 'ran', 'rat', 'raw', 'red', 'rid', 'row', 'rub', 'rug', 'run', 'sad', 'sat', 'saw', 'say', 'sea', 'see', 'set', 'sew', 'she', 'shy', 'sin', 'sip', 'sir', 'sit', 'six', 'sky', 'son', 'sun', 'tab', 'tag', 'tan', 'tap', 'tar', 'tax', 'tea', 'ten', 'the', 'tie', 'tin', 'tip', 'toe', 'ton', 'too', 'top', 'toy', 'try', 'tub', 'two', 'use', 'van', 'war', 'was', 'way', 'web', 'wet', 'who', 'why', 'win', 'wit', 'won', 'wow', 'yes', 'yet', 'you', 'zip', 'zoo'],
+                        4: ['able', 'acid', 'aged', 'also', 'area', 'army', 'away', 'baby', 'back', 'ball', 'band', 'bank', 'base', 'beat', 'been', 'bell', 'best', 'bike', 'bill', 'bird', 'blow', 'blue', 'boat', 'body', 'bone', 'book', 'born', 'both', 'bowl', 'boys', 'busy', 'call', 'calm', 'came', 'camp', 'card', 'care', 'case', 'cast', 'cell', 'chat', 'chip', 'city', 'club', 'coal', 'coat', 'code', 'cold', 'come', 'cool', 'copy', 'cord', 'corn', 'cost', 'crew', 'crop', 'dark', 'data', 'date', 'dawn', 'days', 'dead', 'deal', 'dear', 'debt', 'deep', 'deer', 'desk', 'dial', 'died', 'diet', 'disk', 'does', 'done', 'door', 'down', 'draw', 'drew', 'drop', 'drug', 'dual', 'duck', 'dump', 'dust', 'duty', 'each', 'earn', 'easy', 'edge', 'else', 'even', 'ever', 'evil', 'exit', 'face', 'fact', 'fail', 'fair', 'fall', 'farm', 'fast', 'fate', 'fear', 'feed', 'feel', 'feet', 'fell', 'felt', 'file', 'fill', 'film', 'find', 'fine', 'fire', 'firm', 'fish', 'fist', 'five', 'flag', 'flat', 'flow', 'folk', 'food', 'foot', 'ford', 'form', 'fort', 'four', 'free', 'from', 'full', 'fund', 'gain', 'game', 'gate', 'gave', 'gear', 'gift', 'girl', 'give', 'glad', 'goal', 'goat', 'goes', 'gold', 'golf', 'gone', 'good', 'grab', 'gray', 'grew', 'grid', 'grow', 'gulf', 'hair', 'half', 'hall', 'hand', 'hang', 'hard', 'harm', 'hate', 'have', 'head', 'hear', 'heat', 'held', 'help', 'here', 'hero', 'hide', 'high', 'hill', 'hire', 'hold', 'hole', 'holy', 'home', 'hope', 'host', 'hour', 'huge', 'hung', 'hunt', 'hurt', 'idea', 'inch', 'into', 'iron', 'item', 'jail', 'jean', 'join', 'jump', 'june', 'jury', 'just', 'keen', 'keep', 'kept', 'keys', 'kick', 'kill', 'kind', 'king', 'knee', 'knew', 'know', 'lack', 'lady', 'laid', 'lake', 'land', 'lane', 'last', 'late', 'lawn', 'lead', 'lean', 'left', 'lend', 'lens', 'lent', 'less', 'life', 'lift', 'like', 'line', 'link', 'list', 'live', 'loan', 'lock', 'long', 'look', 'lord', 'lose', 'loss', 'lost', 'loud', 'love', 'luck', 'lucy', 'lung', 'made', 'mail', 'main', 'make', 'many', 'mark', 'mass', 'meet', 'mind', 'move', 'much', 'name', 'near', 'need', 'news', 'next', 'nice', 'nine', 'note', 'open', 'over', 'page', 'park', 'part', 'pass', 'past', 'path', 'pick', 'plan', 'play', 'plus', 'poor', 'pull', 'push', 'quit', 'race', 'rain', 'rank', 'rate', 'read', 'real', 'rich', 'ride', 'ring', 'rise', 'risk', 'road', 'rock', 'role', 'room', 'root', 'rose', 'rule', 'runs', 'safe', 'said', 'sake', 'sale', 'same', 'save', 'seat', 'seed', 'seek', 'seem', 'seen', 'self', 'sell', 'send', 'sent', 'ship', 'shop', 'shot', 'show', 'shut', 'sick', 'side', 'sign', 'site', 'size', 'skin', 'slip', 'slow', 'snow', 'soft', 'soil', 'sold', 'sole', 'some', 'song', 'soon', 'sort', 'soul', 'spot', 'star', 'stay', 'step', 'stop', 'such', 'sure', 'take', 'talk', 'tall', 'tank', 'tape', 'task', 'team', 'tell', 'term', 'test', 'text', 'than', 'that', 'them', 'then', 'they', 'thin', 'this', 'thus', 'till', 'time', 'tiny', 'told', 'tone', 'took', 'tool', 'town', 'tree', 'trip', 'true', 'tune', 'turn', 'twin', 'type', 'unit', 'upon', 'used', 'user', 'vary', 'vast', 'very', 'view', 'vote', 'wait', 'wake', 'walk', 'wall', 'want', 'warm', 'wash', 'wave', 'ways', 'weak', 'wear', 'week', 'well', 'went', 'were', 'what', 'when', 'will', 'wind', 'wine', 'wire', 'wise', 'wish', 'with', 'wood', 'word', 'wore', 'work', 'worn', 'year', 'your', 'zero', 'zone']
+                    },
+                    food: {
+                        3: ['tea', 'pie', 'egg', 'ham', 'jam', 'nut', 'cod', 'bun', 'soy', 'rye', 'oat', 'yam', 'fig', 'ale'],
+                        4: ['milk', 'eggs', 'meat', 'fish', 'rice', 'soup', 'cake', 'beef', 'pork', 'lamb', 'duck', 'wine', 'beer', 'cola', 'tuna', 'corn', 'bean', 'peas', 'plum', 'lime', 'kiwi', 'mint', 'herb', 'salt', 'mayo', 'taco', 'wrap', 'roll', 'loaf', 'donut', 'bagel', 'chips', 'nuts', 'raisin', 'grape', 'apple', 'peach', 'mango'],
+                        5: ['pizza', 'bread', 'pasta', 'salad', 'fruit', 'sauce', 'sugar', 'flour', 'honey', 'cream', 'butter', 'cheese', 'bacon', 'pasta', 'lemon', 'onion', 'garlic', 'tomato', 'potato', 'carrot', 'celery', 'pickle', 'olive', 'grape', 'berry', 'melon', 'mango', 'peach', 'waffle', 'donut', 'muffin', 'cookie', 'candy', 'fudge', 'syrup', 'jelly', 'beans', 'chili', 'curry', 'gravy']
+                    },
+                    animals: {
+                        3: ['cat', 'dog', 'pig', 'cow', 'fox', 'bat', 'rat', 'owl', 'bee', 'ant', 'fly', 'elk', 'yak', 'emu'],
+                        4: ['bear', 'deer', 'wolf', 'duck', 'goat', 'lamb', 'frog', 'toad', 'fish', 'bird', 'hawk', 'dove', 'swan', 'crow', 'worm', 'snail', 'crab', 'seal', 'whale', 'shark', 'lion', 'tiger', 'lynx', 'puma'],
+                        5: ['horse', 'sheep', 'llama', 'zebra', 'mouse', 'bunny', 'snake', 'lizard', 'eagle', 'robin', 'finch', 'goose', 'penguin', 'otter', 'beaver', 'skunk', 'badger', 'ferret', 'hamster', 'guinea', 'parrot', 'canary', 'spider', 'beetle']
+                    },
+                    movies: {
+                        4: ['star', 'hero', 'plot', 'cast', 'role', 'film', 'show', 'epic', 'saga', 'tale'],
+                        5: ['actor', 'drama', 'comic', 'scene', 'stage', 'movie', 'title', 'genre', 'award', 'oscar', 'sound', 'music', 'theme', 'alien', 'robot', 'magic', 'sword', 'quest', 'tower', 'castle']
+                    },
+                    sports: {
+                        4: ['game', 'team', 'goal', 'ball', 'play', 'race', 'run', 'jump', 'swim', 'golf', 'bowl', 'kick', 'pass', 'shot', 'yard', 'home', 'base', 'wing', 'dive'],
+                        5: ['score', 'match', 'field', 'court', 'track', 'arena', 'coach', 'skill', 'sport', 'medal', 'title', 'boxer', 'rider', 'skier', 'diver', 'biker', 'racer', 'guard', 'bench', 'draft']
+                    },
+                    science: {
+                        4: ['atom', 'gene', 'cell', 'data', 'code', 'tech', 'math', 'test', 'lab', 'chip', 'wire', 'volt', 'beam', 'wave', 'lens', 'disk'],
+                        5: ['robot', 'laser', 'space', 'earth', 'brain', 'virus', 'organ', 'metal', 'steel', 'glass', 'steam', 'solar', 'force', 'power', 'speed', 'light', 'sound', 'micro', 'macro', 'logic']
+                    }
+                };
+                
+                // Current active category and unlocked categories
+                this.currentCategory = 'general';
+                this.unlockedCategories = { general: true };
+                
+                // Get current word lists based on active category
+                this.wordLists = this.categoryWordLists[this.currentCategory];
+                
+                // Initialize game data
+                this.gameStats = {
+                    currentStreak: 0,
+                    bestStreak: 0,
+                    lastPlayDate: null,
+                    achievements: [],
+                    totalLevelsCompleted: 0,
+                    totalWordsFound: 0,
+                    fastestCompletions: {}
+                };
+                
+                this.levelStartTime = null;
                     2: ['ad', 'ah', 'am', 'an', 'as', 'at', 'ax', 'ay', 'be', 'by', 'do', 'go', 'he', 'hi', 'if', 'in', 'is', 'it', 'me', 'my', 'no', 'of', 'on', 'or', 'so', 'to', 'up', 'us', 'we', 'ab', 'ag', 'al', 'ar', 'aw', 'ba', 'bo', 'ed', 'eh', 'el', 'em', 'en', 'er', 'es', 'ex', 'fa', 'gi', 'ha', 'ho', 'id', 'jo', 'ka', 'la', 'li', 'lo', 'ma', 'mi', 'mo', 'mu', 'na', 'ne', 'nu', 'od', 'oh', 'om', 'op', 'os', 'ow', 'ox', 'oy', 'pa', 'pi', 'qi', 're', 'sh', 'si', 'ta', 'ti', 'uh', 'um', 'un', 'ut', 'wo', 'xi', 'xu', 'ya', 'ye', 'yo', 'za'],
                     3: ['ace', 'act', 'add', 'age', 'ago', 'aid', 'aim', 'air', 'all', 'and', 'ant', 'any', 'ape', 'app', 'arc', 'are', 'ark', 'arm', 'art', 'ash', 'ask', 'ate', 'bad', 'bag', 'ban', 'bar', 'bat', 'bay', 'bed', 'bee', 'bet', 'bid', 'big', 'bin', 'bit', 'bow', 'box', 'boy', 'bug', 'bus', 'but', 'buy', 'can', 'cap', 'car', 'cat', 'cod', 'cop', 'cow', 'cry', 'cup', 'cut', 'dad', 'day', 'den', 'dew', 'did', 'die', 'dig', 'dog', 'dot', 'dry', 'due', 'ear', 'eat', 'egg', 'elk', 'elm', 'end', 'era', 'eve', 'eye', 'fan', 'far', 'fat', 'few', 'fig', 'fin', 'fit', 'fix', 'fly', 'fog', 'for', 'fox', 'fun', 'fur', 'gap', 'gas', 'get', 'god', 'got', 'gun', 'guy', 'gym', 'had', 'ham', 'hat', 'hay', 'her', 'hid', 'him', 'hip', 'his', 'hit', 'hop', 'hot', 'how', 'hub', 'hug', 'hut', 'ice', 'ill', 'ink', 'inn', 'ion', 'its', 'ivy', 'jam', 'jar', 'jaw', 'jet', 'job', 'joy', 'key', 'kid', 'kit', 'lab', 'lap', 'law', 'lay', 'led', 'leg', 'let', 'lid', 'lie', 'lip', 'log', 'lot', 'low', 'mad', 'man', 'map', 'mat', 'max', 'may', 'men', 'met', 'mix', 'mob', 'mom', 'mud', 'nap', 'net', 'new', 'nod', 'nor', 'not', 'now', 'nut', 'oak', 'odd', 'off', 'oil', 'old', 'one', 'our', 'out', 'owl', 'own', 'pad', 'pan', 'pat', 'pay', 'pen', 'pet', 'pie', 'pig', 'pin', 'pit', 'pop', 'pot', 'put', 'ran', 'rat', 'raw', 'red', 'rid', 'row', 'rub', 'rug', 'run', 'sad', 'sat', 'saw', 'say', 'sea', 'see', 'set', 'sew', 'she', 'shy', 'sin', 'sip', 'sir', 'sit', 'six', 'sky', 'son', 'sun', 'tab', 'tag', 'tan', 'tap', 'tar', 'tax', 'tea', 'ten', 'the', 'tie', 'tin', 'tip', 'toe', 'ton', 'too', 'top', 'toy', 'try', 'tub', 'two', 'use', 'van', 'war', 'was', 'way', 'web', 'wet', 'who', 'why', 'win', 'wit', 'won', 'wow', 'yes', 'yet', 'you', 'zip', 'zoo'],
                     4: ['able', 'acid', 'aged', 'also', 'area', 'army', 'away', 'baby', 'back', 'ball', 'band', 'bank', 'base', 'beat', 'been', 'bell', 'best', 'bike', 'bill', 'bird', 'blow', 'blue', 'boat', 'body', 'bone', 'book', 'born', 'both', 'bowl', 'boys', 'busy', 'call', 'calm', 'came', 'camp', 'card', 'care', 'case', 'cast', 'cell', 'chat', 'chip', 'city', 'club', 'coal', 'coat', 'code', 'cold', 'come', 'cool', 'copy', 'cord', 'corn', 'cost', 'crew', 'crop', 'dark', 'data', 'date', 'dawn', 'days', 'dead', 'deal', 'dear', 'debt', 'deep', 'deer', 'desk', 'dial', 'died', 'diet', 'disk', 'does', 'done', 'door', 'down', 'draw', 'drew', 'drop', 'drug', 'dual', 'duck', 'dump', 'dust', 'duty', 'each', 'earn', 'easy', 'edge', 'else', 'even', 'ever', 'evil', 'exit', 'face', 'fact', 'fail', 'fair', 'fall', 'farm', 'fast', 'fate', 'fear', 'feed', 'feel', 'feet', 'fell', 'felt', 'file', 'fill', 'film', 'find', 'fine', 'fire', 'firm', 'fish', 'fist', 'five', 'flag', 'flat', 'flow', 'folk', 'food', 'foot', 'ford', 'form', 'fort', 'four', 'free', 'from', 'full', 'fund', 'gain', 'game', 'gate', 'gave', 'gear', 'gift', 'girl', 'give', 'glad', 'goal', 'goat', 'goes', 'gold', 'golf', 'gone', 'good', 'grab', 'gray', 'grew', 'grid', 'grow', 'gulf', 'hair', 'half', 'hall', 'hand', 'hang', 'hard', 'harm', 'hate', 'have', 'head', 'hear', 'heat', 'held', 'help', 'here', 'hero', 'hide', 'high', 'hill', 'hire', 'hold', 'hole', 'holy', 'home', 'hope', 'host', 'hour', 'huge', 'hung', 'hunt', 'hurt', 'idea', 'inch', 'into', 'iron', 'item', 'jail', 'jean', 'join', 'jump', 'june', 'jury', 'just', 'keen', 'keep', 'kept', 'keys', 'kick', 'kill', 'kind', 'king', 'knee', 'knew', 'know', 'lack', 'lady', 'laid', 'lake', 'land', 'lane', 'last', 'late', 'lawn', 'lead', 'lean', 'left', 'lend', 'lens', 'lent', 'less', 'life', 'lift', 'like', 'line', 'link', 'list', 'live', 'loan', 'lock', 'long', 'look', 'lord', 'lose', 'loss', 'lost', 'loud', 'love', 'luck', 'lucy', 'lung', 'made', 'mail', 'main', 'make', 'male', 'mall', 'many', 'mark', 'mars', 'mass', 'mate', 'math', 'meal', 'mean', 'meat', 'meet', 'melt', 'memo', 'menu', 'mesh', 'mice', 'mike', 'mild', 'mile', 'milk', 'mill', 'mind', 'mine', 'miss', 'mode', 'mood', 'moon', 'more', 'most', 'move', 'much', 'name', 'navy', 'near', 'neck', 'need', 'news', 'next', 'nice', 'nine', 'none', 'noon', 'nose', 'note', 'noun', 'nude', 'odds', 'okay', 'once', 'only', 'open', 'oral', 'over', 'pace', 'pack', 'page', 'paid', 'pain', 'pair', 'palm', 'park', 'part', 'pass', 'past', 'path', 'peak', 'pick', 'pink', 'plan', 'play', 'plot', 'plug', 'poem', 'poet', 'pole', 'poll', 'pool', 'poor', 'port', 'post', 'pull', 'pump', 'pure', 'push', 'quit', 'race', 'rain', 'rank', 'rare', 'rate', 'read', 'real', 'rear', 'rely', 'rent', 'rest', 'rich', 'ride', 'ring', 'rise', 'risk', 'road', 'rock', 'role', 'roll', 'roof', 'room', 'root', 'rope', 'rose', 'rude', 'rule', 'rush', 'safe', 'said', 'sail', 'sake', 'sale', 'salt', 'same', 'sand', 'save', 'seal', 'seat', 'seed', 'seek', 'seem', 'seen', 'self', 'sell', 'send', 'sent', 'ship', 'shop', 'shot', 'show', 'shut', 'sick', 'side', 'sign', 'sing', 'sink', 'site', 'size', 'skin', 'skip', 'slip', 'slow', 'snap', 'snow', 'soap', 'soft', 'soil', 'sold', 'sole', 'some', 'song', 'soon', 'sort', 'soul', 'spot', 'star', 'stay', 'step', 'stop', 'such', 'suit', 'sure', 'take', 'tale', 'talk', 'tall', 'tank', 'tape', 'task', 'team', 'tell', 'term', 'test', 'text', 'than', 'that', 'them', 'then', 'they', 'thin', 'this', 'thus', 'tide', 'tied', 'ties', 'tile', 'till', 'time', 'tiny', 'tips', 'tire', 'told', 'tone', 'took', 'tool', 'tops', 'tour', 'town', 'tree', 'trip', 'true', 'tune', 'turn', 'twin', 'type', 'unit', 'upon', 'used', 'user', 'vary', 'vast', 'very', 'vice', 'view', 'vote', 'wade', 'wage', 'wait', 'wake', 'walk', 'wall', 'want', 'ward', 'warm', 'warn', 'wash', 'wave', 'ways', 'weak', 'wear', 'week', 'well', 'went', 'were', 'west', 'what', 'when', 'wide', 'wife', 'wild', 'will', 'wind', 'wine', 'wing', 'wire', 'wise', 'wish', 'with', 'wolf', 'wood', 'wool', 'word', 'work', 'worn', 'yard', 'year', 'yoga', 'your', 'zero', 'zone'],
@@ -658,11 +976,19 @@
                     7: ['ability', 'absence', 'academy', 'account', 'accused', 'achieve', 'acquire', 'address', 'advance', 'adviser', 'against', 'airline', 'airport', 'alcohol', 'already', 'analyst', 'ancient', 'another', 'anxiety', 'anxious', 'anybody', 'anymore', 'arrival', 'article', 'assault', 'assumed', 'athlete', 'attempt', 'attract', 'auction', 'average', 'backing', 'balance', 'banking', 'battery', 'bedroom', 'beneath', 'benefit', 'between', 'bicycle', 'biology', 'brother', 'brought', 'burning', 'business', 'cabinet', 'calcium', 'caliber', 'capable', 'capital', 'captain', 'capture', 'cardiac', 'careful', 'carrier', 'catalog', 'ceiling', 'central', 'century', 'certain', 'chairman', 'chamber', 'channel', 'chapter', 'charity', 'charlie', 'chicken', 'chinese', 'circuit', 'classes', 'classic', 'climate', 'closing', 'clothes', 'coating', 'collect', 'college', 'combine', 'comment', 'compact', 'company', 'compare', 'compete', 'complex', 'concept', 'concern', 'concert', 'conduct', 'confirm', 'connect', 'consent', 'consist', 'console', 'contact', 'contain', 'content', 'contest', 'context', 'control', 'convert', 'cooking', 'correct', 'council', 'counter', 'country', 'courage', 'covered', 'crystal', 'culture', 'current', 'cutting', 'dancing', 'decided', 'decline', 'default', 'defence', 'deficit', 'deliver', 'density', 'deposit', 'desktop', 'despite', 'destroy', 'diagram', 'diamond', 'digital', 'diploma', 'disable', 'discard', 'discuss', 'disease', 'dismiss', 'display', 'dispute', 'distant', 'diverse', 'dynasty', 'eastern', 'economy', 'edition', 'element', 'enhance', 'evening', 'examine', 'example', 'excited', 'execute', 'exhibit', 'existed', 'explain', 'explore', 'express', 'extreme', 'factory', 'faculty', 'failure', 'fantasy', 'fashion', 'feature', 'federal', 'feeling', 'fiction', 'fifteen', 'finance', 'finding', 'fishing', 'fitness', 'flowing', 'foreign', 'forever', 'formula', 'fortune', 'forward', 'founder', 'freedom', 'freight', 'friends', 'funding', 'further', 'gallery', 'gaming', 'gateway', 'general', 'genetic', 'genuine', 'getting', 'gilbert', 'glucose', 'governs', 'greatly', 'growing', 'habitat', 'handful', 'hanging', 'harmony', 'heading', 'healthy', 'hearing', 'heavily', 'helpful', 'highway', 'himself', 'history', 'holding', 'holiday', 'housing', 'however', 'hundred', 'hunting', 'husband', 'imagine', 'imaging', 'improve', 'include', 'initial', 'inquiry', 'insight', 'inspect', 'install', 'instant', 'instead', 'intense', 'interim', 'involve', 'italian', 'jacket', 'january', 'jessica', 'journey', 'justice', 'justify', 'keeping', 'kitchen', 'lacking', 'landing', 'largely', 'lasting', 'laundry', 'lawsuit', 'leading', 'learned', 'leather', 'leaving', 'leisure', 'liberal', 'liberty', 'library', 'license', 'limited', 'listing', 'logical', 'looking', 'lottery', 'machine', 'magical', 'manager', 'mandate', 'mapping', 'marble', 'massage', 'massive', 'maximum', 'meaning', 'measure', 'medical', 'meeting', 'membrane', 'mention', 'message', 'michael', 'mineral', 'minimal', 'minimum', 'missing', 'mission', 'mistake', 'mixture', 'monitor', 'monthly', 'morning', 'mystery', 'natural', 'neither', 'nervous', 'network', 'neutral', 'notable', 'nothing', 'nuclear', 'nursing', 'obvious', 'october', 'offense', 'officer', 'ongoing', 'opening', 'operate', 'opinion', 'optical', 'optimal', 'options', 'organic', 'outcome', 'outdoor', 'outlook', 'outside', 'overall', 'overlap', 'overview', 'package', 'painted', 'parking', 'partial', 'partner', 'passing', 'passion', 'patient', 'pattern', 'payment', 'penalty', 'pending', 'perfect', 'perform', 'perhaps', 'Persian', 'picture', 'pioneer', 'plastic', 'popular', 'portion', 'poverty', 'precise', 'predict', 'premier', 'premium', 'prepare', 'present', 'prevent', 'primary', 'printer', 'privacy', 'private', 'problem', 'proceed', 'process', 'produce', 'product', 'program', 'project', 'promote', 'protect', 'protein', 'protest', 'provide', 'publish', 'purpose', 'pushing', 'qualify', 'quality', 'quarter', 'quickly', 'radical', 'railway', 'readily', 'reality', 'realize', 'receipt', 'receive', 'recover', 'reflect', 'regular', 'related', 'release', 'remains', 'removal', 'replace', 'require', 'reserve', 'respect', 'respond', 'restore', 'retired', 'revenue', 'reverse', 'routine', 'running', 'satisfy', 'science', 'section', 'seeking', 'segment', 'selling', 'seminar', 'serious', 'service', 'session', 'setting', 'several', 'sharing', 'shelter', 'showing', 'shortly', 'similar', 'sitting', 'smoking', 'society', 'somehow', 'someone', 'speaker', 'special', 'specify', 'sponsor', 'station', 'storage', 'strange', 'stretch', 'student', 'studied', 'subject', 'succeed', 'success', 'suggest', 'summary', 'support', 'suppose', 'surface', 'surgery', 'surplus', 'survive', 'suspect', 'sustain', 'sweater', 'systems', 'tactical', 'talking', 'teacher', 'telling', 'testing', 'textile', 'texture', 'theater', 'therapy', 'thereby', 'thought', 'through', 'tonight', 'totally', 'towards', 'trading', 'traffic', 'trained', 'transfer', 'transit', 'trouble', 'turning', 'typical', 'uniform', 'unknown', 'unusual', 'utility', 'variety', 'various', 'vehicle', 'venture', 'version', 'village', 'visible', 'waiting', 'walking', 'wanting', 'warning', 'wearing', 'weather', 'website', 'wedding', 'weekend', 'welcome', 'welfare', 'western', 'whether', 'willing', 'winning', 'without', 'working', 'writing', 'written']
                 };
 
-                this.maxLevel = Object.keys(this.wordLists).length;
+                this.maxLevel = Math.max(...Object.keys(this.wordLists).map(Number));
                 this.currentLevel = 1;
                 this.foundWords = {};
-                this.attemptedWords = {}; // Track all word attempts per level
+                this.attemptedWords = {};
                 this.gameProgress = {};
+                
+                // Initialize hint system
+                this.hintsUsed = {};
+                this.availableHints = {
+                    letterReveal: true,
+                    keyboardGray: true,
+                    scrambledWord: true
+                };
                 
                 // Initialize found words and attempted words arrays for each level
                 for (let level = 1; level <= this.maxLevel; level++) {
@@ -688,6 +1014,14 @@
                         this.foundWords = data.foundWords || {};
                         this.attemptedWords = data.attemptedWords || {};
                         this.gameProgress = data.gameProgress || {};
+                        this.currentCategory = data.currentCategory || 'general';
+                        this.unlockedCategories = data.unlockedCategories || { general: true };
+                        this.gameStats = data.gameStats || this.gameStats;
+                        this.hintsUsed = data.hintsUsed || {};
+                        
+                        // Update word lists based on loaded category
+                        this.wordLists = this.categoryWordLists[this.currentCategory];
+                        this.maxLevel = Math.max(...Object.keys(this.wordLists).map(Number));
                         
                         // Ensure all levels have arrays
                         for (let level = 1; level <= this.maxLevel; level++) {
@@ -710,7 +1044,11 @@
                     currentLevel: this.currentLevel,
                     foundWords: this.foundWords,
                     attemptedWords: this.attemptedWords,
-                    gameProgress: this.gameProgress
+                    gameProgress: this.gameProgress,
+                    currentCategory: this.currentCategory,
+                    unlockedCategories: this.unlockedCategories,
+                    gameStats: this.gameStats,
+                    hintsUsed: this.hintsUsed
                 };
                 localStorage.setItem('progressiveWordleGame', JSON.stringify(data));
             }
@@ -735,12 +1073,30 @@
                     resetLevelBtn: document.getElementById('resetLevelBtn'),
                     resetGameBtn: document.getElementById('resetGameBtn'),
                     levelButtons: document.getElementById('levelButtons'),
-                    rewardedAdBtn: document.getElementById('rewarded-ad-btn'),
-                    hintDisplay: document.getElementById('hintDisplay')
+                    categoryButtons: document.getElementById('categoryButtons'),
+                    currentStreak: document.getElementById('currentStreak'),
+                    achievements: document.getElementById('achievements'),
+                    bestTime: document.getElementById('bestTime'),
+                    hintDisplay: document.getElementById('hintDisplay'),
+                    letterRevealBtn: document.getElementById('letter-reveal-btn'),
+                    keyboardGrayBtn: document.getElementById('keyboard-gray-btn'),
+                    scrambleGameBtn: document.getElementById('scramble-game-btn'),
+                    basicHintBtn: document.getElementById('basic-hint-btn'),
+                    keyboardDisplay: document.getElementById('keyboardDisplay'),
+                    scrambleGame: document.getElementById('scrambleGame'),
+                    scrambledLetters: document.getElementById('scrambledLetters'),
+                    scrambleSubmit: document.getElementById('scramble-submit'),
+                    scrambleClose: document.getElementById('scramble-close'),
+                    leaderboardEntries: document.getElementById('leaderboardEntries'),
+                    shareBtn: document.getElementById('shareBtn')
                 };
 
                 this.createLevelButtons();
+                this.createCategoryButtons();
+                this.createKeyboard();
                 this.updateInputMaxLength();
+                this.checkDailyLogin();
+                this.updateStatsDisplay();
             }
 
             // Create level selection buttons
@@ -829,6 +1185,7 @@
             // Get the list of available words for a level (first N words based on available count)
             getAvailableWords(level) {
                 const wordList = this.wordLists[level + 1]; // +1 because level 1 uses 2-letter words
+                if (!wordList) return [];
                 const availableCount = this.getAvailableWordsCount(level);
                 return wordList.slice(0, availableCount);
             }
@@ -875,15 +1232,48 @@
                     this.resetEntireGame();
                 });
 
-                this.elements.rewardedAdBtn.addEventListener('click', () => {
+                this.elements.letterRevealBtn.addEventListener('click', () => {
+                    this.watchAdForLetterReveal();
+                });
+
+                this.elements.keyboardGrayBtn.addEventListener('click', () => {
+                    this.watchAdForKeyboardGray();
+                });
+
+                this.elements.scrambleGameBtn.addEventListener('click', () => {
+                    this.watchAdForScrambleGame();
+                });
+
+                this.elements.basicHintBtn.addEventListener('click', () => {
                     this.watchAdForHint();
                 });
+
+                this.elements.scrambleSubmit.addEventListener('click', () => {
+                    this.submitScrambleAnswer();
+                });
+
+                this.elements.scrambleClose.addEventListener('click', () => {
+                    this.closeScrambleGame();
+                });
+
+                this.elements.shareBtn.addEventListener('click', () => {
+                    this.shareProgress();
+                });
+            }
+
+            // Start level timer
+            startLevelTimer() {
+                this.levelStartTime = Date.now();
             }
 
             // Submit a word guess
             submitGuess() {
                 const guess = this.elements.wordInput.value.trim().toLowerCase();
                 const wordLength = this.currentLevel + 1;
+                
+                if (!this.levelStartTime) {
+                    this.startLevelTimer();
+                }
 
                 // Validate input
                 if (guess.length !== wordLength) {
@@ -927,8 +1317,10 @@
                 // Add word to found words (all valid dictionary words count as found)
                 this.foundWords[this.currentLevel].push(guess);
                 this.addAttemptedWord(guess);
+                this.gameStats.totalWordsFound++;
                 this.showMessage('Word found!', 'success');
                 this.showFeedback(guess, guess);
+                this.updateKeyboardDisplay(guess);
                 
                 // Update display
                 this.updateDisplay();
@@ -985,7 +1377,22 @@
 
             // Handle level completion
             handleLevelCompletion() {
-                this.showMessage(`Level ${this.currentLevel} completed! 🎉`, 'level-complete');
+                const completionTime = this.levelStartTime ? Date.now() - this.levelStartTime : 0;
+                const timeInSeconds = Math.floor(completionTime / 1000);
+                
+                // Record completion time
+                const levelKey = `level_${this.currentLevel}_${this.currentCategory}`;
+                if (!this.gameStats.fastestCompletions[levelKey] || timeInSeconds < this.gameStats.fastestCompletions[levelKey]) {
+                    this.gameStats.fastestCompletions[levelKey] = timeInSeconds;
+                }
+                
+                this.gameStats.totalLevelsCompleted++;
+                this.checkAchievements();
+                
+                this.showMessage(`Level ${this.currentLevel} completed in ${this.formatTime(timeInSeconds)}! 🎉`, 'level-complete');
+                
+                // Reset timer
+                this.levelStartTime = null;
                 
                 // Don't auto-advance, let players choose their path
                 setTimeout(() => {
@@ -997,6 +1404,7 @@
                     // Update all level buttons to reflect new unlocks
                     this.createLevelButtons();
                     this.updateDisplay();
+                    this.updateLeaderboard();
                 }, 2000);
             }
 
@@ -1279,27 +1687,160 @@
                 });
             }
 
-            // Ad Monetization: Watch rewarded ad for hint
-            watchAdForHint() {
-                // Simulate watching an ad (placeholder functionality)
-                this.elements.rewardedAdBtn.disabled = true;
-                this.elements.rewardedAdBtn.textContent = '📺 Loading Ad...';
-                
-                // Simulate ad loading and playing
-                setTimeout(() => {
-                    // Show hint after "ad" completes
-                    this.showHint();
-                    
-                    // Re-enable button after cooldown
-                    setTimeout(() => {
-                        this.elements.rewardedAdBtn.disabled = false;
-                        this.elements.rewardedAdBtn.textContent = '🎬 Watch Ad for Hint';
-                    }, 30000); // 30 second cooldown
-                }, 2000); // 2 second "ad" duration
+            // Enhanced Ad-Based Hint System
+            watchAdForLetterReveal() {
+                this.simulateAdWatch(this.elements.letterRevealBtn, () => {
+                    this.revealRandomLetter();
+                });
             }
 
-            // Show hint to player
-            showHint() {
+            watchAdForKeyboardGray() {
+                this.simulateAdWatch(this.elements.keyboardGrayBtn, () => {
+                    this.grayOutUnusedLetters();
+                });
+            }
+
+            watchAdForScrambleGame() {
+                this.simulateAdWatch(this.elements.scrambleGameBtn, () => {
+                    this.startScrambleGame();
+                });
+            }
+
+            watchAdForHint() {
+                this.simulateAdWatch(this.elements.basicHintBtn, () => {
+                    this.showBasicHint();
+                });
+            }
+
+            simulateAdWatch(button, callback) {
+                button.disabled = true;
+                const originalText = button.textContent;
+                button.textContent = '📺 Loading Ad...';
+                
+                setTimeout(() => {
+                    callback();
+                    setTimeout(() => {
+                        button.disabled = false;
+                        button.textContent = originalText;
+                    }, 30000); // 30 second cooldown
+                }, 2000);
+            }
+
+            revealRandomLetter() {
+                const availableWords = this.getAvailableWords(this.currentLevel);
+                const foundWords = this.foundWords[this.currentLevel];
+                const remainingWords = availableWords.filter(word => !foundWords.includes(word));
+                
+                if (remainingWords.length === 0) {
+                    this.showMessage('No more words to reveal!', 'warning');
+                    return;
+                }
+                
+                const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+                const randomLetter = randomWord[Math.floor(Math.random() * randomWord.length)];
+                
+                this.elements.hintDisplay.innerHTML = `💡 <strong>Letter Hint:</strong> One word contains the letter "<span style="color: #6aaa64; text-transform: uppercase;">${randomLetter}</span>"`;
+                this.elements.hintDisplay.style.display = 'block';
+                
+                setTimeout(() => {
+                    this.elements.hintDisplay.style.display = 'none';
+                }, 10000);
+                
+                this.showMessage('Letter revealed! Thanks for watching! 🎉', 'success');
+            }
+
+            grayOutUnusedLetters() {
+                const availableWords = this.getAvailableWords(this.currentLevel);
+                const foundWords = this.foundWords[this.currentLevel];
+                const remainingWords = availableWords.filter(word => !foundWords.includes(word));
+                
+                if (remainingWords.length === 0) {
+                    this.showMessage('No more words to analyze!', 'warning');
+                    return;
+                }
+                
+                const usedLetters = new Set();
+                remainingWords.forEach(word => {
+                    for (let letter of word) {
+                        usedLetters.add(letter.toLowerCase());
+                    }
+                });
+                
+                // Gray out unused letters in keyboard
+                const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+                for (let letter of alphabet) {
+                    const keyElement = document.querySelector(`[data-key="${letter}"]`);
+                    if (keyElement && !usedLetters.has(letter)) {
+                        keyElement.classList.add('grayed');
+                    }
+                }
+                
+                this.showMessage('Unused letters grayed out! Thanks for watching! 🎉', 'success');
+            }
+
+            startScrambleGame() {
+                const availableWords = this.getAvailableWords(this.currentLevel);
+                const foundWords = this.foundWords[this.currentLevel];
+                const remainingWords = availableWords.filter(word => !foundWords.includes(word));
+                
+                if (remainingWords.length === 0) {
+                    this.showMessage('No more words to scramble!', 'warning');
+                    return;
+                }
+                
+                this.currentScrambleWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+                this.scrambledAnswer = [];
+                
+                // Scramble the letters
+                const letters = this.currentScrambleWord.split('');
+                const scrambled = letters.sort(() => Math.random() - 0.5);
+                
+                this.elements.scrambledLetters.innerHTML = '';
+                scrambled.forEach((letter, index) => {
+                    const letterDiv = document.createElement('div');
+                    letterDiv.className = 'scrambled-letter';
+                    letterDiv.textContent = letter.toUpperCase();
+                    letterDiv.dataset.index = index;
+                    letterDiv.addEventListener('click', () => this.selectScrambledLetter(letterDiv));
+                    this.elements.scrambledLetters.appendChild(letterDiv);
+                });
+                
+                this.elements.scrambleGame.style.display = 'block';
+                this.showMessage('Unscramble the word! Thanks for watching! 🎉', 'success');
+            }
+
+            selectScrambledLetter(letterElement) {
+                if (letterElement.classList.contains('selected')) {
+                    letterElement.classList.remove('selected');
+                    const letter = letterElement.textContent.toLowerCase();
+                    const index = this.scrambledAnswer.indexOf(letter);
+                    if (index > -1) this.scrambledAnswer.splice(index, 1);
+                } else {
+                    letterElement.classList.add('selected');
+                    this.scrambledAnswer.push(letterElement.textContent.toLowerCase());
+                }
+            }
+
+            submitScrambleAnswer() {
+                const answer = this.scrambledAnswer.join('');
+                if (answer === this.currentScrambleWord) {
+                    this.showMessage('Correct! Word automatically added!', 'success');
+                    this.foundWords[this.currentLevel].push(this.currentScrambleWord);
+                    this.addAttemptedWord(this.currentScrambleWord);
+                    this.updateDisplay();
+                    this.closeScrambleGame();
+                } else {
+                    this.showMessage('Try again! Rearrange the letters.', 'warning');
+                }
+            }
+
+            closeScrambleGame() {
+                this.elements.scrambleGame.style.display = 'none';
+                this.scrambledAnswer = [];
+                this.currentScrambleWord = null;
+            }
+
+            showBasicHint() {
                 const availableWords = this.getAvailableWords(this.currentLevel);
                 const foundWords = this.foundWords[this.currentLevel];
                 const remainingWords = availableWords.filter(word => !foundWords.includes(word));
@@ -1307,19 +1848,267 @@
                 if (remainingWords.length === 0) {
                     this.elements.hintDisplay.innerHTML = '💡 <strong>Hint:</strong> You\'ve found all available words! Progress in previous levels to unlock more.';
                 } else {
-                    // Show a random unfound word as hint
                     const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
                     this.elements.hintDisplay.innerHTML = `💡 <strong>Hint:</strong> Try the word "<span style="color: #6aaa64; text-transform: uppercase;">${randomWord}</span>"`;
                 }
                 
                 this.elements.hintDisplay.style.display = 'block';
                 
-                // Hide hint after 10 seconds
                 setTimeout(() => {
                     this.elements.hintDisplay.style.display = 'none';
                 }, 10000);
                 
-                this.showMessage('Hint unlocked! Thanks for watching the ad! 🎉', 'success');
+                this.showMessage('Hint unlocked! Thanks for watching! 🎉', 'success');
+            // Category Management
+            createCategoryButtons() {
+                this.elements.categoryButtons.innerHTML = '';
+                
+                Object.keys(this.categories).forEach(categoryKey => {
+                    const button = document.createElement('button');
+                    button.className = 'category-btn';
+                    button.textContent = this.categories[categoryKey];
+                    button.dataset.category = categoryKey;
+                    
+                    if (categoryKey === this.currentCategory) {
+                        button.classList.add('active');
+                    } else if (this.unlockedCategories[categoryKey]) {
+                        button.classList.add('unlocked');
+                    } else {
+                        button.classList.add('locked');
+                        button.disabled = true;
+                    }
+                    
+                    button.addEventListener('click', () => {
+                        if (this.unlockedCategories[categoryKey]) {
+                            this.switchCategory(categoryKey);
+                        } else {
+                            this.unlockCategoryWithAd(categoryKey);
+                        }
+                    });
+                    
+                    this.elements.categoryButtons.appendChild(button);
+                });
+            }
+
+            switchCategory(categoryKey) {
+                this.currentCategory = categoryKey;
+                this.wordLists = this.categoryWordLists[categoryKey];
+                this.maxLevel = Math.max(...Object.keys(this.wordLists).map(Number));
+                
+                // Reset to level 1 when switching categories
+                this.currentLevel = 1;
+                
+                // Initialize found words for new category if needed
+                for (let level = 1; level <= this.maxLevel; level++) {
+                    if (!this.foundWords[level]) this.foundWords[level] = [];
+                    if (!this.attemptedWords[level]) this.attemptedWords[level] = [];
+                }
+                
+                this.updateInputMaxLength();
+                this.updateDisplay();
+                this.updateAttemptedWordsDisplay();
+                this.createCategoryButtons();
+                this.createLevelButtons();
+                this.saveGameState();
+                
+                this.showMessage(`Switched to ${this.categories[categoryKey]} category!`, 'success');
+            }
+
+            unlockCategoryWithAd(categoryKey) {
+                const button = document.querySelector(`[data-category="${categoryKey}"]`);
+                button.disabled = true;
+                button.textContent = '📺 Loading Ad...';
+                
+                setTimeout(() => {
+                    this.unlockedCategories[categoryKey] = true;
+                    this.createCategoryButtons();
+                    this.saveGameState();
+                    this.showMessage(`${this.categories[categoryKey]} category unlocked! Thanks for watching!`, 'success');
+                }, 2000);
+            }
+
+            // Streak and Achievement System
+            checkDailyLogin() {
+                const today = new Date().toDateString();
+                const lastPlay = this.gameStats.lastPlayDate;
+                
+                if (!lastPlay) {
+                    // First time playing
+                    this.gameStats.currentStreak = 1;
+                    this.gameStats.lastPlayDate = today;
+                } else if (lastPlay !== today) {
+                    const lastDate = new Date(lastPlay);
+                    const todayDate = new Date(today);
+                    const diffTime = todayDate - lastDate;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays === 1) {
+                        // Consecutive day
+                        this.gameStats.currentStreak++;
+                        if (this.gameStats.currentStreak > this.gameStats.bestStreak) {
+                            this.gameStats.bestStreak = this.gameStats.currentStreak;
+                        }
+                    } else {
+                        // Streak broken
+                        this.gameStats.currentStreak = 1;
+                    }
+                    
+                    this.gameStats.lastPlayDate = today;
+                }
+                
+                this.saveGameState();
+            }
+
+            checkAchievements() {
+                const achievements = [];
+                
+                // Streak achievements
+                if (this.gameStats.currentStreak >= 7 && !this.gameStats.achievements.includes('week_streak')) {
+                    achievements.push({ id: 'week_streak', name: '7-Day Streak', icon: '🔥' });
+                    this.gameStats.achievements.push('week_streak');
+                }
+                
+                if (this.gameStats.currentStreak >= 30 && !this.gameStats.achievements.includes('month_streak')) {
+                    achievements.push({ id: 'month_streak', name: '30-Day Streak', icon: '💯' });
+                    this.gameStats.achievements.push('month_streak');
+                }
+                
+                // Word count achievements
+                if (this.gameStats.totalWordsFound >= 100 && !this.gameStats.achievements.includes('hundred_words')) {
+                    achievements.push({ id: 'hundred_words', name: '100 Words', icon: '📝' });
+                    this.gameStats.achievements.push('hundred_words');
+                }
+                
+                if (this.gameStats.totalWordsFound >= 500 && !this.gameStats.achievements.includes('five_hundred_words')) {
+                    achievements.push({ id: 'five_hundred_words', name: '500 Words', icon: '📚' });
+                    this.gameStats.achievements.push('five_hundred_words');
+                }
+                
+                // Level completion achievements
+                if (this.gameStats.totalLevelsCompleted >= 10 && !this.gameStats.achievements.includes('ten_levels')) {
+                    achievements.push({ id: 'ten_levels', name: '10 Levels', icon: '🏆' });
+                    this.gameStats.achievements.push('ten_levels');
+                }
+                
+                // Show new achievements
+                achievements.forEach(achievement => {
+                    this.showMessage(`🎉 Achievement Unlocked: ${achievement.icon} ${achievement.name}!`, 'success');
+                });
+                
+                this.updateStatsDisplay();
+            }
+
+            updateStatsDisplay() {
+                this.elements.currentStreak.textContent = this.gameStats.currentStreak;
+                
+                // Update achievements display
+                this.elements.achievements.innerHTML = '';
+                this.gameStats.achievements.forEach(achievementId => {
+                    const achievementData = this.getAchievementData(achievementId);
+                    if (achievementData) {
+                        const badge = document.createElement('div');
+                        badge.className = 'achievement-badge';
+                        badge.textContent = `${achievementData.icon} ${achievementData.name}`;
+                        badge.title = achievementData.name;
+                        this.elements.achievements.appendChild(badge);
+                    }
+                });
+                
+                // Update best time
+                const levelKey = `level_${this.currentLevel}_${this.currentCategory}`;
+                const bestTime = this.gameStats.fastestCompletions[levelKey];
+                this.elements.bestTime.textContent = bestTime ? this.formatTime(bestTime) : '--:--';
+            }
+
+            getAchievementData(achievementId) {
+                const achievements = {
+                    'week_streak': { name: '7-Day Streak', icon: '🔥' },
+                    'month_streak': { name: '30-Day Streak', icon: '💯' },
+                    'hundred_words': { name: '100 Words', icon: '📝' },
+                    'five_hundred_words': { name: '500 Words', icon: '📚' },
+                    'ten_levels': { name: '10 Levels', icon: '🏆' }
+                };
+                return achievements[achievementId];
+            }
+
+            // Keyboard Display
+            createKeyboard() {
+                this.elements.keyboardDisplay.innerHTML = '';
+                const alphabet = 'qwertyuiopasdfghjklzxcvbnm';
+                
+                alphabet.split('').forEach(letter => {
+                    const key = document.createElement('button');
+                    key.className = 'keyboard-key';
+                    key.textContent = letter.toUpperCase();
+                    key.dataset.key = letter;
+                    this.elements.keyboardDisplay.appendChild(key);
+                });
+            }
+
+            updateKeyboardDisplay(word) {
+                word.split('').forEach(letter => {
+                    const keyElement = document.querySelector(`[data-key="${letter.toLowerCase()}"]`);
+                    if (keyElement) {
+                        keyElement.classList.add('used');
+                    }
+                });
+            }
+
+            // Leaderboard and Social Features
+            updateLeaderboard() {
+                this.elements.leaderboardEntries.innerHTML = '';
+                
+                const completions = Object.entries(this.gameStats.fastestCompletions)
+                    .sort(([,a], [,b]) => a - b)
+                    .slice(0, 5);
+                
+                if (completions.length === 0) {
+                    this.elements.leaderboardEntries.innerHTML = '<div class="leaderboard-entry">No completions yet!</div>';
+                    return;
+                }
+                
+                completions.forEach(([levelKey, time], index) => {
+                    const [, level, category] = levelKey.split('_');
+                    const entry = document.createElement('div');
+                    entry.className = 'leaderboard-entry';
+                    entry.innerHTML = `
+                        <span>🏅 Level ${level} (${this.categories[category] || category})</span>
+                        <span>${this.formatTime(time)}</span>
+                    `;
+                    this.elements.leaderboardEntries.appendChild(entry);
+                });
+            }
+
+            shareProgress() {
+                const stats = {
+                    streak: this.gameStats.currentStreak,
+                    totalWords: this.gameStats.totalWordsFound,
+                    totalLevels: this.gameStats.totalLevelsCompleted,
+                    achievements: this.gameStats.achievements.length
+                };
+                
+                const shareText = `🎮 Progressive Wordle Grind Stats:\\n🔥 ${stats.streak} day streak\\n📝 ${stats.totalWords} words found\\n🏆 ${stats.totalLevels} levels completed\\n🏅 ${stats.achievements} achievements unlocked\\n\\nPlay at: ${window.location.href}`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Progressive Wordle Grind - My Stats',
+                        text: shareText
+                    }).catch(console.error);
+                } else {
+                    // Fallback to clipboard
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        this.showMessage('Stats copied to clipboard!', 'success');
+                    }).catch(() => {
+                        // Fallback alert
+                        alert(shareText);
+                    });
+                }
+            }
+
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
             }
         }
 
