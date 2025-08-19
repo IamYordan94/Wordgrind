@@ -209,8 +209,8 @@
         }
 
         .attempted-word.not-found {
-            background-color: rgba(255, 0, 0, 0.2);
-            color: #ff6666;
+            background-color: rgba(120, 124, 126, 0.3);
+            color: #787c7e;
         }
 
         @media (max-width: 900px) {
@@ -677,15 +677,7 @@
                     return;
                 }
 
-                // Check if this word is in the available words for this level
-                if (!availableWords.includes(guess)) {
-                    this.showMessage('Word found but not yet unlocked for this level! Progress in previous levels.', 'error');
-                    this.showFeedback(guess, '');
-                    this.addAttemptedWord(guess);
-                    return;
-                }
-
-                // Add word to found words
+                // Add word to found words (all valid dictionary words count as found)
                 this.foundWords[this.currentLevel].push(guess);
                 this.addAttemptedWord(guess);
                 this.showMessage('Word found!', 'success');
@@ -695,16 +687,15 @@
                 this.updateDisplay();
                 this.createLevelButtons();
                 
-                // Check if all available words in level are found
+                // Check if reached the submission limit
                 const updatedFoundInLevel = this.foundWords[this.currentLevel];
-                const allAvailableFound = availableWords.every(word => updatedFoundInLevel.includes(word));
+                if (updatedFoundInLevel.length >= availableWords.length) {
+                    this.showMessage(`Submission limit reached! You've found ${updatedFoundInLevel.length} words. Progress in previous levels to increase your limit.`, 'success');
+                }
                 
-                if (allAvailableFound && availableWords.length === this.wordLists[wordLength].length) {
-                    // Only show completion if ALL words in the level are found
+                // Check if all words in the entire level are found
+                if (updatedFoundInLevel.length === this.wordLists[wordLength].length) {
                     this.handleLevelCompletion();
-                } else if (allAvailableFound) {
-                    // Show progress message for completing available words
-                    this.showMessage('All available words found! Unlock more by progressing in previous levels.', 'success');
                 }
 
                 // Clear input
@@ -782,9 +773,9 @@
                 this.elements.currentLevel.textContent = this.currentLevel;
                 this.elements.wordLength.textContent = wordLength;
 
-                // Update progress info to show available vs total
+                // Update progress info to show submissions used vs limit
                 this.elements.foundCount.textContent = foundInLevel;
-                this.elements.totalCount.textContent = `${availableCount} (${totalWords} total)`;
+                this.elements.totalCount.textContent = `${availableCount} limit (${totalWords} total)`;
                 this.elements.progressFill.style.width = `${progressPercent}%`;
 
                 // Update found words display
@@ -809,11 +800,11 @@
                     const prevProgress = prevWordList.length > 0 ? ((prevFound.length / prevWordList.length) * 100).toFixed(1) : 0;
                     
                     this.elements.unlockInfo.innerHTML = `
-                        <strong>Available:</strong> ${availableWords.length} / ${totalWords} words<br>
-                        <strong>Unlock more:</strong> Progress in Level ${prevLevel} (${prevProgress}% complete)
+                        <strong>Submission Limit:</strong> ${availableWords.length} / ${totalWords} words<br>
+                        <strong>Increase limit:</strong> Progress in Level ${prevLevel} (${prevProgress}% complete)
                     `;
                 } else {
-                    this.elements.unlockInfo.innerHTML = `<strong>All ${totalWords} words available!</strong>`;
+                    this.elements.unlockInfo.innerHTML = `<strong>Submission Limit:</strong> ${totalWords} words available`;
                 }
 
                 // Sort found words alphabetically
@@ -878,20 +869,24 @@
             updateAttemptedWordsDisplay() {
                 const attempted = this.attemptedWords[this.currentLevel] || [];
                 const found = this.foundWords[this.currentLevel] || [];
+                const wordLength = this.currentLevel + 1;
+                const allWordsInLevel = this.wordLists[wordLength];
                 this.elements.attemptedWordsList.innerHTML = '';
 
-                // Sort attempted words - found first (green), then not found (red)
+                // Sort attempted words - valid dictionary words first (green), then invalid (red)
                 const sortedAttempts = [...attempted].sort((a, b) => {
-                    const aFound = found.includes(a);
-                    const bFound = found.includes(b);
-                    if (aFound && !bFound) return -1;
-                    if (!aFound && bFound) return 1;
+                    const aValid = allWordsInLevel.includes(a);
+                    const bValid = allWordsInLevel.includes(b);
+                    if (aValid && !bValid) return -1;
+                    if (!aValid && bValid) return 1;
                     return a.localeCompare(b);
                 });
 
                 sortedAttempts.forEach(word => {
                     const wordDiv = document.createElement('div');
-                    wordDiv.className = found.includes(word) ? 'attempted-word found' : 'attempted-word not-found';
+                    // Show green for any valid dictionary word, red only for invalid words
+                    const isValid = allWordsInLevel.includes(word);
+                    wordDiv.className = isValid ? 'attempted-word found' : 'attempted-word not-found';
                     wordDiv.textContent = word.toUpperCase();
                     this.elements.attemptedWordsList.appendChild(wordDiv);
                 });
