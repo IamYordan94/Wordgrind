@@ -208,6 +208,11 @@
             color: #6aaa64;
         }
 
+        .attempted-word.already-tried {
+            background-color: rgba(201, 180, 88, 0.3);
+            color: #c9b458;
+        }
+
         .attempted-word.not-found {
             background-color: rgba(120, 124, 126, 0.3);
             color: #787c7e;
@@ -672,7 +677,8 @@
                 // Check if word was already found
                 if (foundInLevel.includes(guess)) {
                     this.showMessage('Word already found!', 'error');
-                    this.showFeedback(guess, guess);
+                    // Show yellow feedback for already tried words
+                    this.showFeedback(guess, guess, 'yellow');
                     this.addAttemptedWord(guess);
                     return;
                 }
@@ -704,25 +710,23 @@
             }
 
             // Show visual feedback for the guessed word
-            showFeedback(guess, correctWord) {
+            showFeedback(guess, correctWord, feedbackType = 'auto') {
                 this.elements.feedback.innerHTML = '';
 
-                // If it's a correct word, show all green
-                if (guess === correctWord && correctWord !== '') {
-                    for (let i = 0; i < guess.length; i++) {
-                        const letterDiv = document.createElement('div');
-                        letterDiv.className = 'letter-feedback correct';
-                        letterDiv.textContent = guess[i].toUpperCase();
-                        this.elements.feedback.appendChild(letterDiv);
-                    }
+                let className;
+                if (feedbackType === 'yellow') {
+                    className = 'letter-feedback wrong-position';
+                } else if (guess === correctWord && correctWord !== '') {
+                    className = 'letter-feedback correct';
                 } else {
-                    // Show gray for incorrect word (not in dictionary)
-                    for (let i = 0; i < guess.length; i++) {
-                        const letterDiv = document.createElement('div');
-                        letterDiv.className = 'letter-feedback incorrect';
-                        letterDiv.textContent = guess[i].toUpperCase();
-                        this.elements.feedback.appendChild(letterDiv);
-                    }
+                    className = 'letter-feedback incorrect';
+                }
+
+                for (let i = 0; i < guess.length; i++) {
+                    const letterDiv = document.createElement('div');
+                    letterDiv.className = className;
+                    letterDiv.textContent = guess[i].toUpperCase();
+                    this.elements.feedback.appendChild(letterDiv);
                 }
             }
 
@@ -873,8 +877,14 @@
                 const allWordsInLevel = this.wordLists[wordLength];
                 this.elements.attemptedWordsList.innerHTML = '';
 
-                // Sort attempted words - valid dictionary words first (green), then invalid (red)
-                const sortedAttempts = [...attempted].sort((a, b) => {
+                // Count occurrences of each word
+                const wordCounts = {};
+                attempted.forEach(word => {
+                    wordCounts[word] = (wordCounts[word] || 0) + 1;
+                });
+
+                // Get unique words and sort them
+                const uniqueWords = [...new Set(attempted)].sort((a, b) => {
                     const aValid = allWordsInLevel.includes(a);
                     const bValid = allWordsInLevel.includes(b);
                     if (aValid && !bValid) return -1;
@@ -882,12 +892,23 @@
                     return a.localeCompare(b);
                 });
 
-                sortedAttempts.forEach(word => {
+                uniqueWords.forEach(word => {
                     const wordDiv = document.createElement('div');
-                    // Show green for any valid dictionary word, red only for invalid words
                     const isValid = allWordsInLevel.includes(word);
-                    wordDiv.className = isValid ? 'attempted-word found' : 'attempted-word not-found';
-                    wordDiv.textContent = word.toUpperCase();
+                    const count = wordCounts[word];
+                    
+                    if (!isValid) {
+                        // Invalid word - gray
+                        wordDiv.className = 'attempted-word not-found';
+                    } else if (count > 1) {
+                        // Already tried multiple times - yellow
+                        wordDiv.className = 'attempted-word already-tried';
+                    } else {
+                        // Valid word tried once - green
+                        wordDiv.className = 'attempted-word found';
+                    }
+                    
+                    wordDiv.textContent = word.toUpperCase() + (count > 1 ? ` (${count}x)` : '');
                     this.elements.attemptedWordsList.appendChild(wordDiv);
                 });
             }
