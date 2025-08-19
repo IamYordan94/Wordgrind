@@ -263,6 +263,12 @@
             color: #ff0000;
         }
 
+        .warning {
+            background-color: rgba(201, 180, 88, 0.2);
+            border: 1px solid #c9b458;
+            color: #c9b458;
+        }
+
         .level-complete {
             background-color: rgba(201, 180, 88, 0.2);
             border: 1px solid #c9b458;
@@ -676,7 +682,7 @@
 
                 // Check if word was already found
                 if (foundInLevel.includes(guess)) {
-                    this.showMessage('Word already found!', 'error');
+                    this.showMessage('Word already found!', 'warning');
                     // Show yellow feedback for already tried words
                     this.showFeedback(guess, guess, 'yellow');
                     this.addAttemptedWord(guess);
