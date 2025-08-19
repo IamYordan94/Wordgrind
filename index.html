@@ -218,6 +218,112 @@
             color: #787c7e;
         }
 
+        .info-circle {
+            display: inline-block;
+            margin-left: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: #6aaa64;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .info-circle:hover {
+            background-color: #5a9954;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #2a2a2a;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+            color: white;
+        }
+
+        .grammar-modal-content {
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: white;
+        }
+
+        #modalWord {
+            color: #6aaa64;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+        }
+
+        #modalDefinition {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .grammar-type {
+            background-color: #3a3a3a;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-style: italic;
+            color: #c9b458;
+        }
+
+        .grammar-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .grammar-item {
+            background-color: #3a3a3a;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #6aaa64;
+        }
+
+        .grammar-item h4 {
+            color: #6aaa64;
+            margin: 0 0 8px 0;
+            text-transform: capitalize;
+        }
+
+        .grammar-item p {
+            margin: 0;
+            line-height: 1.4;
+        }
+
         @media (max-width: 900px) {
             .game-content {
                 grid-template-columns: 1fr;
@@ -393,14 +499,35 @@
 
         <div class="game-content">
             <div class="found-words">
-                <h3>Found Words (<span id="foundWordsCount">0</span>)</h3>
+                <h3>Found Words (<span id="foundWordsCount">0</span>)
+                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>
+                </h3>
                 <div class="unlock-info" id="unlockInfo"></div>
                 <div class="words-grid" id="foundWordsGrid"></div>
             </div>
             
             <div class="attempted-words-box" id="attemptedWordsBox">
-                <h3>All Attempts</h3>
+                <h3>All Attempts <small>(click words for definitions)</small></h3>
                 <div class="attempted-words-list" id="attemptedWordsList"></div>
+            </div>
+        </div>
+        
+        <!-- Word Definition Modal -->
+        <div class="modal" id="definitionModal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <h2 id="modalWord"></h2>
+                <p id="modalDefinition"></p>
+                <p class="grammar-type" id="modalGrammarType"></p>
+            </div>
+        </div>
+        
+        <!-- Grammar Info Modal -->
+        <div class="modal" id="grammarModal">
+            <div class="modal-content grammar-modal-content">
+                <span class="close" id="closeGrammarModal">&times;</span>
+                <h2>Grammar Types Explained</h2>
+                <div class="grammar-list" id="grammarList"></div>
             </div>
         </div>
 
@@ -411,6 +538,375 @@
     </div>
 
     <script>
+        // Simple word definitions database
+        const wordDefinitions = {
+            // 2-letter words
+            'ad': { def: 'Advertisement; a promotional message', type: 'noun' },
+            'am': { def: 'First person singular present of "be"', type: 'verb' },
+            'an': { def: 'Indefinite article used before vowel sounds', type: 'article' },
+            'as': { def: 'Used to indicate similarity or comparison', type: 'adverb/conjunction' },
+            'at': { def: 'Used to indicate location or time', type: 'preposition' },
+            'be': { def: 'To exist or have a certain quality', type: 'verb' },
+            'by': { def: 'Near to; beside; through the action of', type: 'preposition' },
+            'do': { def: 'To perform an action or activity', type: 'verb' },
+            'go': { def: 'To move from one place to another', type: 'verb' },
+            'he': { def: 'Third person singular masculine pronoun', type: 'pronoun' },
+            'hi': { def: 'Informal greeting; hello', type: 'interjection' },
+            'if': { def: 'On the condition that; supposing that', type: 'conjunction' },
+            'in': { def: 'Expressing location within something', type: 'preposition' },
+            'is': { def: 'Third person singular present of "be"', type: 'verb' },
+            'it': { def: 'Used to refer to a thing or situation', type: 'pronoun' },
+            'me': { def: 'First person singular object pronoun', type: 'pronoun' },
+            'my': { def: 'Belonging to me', type: 'possessive adjective' },
+            'no': { def: 'Used to express denial or refusal', type: 'adverb/adjective' },
+            'of': { def: 'Expressing relationship or possession', type: 'preposition' },
+            'on': { def: 'Used to indicate position or location', type: 'preposition' },
+            'or': { def: 'Used to connect alternatives', type: 'conjunction' },
+            'so': { def: 'To such a degree; therefore', type: 'adverb/conjunction' },
+            'to': { def: 'Expressing direction or intention', type: 'preposition' },
+            'up': { def: 'Toward a higher position', type: 'adverb/preposition' },
+            'us': { def: 'First person plural object pronoun', type: 'pronoun' },
+            'we': { def: 'First person plural subject pronoun', type: 'pronoun' },
+            // 3-letter words (sample)
+            'ace': { def: 'Playing card with single symbol; expert', type: 'noun' },
+            'act': { def: 'To perform an action; a deed', type: 'verb/noun' },
+            'add': { def: 'To combine numbers; include something extra', type: 'verb' },
+            'age': { def: 'Length of time lived; era', type: 'noun' },
+            'ago': { def: 'In the past; before now', type: 'adverb' },
+            'aid': { def: 'Help or support', type: 'noun/verb' },
+            'aim': { def: 'To point or direct; purpose', type: 'verb/noun' },
+            'air': { def: 'The gas we breathe; atmosphere', type: 'noun' },
+            'all': { def: 'The whole quantity; every one', type: 'determiner/pronoun' },
+            'and': { def: 'Used to connect words or phrases', type: 'conjunction' },
+            'ant': { def: 'Small insect that lives in colonies', type: 'noun' },
+            'any': { def: 'One or some; whichever', type: 'determiner/pronoun' },
+            'ape': { def: 'Large primate without a tail', type: 'noun' },
+            'app': { def: 'Software application for devices', type: 'noun' },
+            'arc': { def: 'Curved line or shape', type: 'noun' },
+            'are': { def: 'Second person or plural present of "be"', type: 'verb' },
+            'ark': { def: 'Large boat; chest or container', type: 'noun' },
+            'arm': { def: 'Upper limb from shoulder to hand', type: 'noun' },
+            'art': { def: 'Creative work; skill', type: 'noun' },
+            'ash': { def: 'Powdery remains after burning', type: 'noun' },
+            'ask': { def: 'To request information or something', type: 'verb' },
+            'ate': { def: 'Past tense of "eat"', type: 'verb' },
+            'bad': { def: 'Poor quality; unpleasant', type: 'adjective' },
+            'bag': { def: 'Container for carrying things', type: 'noun' },
+            'ban': { def: 'To forbid officially', type: 'verb/noun' },
+            'bar': { def: 'Long rigid piece; drinking establishment', type: 'noun' },
+            'bat': { def: 'Flying mammal; sports equipment', type: 'noun' },
+            'bay': { def: 'Curved inlet of sea; reddish-brown color', type: 'noun/adjective' },
+            'bed': { def: 'Furniture for sleeping', type: 'noun' },
+            'bee': { def: 'Flying insect that makes honey', type: 'noun' },
+            'bet': { def: 'To wager money; prediction', type: 'verb/noun' },
+            'bid': { def: 'To offer a price; attempt', type: 'verb/noun' },
+            'big': { def: 'Large in size', type: 'adjective' },
+            'bin': { def: 'Container for storage or waste', type: 'noun' },
+            'bit': { def: 'Small piece; past tense of "bite"', type: 'noun/verb' },
+            'bow': { def: 'To bend forward; weapon for arrows', type: 'verb/noun' },
+            'box': { def: 'Container; to fight with fists', type: 'noun/verb' },
+            'boy': { def: 'Young male person', type: 'noun' },
+            'bug': { def: 'Small insect; software error', type: 'noun' },
+            'bus': { def: 'Large vehicle for public transport', type: 'noun' },
+            'but': { def: 'However; except', type: 'conjunction/preposition' },
+            'buy': { def: 'To purchase with money', type: 'verb' },
+            'can': { def: 'To be able to; metal container', type: 'modal verb/noun' },
+            'cap': { def: 'Hat; upper limit', type: 'noun' },
+            'car': { def: 'Motor vehicle for passengers', type: 'noun' },
+            'cat': { def: 'Small domesticated feline animal', type: 'noun' },
+            'cod': { def: 'Type of fish', type: 'noun' },
+            'cop': { def: 'Police officer', type: 'noun' },
+            'cow': { def: 'Large farm animal that gives milk', type: 'noun' },
+            'cry': { def: 'To shed tears; shout loudly', type: 'verb' },
+            'cup': { def: 'Small container for drinking', type: 'noun' },
+            'cut': { def: 'To slice or divide with sharp tool', type: 'verb' },
+            'dad': { def: 'Father; informal term', type: 'noun' },
+            'day': { def: '24-hour period; daylight hours', type: 'noun' },
+            'den': { def: 'Animal\'s lair; small room', type: 'noun' },
+            'dew': { def: 'Water droplets on surfaces at dawn', type: 'noun' },
+            'did': { def: 'Past tense of "do"', type: 'verb' },
+            'die': { def: 'To stop living; cubic gaming piece', type: 'verb/noun' },
+            'dig': { def: 'To excavate earth', type: 'verb' },
+            'dog': { def: 'Domesticated canine animal', type: 'noun' },
+            'dot': { def: 'Small round mark', type: 'noun' },
+            'dry': { def: 'Without moisture', type: 'adjective' },
+            'due': { def: 'Expected; owed', type: 'adjective' },
+            'ear': { def: 'Organ of hearing', type: 'noun' },
+            'eat': { def: 'To consume food', type: 'verb' },
+            'egg': { def: 'Oval reproductive body laid by birds', type: 'noun' },
+            'elk': { def: 'Large deer species', type: 'noun' },
+            'elm': { def: 'Type of tree', type: 'noun' },
+            'end': { def: 'Final part; to finish', type: 'noun/verb' },
+            'era': { def: 'Distinct period in history', type: 'noun' },
+            'eve': { def: 'Evening before an event', type: 'noun' },
+            'eye': { def: 'Organ of sight', type: 'noun' },
+            // 4-letter words (sample)
+            'able': { def: 'Having ability or skill', type: 'adjective' },
+            'acid': { def: 'Chemical substance with low pH', type: 'noun' },
+            'aged': { def: 'Old; having lived for a long time', type: 'adjective' },
+            'also': { def: 'In addition; too', type: 'adverb' },
+            'area': { def: 'Region or space', type: 'noun' },
+            'army': { def: 'Military land forces', type: 'noun' },
+            'away': { def: 'At a distance; absent', type: 'adverb' },
+            'baby': { def: 'Very young child or animal', type: 'noun' },
+            'back': { def: 'Rear part; to support', type: 'noun/verb' },
+            'ball': { def: 'Round object; formal dance', type: 'noun' },
+            'band': { def: 'Musical group; strip of material', type: 'noun' },
+            'bank': { def: 'Financial institution; river edge', type: 'noun' },
+            'base': { def: 'Foundation; bottom part', type: 'noun' },
+            'beat': { def: 'To strike repeatedly; rhythm', type: 'verb/noun' },
+            'been': { def: 'Past participle of "be"', type: 'verb' },
+            'bell': { def: 'Device that makes ringing sound', type: 'noun' },
+            'best': { def: 'Highest quality; most excellent', type: 'adjective/noun' },
+            'bike': { def: 'Bicycle; motorcycle', type: 'noun' },
+            'bill': { def: 'Invoice; bird\'s beak; proposed law', type: 'noun' },
+            'bird': { def: 'Flying animal with feathers', type: 'noun' },
+            'blow': { def: 'To move air; strike', type: 'verb/noun' },
+            'blue': { def: 'Color of sky and sea', type: 'adjective/noun' },
+            'boat': { def: 'Water vessel', type: 'noun' },
+            'body': { def: 'Physical structure of person/animal', type: 'noun' },
+            'bone': { def: 'Hard tissue in skeleton', type: 'noun' },
+            'book': { def: 'Written work with pages', type: 'noun' },
+            'born': { def: 'Past participle of "bear"; brought into existence', type: 'verb/adjective' },
+            'both': { def: 'The two; one and the other', type: 'determiner/pronoun' },
+            'bowl': { def: 'Round container; to play bowling', type: 'noun/verb' },
+            'boys': { def: 'Plural of boy; young males', type: 'noun' },
+            'busy': { def: 'Having much activity; occupied', type: 'adjective' },
+            'call': { def: 'To shout; telephone', type: 'verb/noun' },
+            'calm': { def: 'Peaceful; not excited', type: 'adjective' },
+            'came': { def: 'Past tense of "come"', type: 'verb' },
+            'camp': { def: 'Outdoor accommodation; temporary settlement', type: 'noun/verb' },
+            'card': { def: 'Piece of stiff paper; playing card', type: 'noun' },
+            'care': { def: 'Attention; concern', type: 'noun/verb' },
+            'case': { def: 'Container; instance; legal matter', type: 'noun' },
+            'cast': { def: 'To throw; actors in play', type: 'verb/noun' },
+            'cell': { def: 'Small room; basic unit of life', type: 'noun' },
+            'chat': { def: 'Informal conversation', type: 'noun/verb' },
+            'chip': { def: 'Small piece; computer component', type: 'noun' },
+            'city': { def: 'Large town; urban area', type: 'noun' },
+            'club': { def: 'Group; heavy stick; venue', type: 'noun' },
+            'coal': { def: 'Black mineral fuel', type: 'noun' },
+            'coat': { def: 'Outer garment; layer', type: 'noun' },
+            'code': { def: 'System of symbols; programming instructions', type: 'noun' },
+            'cold': { def: 'Low temperature; illness', type: 'adjective/noun' },
+            'come': { def: 'To move toward; arrive', type: 'verb' },
+            'cool': { def: 'Moderately cold; excellent', type: 'adjective' },
+            'copy': { def: 'Duplicate; to reproduce', type: 'noun/verb' },
+            'cord': { def: 'Thick string or rope', type: 'noun' },
+            'corn': { def: 'Cereal grain; maize', type: 'noun' },
+            'cost': { def: 'Price; expense', type: 'noun/verb' },
+            'crew': { def: 'Group of workers; team', type: 'noun' },
+            'crop': { def: 'Cultivated plants; harvest', type: 'noun' },
+            'dark': { def: 'Without light; black', type: 'adjective/noun' },
+            'data': { def: 'Information; facts', type: 'noun' },
+            'date': { def: 'Day; romantic meeting; fruit', type: 'noun/verb' },
+            'dawn': { def: 'Early morning; beginning', type: 'noun' },
+            'days': { def: 'Plural of day; periods of time', type: 'noun' },
+            'dead': { def: 'No longer alive', type: 'adjective' },
+            'deal': { def: 'Agreement; to distribute', type: 'noun/verb' },
+            'dear': { def: 'Beloved; expensive', type: 'adjective' },
+            'debt': { def: 'Money owed', type: 'noun' },
+            'deep': { def: 'Extending far down', type: 'adjective' },
+            'deer': { def: 'Wild animal with antlers', type: 'noun' },
+            'desk': { def: 'Table for work', type: 'noun' },
+            'dial': { def: 'Face of clock; to call', type: 'noun/verb' },
+            'died': { def: 'Past tense of "die"', type: 'verb' },
+            'diet': { def: 'Food regularly consumed', type: 'noun' },
+            'disk': { def: 'Flat circular object; storage device', type: 'noun' },
+            'does': { def: 'Third person singular present of "do"', type: 'verb' },
+            'done': { def: 'Past participle of "do"; completed', type: 'verb/adjective' },
+            'door': { def: 'Entrance to room or building', type: 'noun' },
+            'down': { def: 'Toward lower position', type: 'adverb/preposition' },
+            'draw': { def: 'To sketch; pull toward', type: 'verb' },
+            'drew': { def: 'Past tense of "draw"', type: 'verb' },
+            'drop': { def: 'Small amount of liquid; to fall', type: 'noun/verb' },
+            'drug': { def: 'Medicine; illegal substance', type: 'noun' },
+            'dual': { def: 'Having two parts', type: 'adjective' },
+            'duck': { def: 'Water bird; to lower quickly', type: 'noun/verb' },
+            'dump': { def: 'To drop heavily; waste site', type: 'verb/noun' },
+            'dust': { def: 'Fine particles of matter', type: 'noun' },
+            'duty': { def: 'Responsibility; tax', type: 'noun' },
+            'each': { def: 'Every one individually', type: 'determiner/pronoun' },
+            'earn': { def: 'To receive payment for work', type: 'verb' },
+            'easy': { def: 'Not difficult', type: 'adjective' },
+            'edge': { def: 'Border; sharp side', type: 'noun' },
+            'else': { def: 'In addition; otherwise', type: 'adverb' },
+            'even': { def: 'Level; equal; including', type: 'adjective/adverb' },
+            'ever': { def: 'At any time', type: 'adverb' },
+            'evil': { def: 'Morally wrong; wicked', type: 'adjective/noun' },
+            'exit': { def: 'Way out; to leave', type: 'noun/verb' },
+            'face': { def: 'Front of head; to confront', type: 'noun/verb' },
+            'fact': { def: 'True information', type: 'noun' },
+            'fail': { def: 'To be unsuccessful', type: 'verb' },
+            'fair': { def: 'Just; light-colored; market', type: 'adjective/noun' },
+            'fall': { def: 'To drop down; autumn', type: 'verb/noun' },
+            'farm': { def: 'Land for growing crops', type: 'noun' },
+            'fast': { def: 'Quick; to abstain from food', type: 'adjective/verb' },
+            'fate': { def: 'Destiny; predetermined outcome', type: 'noun' },
+            'fear': { def: 'Feeling of danger; to be afraid', type: 'noun/verb' },
+            'feed': { def: 'To give food to', type: 'verb' },
+            'feel': { def: 'To sense by touch; emotion', type: 'verb' },
+            'feet': { def: 'Plural of foot', type: 'noun' },
+            'fell': { def: 'Past tense of "fall"', type: 'verb' },
+            'felt': { def: 'Past tense of "feel"; fabric', type: 'verb/noun' },
+            'file': { def: 'Document container; to submit', type: 'noun/verb' },
+            'fill': { def: 'To make full', type: 'verb' },
+            'film': { def: 'Movie; thin layer', type: 'noun' },
+            'find': { def: 'To discover; locate', type: 'verb' },
+            'fine': { def: 'Excellent; penalty; thin', type: 'adjective/noun' },
+            'fire': { def: 'Burning flames; to dismiss', type: 'noun/verb' },
+            'firm': { def: 'Solid; company', type: 'adjective/noun' },
+            'fish': { def: 'Aquatic animal; to catch fish', type: 'noun/verb' },
+            'fist': { def: 'Closed hand', type: 'noun' },
+            'five': { def: 'Number after four', type: 'noun/adjective' },
+            'flag': { def: 'National symbol; to mark', type: 'noun/verb' },
+            'flat': { def: 'Level; apartment', type: 'adjective/noun' },
+            'flow': { def: 'To move smoothly; stream', type: 'verb/noun' },
+            'folk': { def: 'People; traditional', type: 'noun/adjective' },
+            'food': { def: 'Substances eaten for nutrition', type: 'noun' },
+            'foot': { def: 'Body part; 12 inches', type: 'noun' },
+            'ford': { def: 'Shallow river crossing', type: 'noun' },
+            'form': { def: 'Shape; document; to create', type: 'noun/verb' },
+            'fort': { def: 'Military stronghold', type: 'noun' },
+            'four': { def: 'Number after three', type: 'noun/adjective' },
+            'free': { def: 'Without cost; not imprisoned', type: 'adjective/verb' },
+            'from': { def: 'Starting point; source', type: 'preposition' },
+            'full': { def: 'Containing maximum; complete', type: 'adjective' },
+            'fund': { def: 'Money for purpose; to finance', type: 'noun/verb' },
+            'gain': { def: 'To obtain; increase', type: 'verb/noun' },
+            'game': { def: 'Activity for fun; match', type: 'noun' },
+            'gate': { def: 'Entrance barrier', type: 'noun' },
+            'gave': { def: 'Past tense of "give"', type: 'verb' },
+            'gear': { def: 'Equipment; mechanical part', type: 'noun' },
+            'gift': { def: 'Present; natural ability', type: 'noun' },
+            'girl': { def: 'Young female person', type: 'noun' },
+            'give': { def: 'To provide; hand over', type: 'verb' },
+            'glad': { def: 'Happy; pleased', type: 'adjective' },
+            'goal': { def: 'Objective; scoring target', type: 'noun' },
+            'goat': { def: 'Farm animal with horns', type: 'noun' },
+            'goes': { def: 'Third person singular present of "go"', type: 'verb' },
+            'gold': { def: 'Precious yellow metal', type: 'noun/adjective' },
+            'golf': { def: 'Sport played with clubs and ball', type: 'noun' },
+            'gone': { def: 'Past participle of "go"', type: 'verb' },
+            'good': { def: 'Positive quality; well', type: 'adjective/noun' },
+            'grab': { def: 'To seize quickly', type: 'verb' },
+            'gray': { def: 'Color between black and white', type: 'adjective/noun' },
+            'grew': { def: 'Past tense of "grow"', type: 'verb' },
+            'grid': { def: 'Network of lines; framework', type: 'noun' },
+            'grow': { def: 'To increase in size', type: 'verb' },
+            'gulf': { def: 'Large bay; gap', type: 'noun' },
+            'hair': { def: 'Strands growing from skin', type: 'noun' },
+            'half': { def: 'One of two equal parts', type: 'noun/adjective' },
+            'hall': { def: 'Corridor; large room', type: 'noun' },
+            'hand': { def: 'Body part at end of arm', type: 'noun' },
+            'hang': { def: 'To suspend; dangle', type: 'verb' },
+            'hard': { def: 'Solid; difficult', type: 'adjective' },
+            'harm': { def: 'Damage; to hurt', type: 'noun/verb' },
+            'hate': { def: 'Strong dislike', type: 'verb/noun' },
+            'have': { def: 'To possess; auxiliary verb', type: 'verb' },
+            'head': { def: 'Top of body; leader', type: 'noun' },
+            'hear': { def: 'To perceive sound', type: 'verb' },
+            'heat': { def: 'High temperature; to warm', type: 'noun/verb' },
+            'held': { def: 'Past tense of "hold"', type: 'verb' },
+            'help': { def: 'To assist; aid', type: 'verb/noun' },
+            'here': { def: 'In this place', type: 'adverb' },
+            'hero': { def: 'Brave person; main character', type: 'noun' },
+            'hide': { def: 'To conceal; animal skin', type: 'verb/noun' },
+            'high': { def: 'Tall; elevated', type: 'adjective' },
+            'hill': { def: 'Small mountain; slope', type: 'noun' },
+            'hire': { def: 'To employ; rent', type: 'verb' },
+            'hold': { def: 'To grasp; contain', type: 'verb' },
+            'hole': { def: 'Opening; cavity', type: 'noun' },
+            'holy': { def: 'Sacred; religious', type: 'adjective' },
+            'home': { def: 'Place of residence', type: 'noun' },
+            'hope': { def: 'To wish for; expectation', type: 'verb/noun' },
+            'host': { def: 'Person who entertains; many', type: 'noun/verb' },
+            'hour': { def: '60 minutes; time period', type: 'noun' },
+            'huge': { def: 'Very large', type: 'adjective' },
+            'hung': { def: 'Past tense of "hang"', type: 'verb' },
+            'hunt': { def: 'To search for; pursue', type: 'verb' },
+            'hurt': { def: 'To cause pain; injured', type: 'verb/adjective' },
+            'idea': { def: 'Thought; concept', type: 'noun' },
+            'inch': { def: 'Unit of measurement', type: 'noun' },
+            'into': { def: 'To the inside of', type: 'preposition' },
+            'iron': { def: 'Metal element; to press clothes', type: 'noun/verb' },
+            'item': { def: 'Individual object; article', type: 'noun' },
+            'jail': { def: 'Prison; to imprison', type: 'noun/verb' },
+            'jean': { def: 'Type of cotton fabric', type: 'noun' },
+            'join': { def: 'To connect; become member', type: 'verb' },
+            'jump': { def: 'To leap; sudden increase', type: 'verb/noun' },
+            'june': { def: 'Sixth month of year', type: 'noun' },
+            'jury': { def: 'Group deciding legal case', type: 'noun' },
+            'just': { def: 'Fair; recently; only', type: 'adjective/adverb' },
+            'keen': { def: 'Eager; sharp', type: 'adjective' },
+            'keep': { def: 'To retain; maintain', type: 'verb' },
+            'kept': { def: 'Past tense of "keep"', type: 'verb' },
+            'keys': { def: 'Plural of key; unlocking devices', type: 'noun' },
+            'kick': { def: 'To strike with foot', type: 'verb/noun' },
+            'kill': { def: 'To cause death', type: 'verb' },
+            'kind': { def: 'Type; gentle nature', type: 'noun/adjective' },
+            'king': { def: 'Male monarch; ruler', type: 'noun' },
+            'knee': { def: 'Joint in leg', type: 'noun' },
+            'knew': { def: 'Past tense of "know"', type: 'verb' },
+            'know': { def: 'To be aware of; understand', type: 'verb' },
+            'lack': { def: 'Absence of; to be without', type: 'noun/verb' },
+            'lady': { def: 'Woman; polite term', type: 'noun' },
+            'laid': { def: 'Past tense of "lay"', type: 'verb' },
+            'lake': { def: 'Large body of water', type: 'noun' },
+            'land': { def: 'Ground; country; to arrive', type: 'noun/verb' },
+            'lane': { def: 'Narrow road; track', type: 'noun' },
+            'last': { def: 'Final; previous; to endure', type: 'adjective/verb' },
+            'late': { def: 'After expected time', type: 'adjective/adverb' },
+            'lawn': { def: 'Grassed area', type: 'noun' },
+            'lead': { def: 'To guide; metal element', type: 'verb/noun' },
+            'lean': { def: 'Thin; to rest against', type: 'adjective/verb' },
+            'left': { def: 'Opposite of right; past tense of "leave"', type: 'adjective/verb' },
+            'lend': { def: 'To give temporarily', type: 'verb' },
+            'lens': { def: 'Optical device; eye part', type: 'noun' },
+            'lent': { def: 'Past tense of "lend"', type: 'verb' },
+            'less': { def: 'Smaller amount', type: 'determiner/adverb' },
+            'life': { def: 'State of being alive', type: 'noun' },
+            'lift': { def: 'To raise up; elevator', type: 'verb/noun' },
+            'like': { def: 'To enjoy; similar to', type: 'verb/preposition' },
+            'line': { def: 'Mark; queue; to cover', type: 'noun/verb' },
+            'link': { def: 'Connection; to connect', type: 'noun/verb' },
+            'list': { def: 'Series of items', type: 'noun' },
+            'live': { def: 'To be alive; occurring now', type: 'verb/adjective' },
+            'loan': { def: 'Borrowed money', type: 'noun' },
+            'lock': { def: 'Fastening device; to secure', type: 'noun/verb' },
+            'long': { def: 'Great length; to yearn', type: 'adjective/verb' },
+            'look': { def: 'To see; appearance', type: 'verb/noun' },
+            'lord': { def: 'Nobleman; master', type: 'noun' },
+            'lose': { def: 'To misplace; be defeated', type: 'verb' },
+            'loss': { def: 'Act of losing; damage', type: 'noun' },
+            'lost': { def: 'Past tense of "lose"; unable to find way', type: 'verb/adjective' },
+            'loud': { def: 'Making much noise', type: 'adjective' },
+            'love': { def: 'Deep affection', type: 'noun/verb' },
+            'luck': { def: 'Fortune; chance', type: 'noun' },
+            'lucy': { def: 'Female given name', type: 'proper noun' },
+            'lung': { def: 'Breathing organ', type: 'noun' },
+            'made': { def: 'Past tense of "make"', type: 'verb' },
+            'mail': { def: 'Postal system; to send', type: 'noun/verb' },
+            'main': { def: 'Principal; most important', type: 'adjective' }
+        };
+
+        // Grammar type explanations
+        const grammarExplanations = {
+            'noun': 'A word that names a person, place, thing, or idea (e.g., cat, house, love)',
+            'verb': 'A word that expresses an action or state of being (e.g., run, is, think)',
+            'adjective': 'A word that describes or modifies a noun (e.g., big, red, happy)',
+            'adverb': 'A word that modifies a verb, adjective, or another adverb (e.g., quickly, very, well)',
+            'pronoun': 'A word that takes the place of a noun (e.g., he, she, it, they)',
+            'preposition': 'A word that shows relationship between nouns/pronouns and other words (e.g., in, on, under)',
+            'conjunction': 'A word that connects words, phrases, or clauses (e.g., and, but, or)',
+            'article': 'Words that define nouns as specific or unspecific (a, an, the)',
+            'interjection': 'A word expressing emotion or exclamation (e.g., oh!, wow!, hello)',
+            'modal verb': 'Auxiliary verbs expressing necessity, possibility, permission (can, may, must)',
+            'possessive adjective': 'Shows ownership or belonging (my, your, his, her, its, our, their)',
+            'determiner': 'Words that introduce nouns and specify quantity or definiteness (this, that, some, many)',
+            'proper noun': 'Names of specific people, places, or things, usually capitalized'
+        };
+
         // Game state and data
         class ProgressiveWordleGame {
             constructor() {
@@ -499,7 +995,16 @@
                     attemptedWordsList: document.getElementById('attemptedWordsList'),
                     resetLevelBtn: document.getElementById('resetLevelBtn'),
                     resetGameBtn: document.getElementById('resetGameBtn'),
-                    levelButtons: document.getElementById('levelButtons')
+                    levelButtons: document.getElementById('levelButtons'),
+                    definitionModal: document.getElementById('definitionModal'),
+                    grammarModal: document.getElementById('grammarModal'),
+                    modalWord: document.getElementById('modalWord'),
+                    modalDefinition: document.getElementById('modalDefinition'),
+                    modalGrammarType: document.getElementById('modalGrammarType'),
+                    closeModal: document.getElementById('closeModal'),
+                    closeGrammarModal: document.getElementById('closeGrammarModal'),
+                    grammarInfoBtn: document.getElementById('grammarInfoBtn'),
+                    grammarList: document.getElementById('grammarList')
                 };
 
                 this.createLevelButtons();
@@ -637,6 +1142,29 @@
                 this.elements.resetGameBtn.addEventListener('click', () => {
                     this.resetEntireGame();
                 });
+
+                // Modal event listeners
+                this.elements.closeModal.addEventListener('click', () => {
+                    this.elements.definitionModal.style.display = 'none';
+                });
+
+                this.elements.closeGrammarModal.addEventListener('click', () => {
+                    this.elements.grammarModal.style.display = 'none';
+                });
+
+                this.elements.grammarInfoBtn.addEventListener('click', () => {
+                    this.showGrammarExplanations();
+                });
+
+                // Click outside modal to close
+                window.addEventListener('click', (e) => {
+                    if (e.target === this.elements.definitionModal) {
+                        this.elements.definitionModal.style.display = 'none';
+                    }
+                    if (e.target === this.elements.grammarModal) {
+                        this.elements.grammarModal.style.display = 'none';
+                    }
+                });
             }
 
             // Submit a word guess
@@ -710,8 +1238,9 @@
             }
 
             // Show visual feedback for the guessed word
-            showFeedback(guess, correctWord, feedbackType = 'auto') {
+            showFeedback(guess, correctWord, feedbackType) {
                 this.elements.feedback.innerHTML = '';
+                feedbackType = feedbackType || 'auto';
 
                 let className;
                 if (feedbackType === 'yellow') {
@@ -818,6 +1347,8 @@
                     const wordDiv = document.createElement('div');
                     wordDiv.className = 'found-word';
                     wordDiv.textContent = word.toUpperCase();
+                    wordDiv.style.cursor = 'pointer';
+                    wordDiv.addEventListener('click', () => this.showWordDefinition(word));
                     this.elements.foundWordsGrid.appendChild(wordDiv);
                 });
             }
@@ -869,6 +1400,40 @@
                 }
             }
 
+            // Show word definition modal
+            showWordDefinition(word) {
+                const definition = wordDefinitions[word.toLowerCase()];
+                
+                if (definition) {
+                    this.elements.modalWord.textContent = word.toUpperCase();
+                    this.elements.modalDefinition.textContent = definition.def;
+                    this.elements.modalGrammarType.textContent = `Type: ${definition.type}`;
+                } else {
+                    this.elements.modalWord.textContent = word.toUpperCase();
+                    this.elements.modalDefinition.textContent = 'Definition not available for this word.';
+                    this.elements.modalGrammarType.textContent = '';
+                }
+                
+                this.elements.definitionModal.style.display = 'block';
+            }
+
+            // Show grammar explanations modal
+            showGrammarExplanations() {
+                this.elements.grammarList.innerHTML = '';
+                
+                Object.entries(grammarExplanations).forEach(([type, explanation]) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'grammar-item';
+                    itemDiv.innerHTML = `
+                        <h4>${type}</h4>
+                        <p>${explanation}</p>
+                    `;
+                    this.elements.grammarList.appendChild(itemDiv);
+                });
+                
+                this.elements.grammarModal.style.display = 'block';
+            }
+
             // Update attempted words display
             updateAttemptedWordsDisplay() {
                 const attempted = this.attemptedWords[this.currentLevel] || [];
@@ -909,6 +1474,8 @@
                     }
                     
                     wordDiv.textContent = word.toUpperCase() + (count > 1 ? ` (${count}x)` : '');
+                    wordDiv.style.cursor = 'pointer';
+                    wordDiv.addEventListener('click', () => this.showWordDefinition(word));
                     this.elements.attemptedWordsList.appendChild(wordDiv);
                 });
             }
