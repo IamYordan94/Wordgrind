@@ -606,7 +606,6 @@
                 this.createLevelButtons();
                 
                 // Check if all available words in level are found
-                const availableWords = this.getAvailableWords(this.currentLevel);
                 const foundInLevel = this.foundWords[this.currentLevel];
                 const allAvailableFound = availableWords.every(word => foundInLevel.includes(word));
                 
