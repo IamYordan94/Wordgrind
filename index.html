@@ -228,6 +228,75 @@
             }
         }
 
+        /* Ad Monetization Styles */
+        .banner-ad {
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+            border: 2px dashed #6aaa64;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #6aaa64;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .ad-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .hint-btn {
+            background: linear-gradient(135deg, #c9b458, #d4c76a);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hint-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(201, 180, 88, 0.4);
+        }
+
+        .hint-btn:disabled {
+            background: #3a3a3a;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .hint-display {
+            background-color: rgba(201, 180, 88, 0.1);
+            border: 1px solid #c9b458;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            color: #c9b458;
+            font-weight: bold;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .ad-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
         .words-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -508,6 +577,11 @@
     <div class="container">
         <h1>Progressive Wordle Grind</h1>
         
+        <!-- Banner Ad Placeholder -->
+        <div id="banner-ad" class="banner-ad">
+            📺 Banner Ad Placeholder - Monetization Ready 📺
+        </div>
+        
         <div class="level-selector" id="levelSelector">
             <h3>Select Level</h3>
             <div class="level-buttons" id="levelButtons"></div>
@@ -531,6 +605,13 @@
             <input type="text" id="wordInput" placeholder="Enter your guess" maxlength="2">
             <button class="submit-btn" id="submitBtn">Submit</button>
         </div>
+
+        <!-- Ad Controls and Hint System -->
+        <div class="ad-controls">
+            <button id="rewarded-ad-btn" class="hint-btn">🎬 Watch Ad for Hint</button>
+        </div>
+        
+        <div class="hint-display" id="hintDisplay"></div>
 
         <div class="feedback" id="feedback"></div>
         <div class="message" id="message"></div>
@@ -653,7 +734,9 @@
                     attemptedWordsList: document.getElementById('attemptedWordsList'),
                     resetLevelBtn: document.getElementById('resetLevelBtn'),
                     resetGameBtn: document.getElementById('resetGameBtn'),
-                    levelButtons: document.getElementById('levelButtons')
+                    levelButtons: document.getElementById('levelButtons'),
+                    rewardedAdBtn: document.getElementById('rewarded-ad-btn'),
+                    hintDisplay: document.getElementById('hintDisplay')
                 };
 
                 this.createLevelButtons();
@@ -790,6 +873,10 @@
 
                 this.elements.resetGameBtn.addEventListener('click', () => {
                     this.resetEntireGame();
+                });
+
+                this.elements.rewardedAdBtn.addEventListener('click', () => {
+                    this.watchAdForHint();
                 });
             }
 
@@ -1190,6 +1277,49 @@
                     wordDiv.textContent = word.toUpperCase() + (count > 1 ? ` (${count}x)` : '');
                     this.elements.attemptedWordsList.appendChild(wordDiv);
                 });
+            }
+
+            // Ad Monetization: Watch rewarded ad for hint
+            watchAdForHint() {
+                // Simulate watching an ad (placeholder functionality)
+                this.elements.rewardedAdBtn.disabled = true;
+                this.elements.rewardedAdBtn.textContent = '📺 Loading Ad...';
+                
+                // Simulate ad loading and playing
+                setTimeout(() => {
+                    // Show hint after "ad" completes
+                    this.showHint();
+                    
+                    // Re-enable button after cooldown
+                    setTimeout(() => {
+                        this.elements.rewardedAdBtn.disabled = false;
+                        this.elements.rewardedAdBtn.textContent = '🎬 Watch Ad for Hint';
+                    }, 30000); // 30 second cooldown
+                }, 2000); // 2 second "ad" duration
+            }
+
+            // Show hint to player
+            showHint() {
+                const availableWords = this.getAvailableWords(this.currentLevel);
+                const foundWords = this.foundWords[this.currentLevel];
+                const remainingWords = availableWords.filter(word => !foundWords.includes(word));
+                
+                if (remainingWords.length === 0) {
+                    this.elements.hintDisplay.innerHTML = '💡 <strong>Hint:</strong> You\'ve found all available words! Progress in previous levels to unlock more.';
+                } else {
+                    // Show a random unfound word as hint
+                    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+                    this.elements.hintDisplay.innerHTML = `💡 <strong>Hint:</strong> Try the word "<span style="color: #6aaa64; text-transform: uppercase;">${randomWord}</span>"`;
+                }
+                
+                this.elements.hintDisplay.style.display = 'block';
+                
+                // Hide hint after 10 seconds
+                setTimeout(() => {
+                    this.elements.hintDisplay.style.display = 'none';
+                }, 10000);
+                
+                this.showMessage('Hint unlocked! Thanks for watching the ad! 🎉', 'success');
             }
         }
 
