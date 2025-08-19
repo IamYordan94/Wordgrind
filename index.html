@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Wordle Grind</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #6aaa64;
+            font-size: 2.5rem;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .level-info {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .progress-info {
+            text-align: right;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 10px;
+            background-color: #3a3a3a;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #6aaa64;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .input-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #wordInput {
+            font-size: 1.5rem;
+            padding: 15px;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            background-color: #2a2a2a;
+            color: white;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            width: 300px;
+            max-width: 100%;
+        }
+
+        #wordInput:focus {
+            outline: none;
+            border-color: #6aaa64;
+        }
+
+        .submit-btn {
+            margin-left: 10px;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            background-color: #6aaa64;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #5a9954;
+        }
+
+        .submit-btn:disabled {
+            background-color: #3a3a3a;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .letter-feedback {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            margin: 2px;
+            line-height: 50px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+            color: white;
+        }
+
+        .correct {
+            background-color: #6aaa64;
+        }
+
+        .wrong-position {
+            background-color: #c9b458;
+        }
+
+        .incorrect {
+            background-color: #787c7e;
+        }
+
+        .found-words {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .found-words h3 {
+            margin-bottom: 15px;
+            color: #6aaa64;
+        }
+
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .found-word {
+            background-color: #3a3a3a;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .success {
+            background-color: rgba(106, 170, 100, 0.2);
+            border: 1px solid #6aaa64;
+            color: #6aaa64;
+        }
+
+        .error {
+            background-color: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+
+        .level-complete {
+            background-color: rgba(201, 180, 88, 0.2);
+            border: 1px solid #c9b458;
+            color: #c9b458;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: #3a3a3a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .control-btn:hover {
+            background-color: #4a4a4a;
+        }
+
+        .level-selector {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .level-selector h3 {
+            margin-bottom: 15px;
+            color: #6aaa64;
+            text-align: center;
+        }
+
+        .level-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .level-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .level-btn.unlocked {
+            background-color: #6aaa64;
+            color: white;
+        }
+
+        .level-btn.current {
+            background-color: #c9b458;
+            color: white;
+        }
+
+        .level-btn.locked {
+            background-color: #3a3a3a;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .level-btn.completed {
+            background-color: #2a7a2a;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .game-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .progress-info {
+                text-align: center;
+            }
+
+            #wordInput {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .submit-btn {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Progressive Wordle Grind</h1>
+        
+        <div class="level-selector" id="levelSelector">
+            <h3>Select Level</h3>
+            <div class="level-buttons" id="levelButtons"></div>
+        </div>
+
+        <div class="game-info">
+            <div class="level-info">
+                <span>Level <span id="currentLevel">1</span></span>
+                <br>
+                <span id="wordLength">2</span>-letter words
+            </div>
+            <div class="progress-info">
+                <div>Found: <span id="foundCount">0</span> / <span id="totalCount">0</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <input type="text" id="wordInput" placeholder="Enter your guess" maxlength="2">
+            <button class="submit-btn" id="submitBtn">Submit</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        <div class="message" id="message"></div>
+
+        <div class="found-words">
+            <h3>Found Words (<span id="foundWordsCount">0</span>)</h3>
+            <div class="words-grid" id="foundWordsGrid"></div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" id="resetLevelBtn">Reset Current Level</button>
+            <button class="control-btn" id="resetGameBtn">Reset Entire Game</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state and data
+        class ProgressiveWordleGame {
+            constructor() {
+                // Word lists by length - comprehensive English word lists
+                this.wordLists = {
+                    2: ['ad', 'ah', 'am', 'an', 'as', 'at', 'ax', 'ay', 'be', 'by', 'do', 'go', 'he', 'hi', 'if', 'in', 'is', 'it', 'me', 'my', 'no', 'of', 'on', 'or', 'so', 'to', 'up', 'us', 'we', 'ab', 'ag', 'al', 'ar', 'aw', 'ba', 'bo', 'ed', 'eh', 'el', 'em', 'en', 'er', 'es', 'ex', 'fa', 'gi', 'ha', 'ho', 'id', 'jo', 'ka', 'la', 'li', 'lo', 'ma', 'mi', 'mo', 'mu', 'na', 'ne', 'nu', 'od', 'oh', 'om', 'op', 'os', 'ow', 'ox', 'oy', 'pa', 'pi', 'qi', 're', 'sh', 'si', 'ta', 'ti', 'uh', 'um', 'un', 'ut', 'wo', 'xi', 'xu', 'ya', 'ye', 'yo', 'za'],
+                    3: ['ace', 'act', 'add', 'age', 'ago', 'aid', 'aim', 'air', 'all', 'and', 'ant', 'any', 'ape', 'app', 'arc', 'are', 'ark', 'arm', 'art', 'ash', 'ask', 'ate', 'bad', 'bag', 'ban', 'bar', 'bat', 'bay', 'bed', 'bee', 'bet', 'bid', 'big', 'bin', 'bit', 'bow', 'box', 'boy', 'bug', 'bus', 'but', 'buy', 'can', 'cap', 'car', 'cat', 'cod', 'cop', 'cow', 'cry', 'cup', 'cut', 'dad', 'day', 'den', 'dew', 'did', 'die', 'dig', 'dog', 'dot', 'dry', 'due', 'ear', 'eat', 'egg', 'elk', 'elm', 'end', 'era', 'eve', 'eye', 'fan', 'far', 'fat', 'few', 'fig', 'fin', 'fit', 'fix', 'fly', 'fog', 'for', 'fox', 'fun', 'fur', 'gap', 'gas', 'get', 'god', 'got', 'gun', 'guy', 'gym', 'had', 'ham', 'hat', 'hay', 'her', 'hid', 'him', 'hip', 'his', 'hit', 'hop', 'hot', 'how', 'hub', 'hug', 'hut', 'ice', 'ill', 'ink', 'inn', 'ion', 'its', 'ivy', 'jam', 'jar', 'jaw', 'jet', 'job', 'joy', 'key', 'kid', 'kit', 'lab', 'lap', 'law', 'lay', 'led', 'leg', 'let', 'lid', 'lie', 'lip', 'log', 'lot', 'low', 'mad', 'man', 'map', 'mat', 'max', 'may', 'men', 'met', 'mix', 'mob', 'mom', 'mud', 'nap', 'net', 'new', 'nod', 'nor', 'not', 'now', 'nut', 'oak', 'odd', 'off', 'oil', 'old', 'one', 'our', 'out', 'owl', 'own', 'pad', 'pan', 'pat', 'pay', 'pen', 'pet', 'pie', 'pig', 'pin', 'pit', 'pop', 'pot', 'put', 'ran', 'rat', 'raw', 'red', 'rid', 'row', 'rub', 'rug', 'run', 'sad', 'sat', 'saw', 'say', 'sea', 'see', 'set', 'sew', 'she', 'shy', 'sin', 'sip', 'sir', 'sit', 'six', 'sky', 'son', 'sun', 'tab', 'tag', 'tan', 'tap', 'tar', 'tax', 'tea', 'ten', 'the', 'tie', 'tin', 'tip', 'toe', 'ton', 'too', 'top', 'toy', 'try', 'tub', 'two', 'use', 'van', 'war', 'was', 'way', 'web', 'wet', 'who', 'why', 'win', 'wit', 'won', 'wow', 'yes', 'yet', 'you', 'zip', 'zoo'],
+                    4: ['able', 'acid', 'aged', 'also', 'area', 'army', 'away', 'baby', 'back', 'ball', 'band', 'bank', 'base', 'beat', 'been', 'bell', 'best', 'bike', 'bill', 'bird', 'blow', 'blue', 'boat', 'body', 'bone', 'book', 'born', 'both', 'bowl', 'boys', 'busy', 'call', 'calm', 'came', 'camp', 'card', 'care', 'case', 'cast', 'cell', 'chat', 'chip', 'city', 'club', 'coal', 'coat', 'code', 'cold', 'come', 'cool', 'copy', 'cord', 'corn', 'cost', 'crew', 'crop', 'dark', 'data', 'date', 'dawn', 'days', 'dead', 'deal', 'dear', 'debt', 'deep', 'deer', 'desk', 'dial', 'died', 'diet', 'disk', 'does', 'done', 'door', 'down', 'draw', 'drew', 'drop', 'drug', 'dual', 'duck', 'dump', 'dust', 'duty', 'each', 'earn', 'easy', 'edge', 'else', 'even', 'ever', 'evil', 'exit', 'face', 'fact', 'fail', 'fair', 'fall', 'farm', 'fast', 'fate', 'fear', 'feed', 'feel', 'feet', 'fell', 'felt', 'file', 'fill', 'film', 'find', 'fine', 'fire', 'firm', 'fish', 'fist', 'five', 'flag', 'flat', 'flow', 'folk', 'food', 'foot', 'ford', 'form', 'fort', 'four', 'free', 'from', 'full', 'fund', 'gain', 'game', 'gate', 'gave', 'gear', 'gift', 'girl', 'give', 'glad', 'goal', 'goat', 'goes', 'gold', 'golf', 'gone', 'good', 'grab', 'gray', 'grew', 'grid', 'grow', 'gulf', 'hair', 'half', 'hall', 'hand', 'hang', 'hard', 'harm', 'hate', 'have', 'head', 'hear', 'heat', 'held', 'help', 'here', 'hero', 'hide', 'high', 'hill', 'hire', 'hold', 'hole', 'holy', 'home', 'hope', 'host', 'hour', 'huge', 'hung', 'hunt', 'hurt', 'idea', 'inch', 'into', 'iron', 'item', 'jail', 'jean', 'join', 'jump', 'june', 'jury', 'just', 'keen', 'keep', 'kept', 'keys', 'kick', 'kill', 'kind', 'king', 'knee', 'knew', 'know', 'lack', 'lady', 'laid', 'lake', 'land', 'lane', 'last', 'late', 'lawn', 'lead', 'lean', 'left', 'lend', 'lens', 'lent', 'less', 'life', 'lift', 'like', 'line', 'link', 'list', 'live', 'loan', 'lock', 'long', 'look', 'lord', 'lose', 'loss', 'lost', 'loud', 'love', 'luck', 'lucy', 'lung', 'made', 'mail', 'main', 'make', 'male', 'mall', 'many', 'mark', 'mars', 'mass', 'mate', 'math', 'meal', 'mean', 'meat', 'meet', 'melt', 'memo', 'menu', 'mesh', 'mice', 'mike', 'mild', 'mile', 'milk', 'mill', 'mind', 'mine', 'miss', 'mode', 'mood', 'moon', 'more', 'most', 'move', 'much', 'name', 'navy', 'near', 'neck', 'need', 'news', 'next', 'nice', 'nine', 'none', 'noon', 'nose', 'note', 'noun', 'nude', 'odds', 'okay', 'once', 'only', 'open', 'oral', 'over', 'pace', 'pack', 'page', 'paid', 'pain', 'pair', 'palm', 'park', 'part', 'pass', 'past', 'path', 'peak', 'pick', 'pink', 'plan', 'play', 'plot', 'plug', 'poem', 'poet', 'pole', 'poll', 'pool', 'poor', 'port', 'post', 'pull', 'pump', 'pure', 'push', 'quit', 'race', 'rain', 'rank', 'rare', 'rate', 'read', 'real', 'rear', 'rely', 'rent', 'rest', 'rich', 'ride', 'ring', 'rise', 'risk', 'road', 'rock', 'role', 'roll', 'roof', 'room', 'root', 'rope', 'rose', 'rude', 'rule', 'rush', 'safe', 'said', 'sail', 'sake', 'sale', 'salt', 'same', 'sand', 'save', 'seal', 'seat', 'seed', 'seek', 'seem', 'seen', 'self', 'sell', 'send', 'sent', 'ship', 'shop', 'shot', 'show', 'shut', 'sick', 'side', 'sign', 'sing', 'sink', 'site', 'size', 'skin', 'skip', 'slip', 'slow', 'snap', 'snow', 'soap', 'soft', 'soil', 'sold', 'sole', 'some', 'song', 'soon', 'sort', 'soul', 'spot', 'star', 'stay', 'step', 'stop', 'such', 'suit', 'sure', 'take', 'tale', 'talk', 'tall', 'tank', 'tape', 'task', 'team', 'tell', 'term', 'test', 'text', 'than', 'that', 'them', 'then', 'they', 'thin', 'this', 'thus', 'tide', 'tied', 'ties', 'tile', 'till', 'time', 'tiny', 'tips', 'tire', 'told', 'tone', 'took', 'tool', 'tops', 'tour', 'town', 'tree', 'trip', 'true', 'tune', 'turn', 'twin', 'type', 'unit', 'upon', 'used', 'user', 'vary', 'vast', 'very', 'vice', 'view', 'vote', 'wade', 'wage', 'wait', 'wake', 'walk', 'wall', 'want', 'ward', 'warm', 'warn', 'wash', 'wave', 'ways', 'weak', 'wear', 'week', 'well', 'went', 'were', 'west', 'what', 'when', 'wide', 'wife', 'wild', 'will', 'wind', 'wine', 'wing', 'wire', 'wise', 'wish', 'with', 'wolf', 'wood', 'wool', 'word', 'work', 'worn', 'yard', 'year', 'yoga', 'your', 'zero', 'zone'],
+                    5: ['about', 'above', 'abuse', 'actor', 'acute', 'admit', 'adopt', 'adult', 'after', 'again', 'agent', 'agree', 'ahead', 'alarm', 'album', 'alert', 'alike', 'alive', 'allow', 'alone', 'along', 'alter', 'among', 'anger', 'angle', 'angry', 'apart', 'apple', 'apply', 'arena', 'argue', 'arise', 'array', 'aside', 'asset', 'avoid', 'awake', 'award', 'aware', 'badly', 'baker', 'bases', 'basic', 'beach', 'began', 'begin', 'being', 'below', 'bench', 'billy', 'birth', 'black', 'blame', 'blank', 'blind', 'block', 'blood', 'board', 'boast', 'bonus', 'boost', 'booth', 'bound', 'brain', 'brand', 'brass', 'brave', 'bread', 'break', 'breed', 'brief', 'bring', 'broad', 'broke', 'brown', 'build', 'built', 'buyer', 'cable', 'calif', 'carry', 'catch', 'cause', 'chain', 'chair', 'chaos', 'charm', 'chart', 'chase', 'cheap', 'check', 'chest', 'chief', 'child', 'china', 'chose', 'civic', 'civil', 'claim', 'class', 'clean', 'clear', 'click', 'clock', 'close', 'cloud', 'coach', 'coast', 'could', 'count', 'court', 'cover', 'craft', 'crash', 'crazy', 'cream', 'crime', 'cross', 'crowd', 'crown', 'crude', 'curve', 'cycle', 'daily', 'dance', 'dated', 'dealt', 'death', 'debut', 'delay', 'depth', 'doing', 'doubt', 'dozen', 'draft', 'drama', 'drank', 'dream', 'dress', 'drill', 'drink', 'drive', 'drove', 'dying', 'eager', 'early', 'earth', 'eight', 'elite', 'empty', 'enemy', 'enjoy', 'enter', 'entry', 'equal', 'error', 'event', 'every', 'exact', 'exist', 'extra', 'faith', 'false', 'fault', 'fiber', 'field', 'fifth', 'fifty', 'fight', 'final', 'first', 'fixed', 'flash', 'fleet', 'floor', 'fluid', 'focus', 'force', 'forth', 'forty', 'forum', 'found', 'frame', 'frank', 'fraud', 'fresh', 'front', 'frost', 'funny', 'giant', 'given', 'glass', 'globe', 'going', 'grace', 'grade', 'grand', 'grant', 'grass', 'grave', 'great', 'green', 'gross', 'group', 'grown', 'guard', 'guess', 'guest', 'guide', 'happy', 'harry', 'heart', 'heavy', 'hence', 'henry', 'horse', 'hotel', 'house', 'human', 'ideal', 'image', 'index', 'inner', 'input', 'issue', 'japan', 'jimmy', 'joint', 'jones', 'judge', 'known', 'label', 'large', 'laser', 'later', 'laugh', 'layer', 'learn', 'lease', 'least', 'leave', 'legal', 'level', 'lewis', 'light', 'limit', 'links', 'lives', 'local', 'logic', 'loose', 'lower', 'lucky', 'lunch', 'lying', 'magic', 'major', 'maker', 'march', 'maria', 'match', 'maybe', 'mayor', 'meant', 'media', 'metal', 'might', 'minor', 'minus', 'mixed', 'model', 'money', 'month', 'moral', 'motor', 'mount', 'mouse', 'mouth', 'moved', 'movie', 'music', 'needs', 'never', 'newly', 'night', 'noise', 'north', 'noted', 'novel', 'nurse', 'occur', 'ocean', 'offer', 'often', 'order', 'other', 'ought', 'paint', 'panel', 'paper', 'party', 'peace', 'peter', 'phase', 'phone', 'photo', 'piano', 'piece', 'pilot', 'pitch', 'place', 'plain', 'plane', 'plant', 'plate', 'point', 'pound', 'power', 'press', 'price', 'pride', 'prime', 'print', 'prior', 'prize', 'proof', 'proud', 'prove', 'queen', 'quick', 'quiet', 'quite', 'radio', 'raise', 'range', 'rapid', 'ratio', 'reach', 'ready', 'realm', 'rebel', 'refer', 'relax', 'repay', 'reply', 'right', 'rigid', 'rival', 'river', 'robin', 'roger', 'roman', 'rough', 'round', 'route', 'royal', 'rural', 'scale', 'scene', 'scope', 'score', 'sense', 'serve', 'setup', 'seven', 'shall', 'shape', 'share', 'sharp', 'sheet', 'shelf', 'shell', 'shift', 'shine', 'shirt', 'shock', 'shoot', 'short', 'shown', 'sides', 'sight', 'silly', 'since', 'sixth', 'sixty', 'sized', 'skill', 'sleep', 'slide', 'small', 'smart', 'smile', 'smith', 'smoke', 'snap', 'snake', 'solid', 'solve', 'sorry', 'sound', 'south', 'space', 'spare', 'speak', 'speed', 'spend', 'spent', 'split', 'spoke', 'sport', 'staff', 'stage', 'stake', 'stand', 'start', 'state', 'steam', 'steel', 'steep', 'steer', 'steve', 'stick', 'still', 'stock', 'stone', 'stood', 'store', 'storm', 'story', 'strip', 'stuck', 'study', 'stuff', 'style', 'sugar', 'suite', 'super', 'sweet', 'table', 'taken', 'taste', 'taxes', 'teach', 'team', 'terry', 'texas', 'thank', 'theft', 'their', 'theme', 'there', 'these', 'thick', 'thing', 'think', 'third', 'those', 'three', 'threw', 'throw', 'thumb', 'tight', 'timer', 'title', 'today', 'topic', 'total', 'touch', 'tough', 'tower', 'track', 'trade', 'train', 'treat', 'trend', 'trial', 'tribe', 'trick', 'tried', 'tries', 'trip', 'truck', 'truly', 'trust', 'truth', 'twice', 'uncle', 'under', 'undue', 'union', 'unity', 'until', 'upper', 'urban', 'usage', 'usual', 'valid', 'value', 'video', 'virus', 'visit', 'vital', 'vocal', 'voice', 'waste', 'watch', 'water', 'wheel', 'where', 'which', 'while', 'white', 'whole', 'whose', 'woman', 'women', 'world', 'worry', 'worse', 'worst', 'worth', 'would', 'write', 'wrong', 'wrote', 'young', 'youth'],
+                    6: ['accept', 'access', 'accord', 'across', 'acting', 'action', 'active', 'actual', 'advice', 'advise', 'affair', 'affect', 'afford', 'afraid', 'africa', 'agency', 'agenda', 'almost', 'always', 'amount', 'animal', 'annual', 'answer', 'anyone', 'anyway', 'appeal', 'appear', 'around', 'arrive', 'artist', 'aspect', 'assess', 'assist', 'assume', 'assure', 'attach', 'attack', 'attend', 'august', 'author', 'autumn', 'avenue', 'backed', 'backup', 'banner', 'barely', 'barrel', 'battle', 'beauty', 'became', 'become', 'before', 'behalf', 'behave', 'behind', 'belief', 'belong', 'berlin', 'better', 'beyond', 'bishop', 'border', 'bottle', 'bottom', 'bought', 'branch', 'breath', 'bridge', 'brief', 'bright', 'bring', 'britain', 'broken', 'budget', 'burden', 'bureau', 'button', 'camera', 'cancer', 'cannot', 'canvas', 'career', 'carpet', 'castle', 'casual', 'caught', 'center', 'centre', 'chance', 'change', 'charge', 'choice', 'choose', 'chosen', 'church', 'circle', 'client', 'closed', 'closer', 'coffee', 'column', 'combat', 'coming', 'commit', 'common', 'comply', 'copper', 'corner', 'costly', 'county', 'couple', 'course', 'covers', 'create', 'credit', 'crisis', 'custom', 'damage', 'danger', 'dealer', 'debate', 'debris', 'decide', 'defeat', 'defend', 'define', 'degree', 'deliver', 'demand', 'depend', 'deputy', 'derive', 'design', 'desire', 'detail', 'detect', 'device', 'differ', 'dinner', 'direct', 'doctor', 'dollar', 'domain', 'double', 'driven', 'driver', 'during', 'easily', 'eating', 'editor', 'effect', 'effort', 'eighth', 'either', 'eleven', 'emerge', 'empire', 'employ', 'enable', 'ending', 'energy', 'engage', 'engine', 'enough', 'ensure', 'entire', 'entity', 'equity', 'escape', 'estate', 'ethnic', 'europe', 'even', 'events', 'ever', 'every', 'exact', 'except', 'excuse', 'executive', 'exist', 'expand', 'expect', 'expert', 'export', 'extend', 'extent', 'fabric', 'facial', 'factor', 'failed', 'fairly', 'fallen', 'family', 'famous', 'father', 'fellow', 'female', 'figure', 'filing', 'finger', 'finish', 'fiscal', 'flight', 'floor', 'flower', 'flying', 'follow', 'footer', 'forest', 'forget', 'formal', 'format', 'former', 'foster', 'fought', 'fourth', 'france', 'friend', 'future', 'garden', 'gather', 'gender', 'gentle', 'german', 'global', 'golden', 'ground', 'growth', 'guilty', 'handed', 'handle', 'happen', 'health', 'height', 'hidden', 'holder', 'honest', 'impact', 'import', 'income', 'indeed', 'indoor', 'injury', 'inside', 'intent', 'invest', 'island', 'itself', 'jersey', 'joseph', 'junior', 'killed', 'labour', 'latest', 'latter', 'launch', 'lawyer', 'leader', 'league', 'leaves', 'legacy', 'length', 'lesson', 'letter', 'lights', 'likely', 'linked', 'liquid', 'listen', 'little', 'living', 'losing', 'lucent', 'luxury', 'mainly', 'making', 'manage', 'manner', 'manual', 'margin', 'marine', 'marked', 'market', 'martin', 'master', 'matter', 'mature', 'medium', 'member', 'memory', 'mental', 'merely', 'merger', 'method', 'middle', 'miller', 'mining', 'minute', 'mirror', 'mobile', 'modern', 'modest', 'module', 'moment', 'morris', 'mostly', 'mother', 'motion', 'moving', 'murder', 'muscle', 'museum', 'mutual', 'myself', 'narrow', 'nation', 'native', 'nature', 'nearby', 'nearly', 'nights', 'nobody', 'normal', 'notice', 'notion', 'number', 'object', 'obtain', 'office', 'oliver', 'online', 'option', 'orange', 'origin', 'output', 'oxford', 'packed', 'palace', 'parent', 'partly', 'passed', 'patent', 'patrol', 'pattern', 'peace', 'people', 'period', 'permit', 'person', 'phrase', 'picked', 'piece', 'placed', 'planet', 'player', 'please', 'plenty', 'pocket', 'police', 'policy', 'popular', 'poster', 'potato', 'potential', 'pounds', 'powder', 'power', 'praise', 'prayer', 'precise', 'predict', 'prefer', 'premier', 'prepare', 'present', 'pretty', 'prevent', 'priest', 'primary', 'prince', 'prison', 'private', 'profit', 'proper', 'protect', 'prove', 'public', 'pursue', 'pushed', 'puzzle', 'rabbit', 'racial', 'radio', 'raised', 'random', 'rarely', 'rather', 'rating', 'reader', 'really', 'reason', 'recall', 'recent', 'record', 'reduce', 'reform', 'refuse', 'regard', 'region', 'relate', 'relief', 'remain', 'remark', 'remedy', 'remind', 'remote', 'remove', 'repair', 'repeat', 'replace', 'reply', 'report', 'rescue', 'resent', 'resist', 'result', 'retail', 'retire', 'return', 'reveal', 'review', 'reward', 'riding', 'rising', 'robust', 'rolled', 'rubber', 'ruling', 'running', 'safety', 'salary', 'sample', 'saving', 'saying', 'scheme', 'school', 'screen', 'script', 'search', 'season', 'second', 'secret', 'sector', 'secure', 'seeing', 'select', 'senior', 'series', 'server', 'settle', 'severe', 'sexual', 'shadow', 'shared', 'should', 'shower', 'simple', 'simply', 'single', 'sister', 'smooth', 'social', 'solely', 'sought', 'source', 'soviet', 'speaker', 'spirit', 'spoken', 'spread', 'spring', 'square', 'stable', 'stated', 'status', 'steady', 'stolen', 'strain', 'strand', 'stream', 'street', 'stress', 'strict', 'strike', 'string', 'strong', 'struck', 'studio', 'submit', 'sudden', 'suffer', 'summer', 'summit', 'sunday', 'sunset', 'supply', 'surely', 'survey', 'switch', 'symbol', 'system', 'taking', 'talent', 'target', 'taught', 'tenant', 'tender', 'tennis', 'thanks', 'theory', 'thirty', 'though', 'thread', 'threat', 'three', 'throne', 'thrown', 'ticket', 'timber', 'tissue', 'title', 'toward', 'travel', 'treaty', 'trying', 'twelve', 'twenty', 'unable', 'unique', 'united', 'unless', 'unlike', 'update', 'useful', 'valley', 'varied', 'vendor', 'versus', 'victim', 'walker', 'wealth', 'weekly', 'weight', 'welcome', 'welfare', 'western', 'window', 'winner', 'winter', 'within', 'wizard', 'wonder', 'worked', 'worker', 'wright', 'writer', 'yellow'],
+                    7: ['ability', 'absence', 'academy', 'account', 'accused', 'achieve', 'acquire', 'address', 'advance', 'adviser', 'against', 'airline', 'airport', 'alcohol', 'already', 'analyst', 'ancient', 'another', 'anxiety', 'anxious', 'anybody', 'anymore', 'arrival', 'article', 'assault', 'assumed', 'athlete', 'attempt', 'attract', 'auction', 'average', 'backing', 'balance', 'banking', 'battery', 'bedroom', 'beneath', 'benefit', 'between', 'bicycle', 'biology', 'brother', 'brought', 'burning', 'business', 'cabinet', 'calcium', 'caliber', 'capable', 'capital', 'captain', 'capture', 'cardiac', 'careful', 'carrier', 'catalog', 'ceiling', 'central', 'century', 'certain', 'chairman', 'chamber', 'channel', 'chapter', 'charity', 'charlie', 'chicken', 'chinese', 'circuit', 'classes', 'classic', 'climate', 'closing', 'clothes', 'coating', 'collect', 'college', 'combine', 'comment', 'compact', 'company', 'compare', 'compete', 'complex', 'concept', 'concern', 'concert', 'conduct', 'confirm', 'connect', 'consent', 'consist', 'console', 'contact', 'contain', 'content', 'contest', 'context', 'control', 'convert', 'cooking', 'correct', 'council', 'counter', 'country', 'courage', 'covered', 'crystal', 'culture', 'current', 'cutting', 'dancing', 'decided', 'decline', 'default', 'defence', 'deficit', 'deliver', 'density', 'deposit', 'desktop', 'despite', 'destroy', 'diagram', 'diamond', 'digital', 'diploma', 'disable', 'discard', 'discuss', 'disease', 'dismiss', 'display', 'dispute', 'distant', 'diverse', 'dynasty', 'eastern', 'economy', 'edition', 'element', 'enhance', 'evening', 'examine', 'example', 'excited', 'execute', 'exhibit', 'existed', 'explain', 'explore', 'express', 'extreme', 'factory', 'faculty', 'failure', 'fantasy', 'fashion', 'feature', 'federal', 'feeling', 'fiction', 'fifteen', 'finance', 'finding', 'fishing', 'fitness', 'flowing', 'foreign', 'forever', 'formula', 'fortune', 'forward', 'founder', 'freedom', 'freight', 'friends', 'funding', 'further', 'gallery', 'gaming', 'gateway', 'general', 'genetic', 'genuine', 'getting', 'gilbert', 'glucose', 'governs', 'greatly', 'growing', 'habitat', 'handful', 'hanging', 'harmony', 'heading', 'healthy', 'hearing', 'heavily', 'helpful', 'highway', 'himself', 'history', 'holding', 'holiday', 'housing', 'however', 'hundred', 'hunting', 'husband', 'imagine', 'imaging', 'improve', 'include', 'initial', 'inquiry', 'insight', 'inspect', 'install', 'instant', 'instead', 'intense', 'interim', 'involve', 'italian', 'jacket', 'january', 'jessica', 'journey', 'justice', 'justify', 'keeping', 'kitchen', 'lacking', 'landing', 'largely', 'lasting', 'laundry', 'lawsuit', 'leading', 'learned', 'leather', 'leaving', 'leisure', 'liberal', 'liberty', 'library', 'license', 'limited', 'listing', 'logical', 'looking', 'lottery', 'machine', 'magical', 'manager', 'mandate', 'mapping', 'marble', 'massage', 'massive', 'maximum', 'meaning', 'measure', 'medical', 'meeting', 'membrane', 'mention', 'message', 'michael', 'mineral', 'minimal', 'minimum', 'missing', 'mission', 'mistake', 'mixture', 'monitor', 'monthly', 'morning', 'mystery', 'natural', 'neither', 'nervous', 'network', 'neutral', 'notable', 'nothing', 'nuclear', 'nursing', 'obvious', 'october', 'offense', 'officer', 'ongoing', 'opening', 'operate', 'opinion', 'optical', 'optimal', 'options', 'organic', 'outcome', 'outdoor', 'outlook', 'outside', 'overall', 'overlap', 'overview', 'package', 'painted', 'parking', 'partial', 'partner', 'passing', 'passion', 'patient', 'pattern', 'payment', 'penalty', 'pending', 'perfect', 'perform', 'perhaps', 'Persian', 'picture', 'pioneer', 'plastic', 'popular', 'portion', 'poverty', 'precise', 'predict', 'premier', 'premium', 'prepare', 'present', 'prevent', 'primary', 'printer', 'privacy', 'private', 'problem', 'proceed', 'process', 'produce', 'product', 'program', 'project', 'promote', 'protect', 'protein', 'protest', 'provide', 'publish', 'purpose', 'pushing', 'qualify', 'quality', 'quarter', 'quickly', 'radical', 'railway', 'readily', 'reality', 'realize', 'receipt', 'receive', 'recover', 'reflect', 'regular', 'related', 'release', 'remains', 'removal', 'replace', 'require', 'reserve', 'respect', 'respond', 'restore', 'retired', 'revenue', 'reverse', 'routine', 'running', 'satisfy', 'science', 'section', 'seeking', 'segment', 'selling', 'seminar', 'serious', 'service', 'session', 'setting', 'several', 'sharing', 'shelter', 'showing', 'shortly', 'similar', 'sitting', 'smoking', 'society', 'somehow', 'someone', 'speaker', 'special', 'specify', 'sponsor', 'station', 'storage', 'strange', 'stretch', 'student', 'studied', 'subject', 'succeed', 'success', 'suggest', 'summary', 'support', 'suppose', 'surface', 'surgery', 'surplus', 'survive', 'suspect', 'sustain', 'sweater', 'systems', 'tactical', 'talking', 'teacher', 'telling', 'testing', 'textile', 'texture', 'theater', 'therapy', 'thereby', 'thought', 'through', 'tonight', 'totally', 'towards', 'trading', 'traffic', 'trained', 'transfer', 'transit', 'trouble', 'turning', 'typical', 'uniform', 'unknown', 'unusual', 'utility', 'variety', 'various', 'vehicle', 'venture', 'version', 'village', 'visible', 'waiting', 'walking', 'wanting', 'warning', 'wearing', 'weather', 'website', 'wedding', 'weekend', 'welcome', 'welfare', 'western', 'whether', 'willing', 'winning', 'without', 'working', 'writing', 'written']
+                };
+
+                this.maxLevel = Object.keys(this.wordLists).length;
+                this.currentLevel = 1;
+                this.foundWords = {};
+                this.gameProgress = {};
+                
+                // Initialize found words arrays for each level
+                for (let level = 1; level <= this.maxLevel; level++) {
+                    this.foundWords[level] = [];
+                }
+
+                this.loadGameState();
+                this.initializeUI();
+                this.bindEvents();
+                this.updateDisplay();
+            }
+
+            // Load game state from localStorage
+            loadGameState() {
+                const saved = localStorage.getItem('progressiveWordleGame');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        this.currentLevel = data.currentLevel || 1;
+                        this.foundWords = data.foundWords || {};
+                        this.gameProgress = data.gameProgress || {};
+                        
+                        // Ensure all levels have arrays
+                        for (let level = 1; level <= this.maxLevel; level++) {
+                            if (!this.foundWords[level]) {
+                                this.foundWords[level] = [];
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error loading game state:', e);
+                    }
+                }
+            }
+
+            // Save game state to localStorage
+            saveGameState() {
+                const data = {
+                    currentLevel: this.currentLevel,
+                    foundWords: this.foundWords,
+                    gameProgress: this.gameProgress
+                };
+                localStorage.setItem('progressiveWordleGame', JSON.stringify(data));
+            }
+
+            // Initialize UI elements
+            initializeUI() {
+                this.elements = {
+                    currentLevel: document.getElementById('currentLevel'),
+                    wordLength: document.getElementById('wordLength'),
+                    foundCount: document.getElementById('foundCount'),
+                    totalCount: document.getElementById('totalCount'),
+                    progressFill: document.getElementById('progressFill'),
+                    wordInput: document.getElementById('wordInput'),
+                    submitBtn: document.getElementById('submitBtn'),
+                    feedback: document.getElementById('feedback'),
+                    message: document.getElementById('message'),
+                    foundWordsCount: document.getElementById('foundWordsCount'),
+                    foundWordsGrid: document.getElementById('foundWordsGrid'),
+                    resetLevelBtn: document.getElementById('resetLevelBtn'),
+                    resetGameBtn: document.getElementById('resetGameBtn'),
+                    levelButtons: document.getElementById('levelButtons')
+                };
+
+                this.createLevelButtons();
+                this.updateInputMaxLength();
+            }
+
+            // Create level selection buttons
+            createLevelButtons() {
+                this.elements.levelButtons.innerHTML = '';
+                
+                for (let level = 1; level <= this.maxLevel; level++) {
+                    const button = document.createElement('button');
+                    button.className = 'level-btn';
+                    button.textContent = `Level ${level} (${level + 1}-letter)`;
+                    button.dataset.level = level;
+                    
+                    // Determine button state
+                    if (level === 1 || this.isLevelUnlocked(level)) {
+                        if (level === this.currentLevel) {
+                            button.classList.add('current');
+                        } else if (this.isLevelCompleted(level)) {
+                            button.classList.add('completed');
+                        } else {
+                            button.classList.add('unlocked');
+                        }
+                        button.disabled = false;
+                    } else {
+                        button.classList.add('locked');
+                        button.disabled = true;
+                    }
+                    
+                    button.addEventListener('click', () => {
+                        if (!button.disabled && level !== this.currentLevel) {
+                            this.switchLevel(level);
+                        }
+                    });
+                    
+                    this.elements.levelButtons.appendChild(button);
+                }
+            }
+
+            // Check if a level is unlocked
+            isLevelUnlocked(level) {
+                if (level === 1) return true;
+                return this.isLevelCompleted(level - 1);
+            }
+
+            // Check if a level is completed
+            isLevelCompleted(level) {
+                const wordList = this.wordLists[level + 1]; // +1 because level 1 uses 2-letter words
+                const found = this.foundWords[level] || [];
+                return found.length === wordList.length;
+            }
+
+            // Switch to a different level
+            switchLevel(level) {
+                this.currentLevel = level;
+                this.updateInputMaxLength();
+                this.updateDisplay();
+                this.createLevelButtons();
+                this.clearFeedback();
+                this.saveGameState();
+            }
+
+            // Update input max length based on current level
+            updateInputMaxLength() {
+                const wordLength = this.currentLevel + 1;
+                this.elements.wordInput.maxLength = wordLength;
+                this.elements.wordInput.placeholder = `Enter ${wordLength}-letter word`;
+            }
+
+            // Bind event listeners
+            bindEvents() {
+                this.elements.wordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.submitGuess();
+                    }
+                });
+
+                this.elements.wordInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.toUpperCase();
+                });
+
+                this.elements.submitBtn.addEventListener('click', () => {
+                    this.submitGuess();
+                });
+
+                this.elements.resetLevelBtn.addEventListener('click', () => {
+                    this.resetCurrentLevel();
+                });
+
+                this.elements.resetGameBtn.addEventListener('click', () => {
+                    this.resetEntireGame();
+                });
+            }
+
+            // Submit a word guess
+            submitGuess() {
+                const guess = this.elements.wordInput.value.trim().toLowerCase();
+                const wordLength = this.currentLevel + 1;
+
+                // Validate input
+                if (guess.length !== wordLength) {
+                    this.showMessage(`Please enter a ${wordLength}-letter word`, 'error');
+                    return;
+                }
+
+                if (!/^[a-z]+$/.test(guess)) {
+                    this.showMessage('Please enter only letters', 'error');
+                    return;
+                }
+
+                // Check if word exists in current level's word list
+                const currentWordList = this.wordLists[wordLength];
+                if (!currentWordList.includes(guess)) {
+                    this.showMessage('Word not found in dictionary', 'error');
+                    this.showFeedback(guess, '');
+                    return;
+                }
+
+                // Check if word was already found
+                if (this.foundWords[this.currentLevel].includes(guess)) {
+                    this.showMessage('Word already found!', 'error');
+                    this.showFeedback(guess, guess);
+                    return;
+                }
+
+                // Add word to found words
+                this.foundWords[this.currentLevel].push(guess);
+                this.showMessage('Word found!', 'success');
+                this.showFeedback(guess, guess);
+                
+                // Update display
+                this.updateDisplay();
+                this.createLevelButtons();
+                
+                // Check if level is completed
+                if (this.isLevelCompleted(this.currentLevel)) {
+                    this.handleLevelCompletion();
+                }
+
+                // Clear input
+                this.elements.wordInput.value = '';
+                this.saveGameState();
+            }
+
+            // Show visual feedback for the guessed word
+            showFeedback(guess, correctWord) {
+                this.elements.feedback.innerHTML = '';
+
+                // If it's a correct word, show all green
+                if (guess === correctWord && correctWord !== '') {
+                    for (let i = 0; i < guess.length; i++) {
+                        const letterDiv = document.createElement('div');
+                        letterDiv.className = 'letter-feedback correct';
+                        letterDiv.textContent = guess[i].toUpperCase();
+                        this.elements.feedback.appendChild(letterDiv);
+                    }
+                } else {
+                    // Show gray for incorrect word (not in dictionary)
+                    for (let i = 0; i < guess.length; i++) {
+                        const letterDiv = document.createElement('div');
+                        letterDiv.className = 'letter-feedback incorrect';
+                        letterDiv.textContent = guess[i].toUpperCase();
+                        this.elements.feedback.appendChild(letterDiv);
+                    }
+                }
+            }
+
+            // Show message to user
+            showMessage(text, type) {
+                this.elements.message.textContent = text;
+                this.elements.message.className = `message ${type}`;
+                
+                // Clear message after 3 seconds
+                setTimeout(() => {
+                    this.elements.message.textContent = '';
+                    this.elements.message.className = 'message';
+                }, 3000);
+            }
+
+            // Handle level completion
+            handleLevelCompletion() {
+                this.showMessage(`Level ${this.currentLevel} completed! 🎉`, 'level-complete');
+                
+                // Auto-advance to next level if available
+                if (this.currentLevel < this.maxLevel) {
+                    setTimeout(() => {
+                        this.currentLevel++;
+                        this.updateInputMaxLength();
+                        this.updateDisplay();
+                        this.createLevelButtons();
+                        this.clearFeedback();
+                        this.showMessage(`Welcome to Level ${this.currentLevel}!`, 'success');
+                        this.saveGameState();
+                    }, 2000);
+                } else {
+                    setTimeout(() => {
+                        this.showMessage('Congratulations! You completed all levels! 🏆', 'level-complete');
+                    }, 1000);
+                }
+            }
+
+            // Clear visual feedback
+            clearFeedback() {
+                this.elements.feedback.innerHTML = '';
+            }
+
+            // Update all display elements
+            updateDisplay() {
+                const wordLength = this.currentLevel + 1;
+                const currentWordList = this.wordLists[wordLength];
+                const foundInLevel = this.foundWords[this.currentLevel].length;
+                const totalInLevel = currentWordList.length;
+                const progressPercent = totalInLevel > 0 ? (foundInLevel / totalInLevel) * 100 : 0;
+
+                // Update level info
+                this.elements.currentLevel.textContent = this.currentLevel;
+                this.elements.wordLength.textContent = wordLength;
+
+                // Update progress info
+                this.elements.foundCount.textContent = foundInLevel;
+                this.elements.totalCount.textContent = totalInLevel;
+                this.elements.progressFill.style.width = `${progressPercent}%`;
+
+                // Update found words display
+                this.updateFoundWordsDisplay();
+            }
+
+            // Update the found words grid
+            updateFoundWordsDisplay() {
+                const foundInLevel = this.foundWords[this.currentLevel];
+                this.elements.foundWordsCount.textContent = foundInLevel.length;
+                this.elements.foundWordsGrid.innerHTML = '';
+
+                // Sort found words alphabetically
+                const sortedWords = [...foundInLevel].sort();
+
+                sortedWords.forEach(word => {
+                    const wordDiv = document.createElement('div');
+                    wordDiv.className = 'found-word';
+                    wordDiv.textContent = word.toUpperCase();
+                    this.elements.foundWordsGrid.appendChild(wordDiv);
+                });
+            }
+
+            // Reset current level
+            resetCurrentLevel() {
+                if (confirm(`Are you sure you want to reset Level ${this.currentLevel}? All found words will be lost.`)) {
+                    this.foundWords[this.currentLevel] = [];
+                    this.updateDisplay();
+                    this.createLevelButtons();
+                    this.clearFeedback();
+                    this.showMessage('Level reset successfully', 'success');
+                    this.saveGameState();
+                }
+            }
+
+            // Reset entire game
+            resetEntireGame() {
+                if (confirm('Are you sure you want to reset the entire game? All progress will be lost.')) {
+                    this.currentLevel = 1;
+                    this.foundWords = {};
+                    this.gameProgress = {};
+                    
+                    // Initialize found words arrays for each level
+                    for (let level = 1; level <= this.maxLevel; level++) {
+                        this.foundWords[level] = [];
+                    }
+                    
+                    this.updateInputMaxLength();
+                    this.updateDisplay();
+                    this.createLevelButtons();
+                    this.clearFeedback();
+                    this.showMessage('Game reset successfully', 'success');
+                    this.saveGameState();
+                }
+            }
+        }
+
+        // Initialize the game when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ProgressiveWordleGame();
+        });
+    </script>
+</body>
+</html>
