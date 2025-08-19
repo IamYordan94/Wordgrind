@@ -241,6 +241,90 @@
             text-align: center;
             text-transform: uppercase;
             font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .found-word:hover {
+            background-color: #4a4a4a;
+        }
+
+        .definition-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .definition-content {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            border: 2px solid #6aaa64;
+        }
+
+        .definition-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .definition-close:hover {
+            color: #ff6b6b;
+        }
+
+        .definition-word {
+            color: #6aaa64;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .definition-meaning {
+            color: #ffffff;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .definition-part {
+            color: #c9b458;
+            font-style: italic;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        .definition-loading {
+            text-align: center;
+            color: #c9b458;
+            font-style: italic;
+        }
+
+        .definition-error {
+            text-align: center;
+            color: #ff6b6b;
         }
 
         .message {
@@ -416,6 +500,15 @@
         </div>
     </div>
 
+    <!-- Definition Modal -->
+    <div class="definition-modal" id="definitionModal">
+        <div class="definition-content">
+            <button class="definition-close" id="definitionClose">&times;</button>
+            <div class="definition-word" id="definitionWord"></div>
+            <div id="definitionBody"></div>
+        </div>
+    </div>
+
     <script>
         // Game state and data
         class ProgressiveWordleGame {
@@ -447,6 +540,7 @@
                 this.bindEvents();
                 this.updateDisplay();
                 this.updateAttemptedWordsDisplay();
+                this.initializeDefinitionModal();
             }
 
             // Load game state from localStorage
@@ -824,6 +918,13 @@
                     const wordDiv = document.createElement('div');
                     wordDiv.className = 'found-word';
                     wordDiv.textContent = word.toUpperCase();
+                    wordDiv.title = 'Click to see definition';
+                    
+                    // Add click handler for definition
+                    wordDiv.addEventListener('click', () => {
+                        this.showDefinition(word);
+                    });
+                    
                     this.elements.foundWordsGrid.appendChild(wordDiv);
                 });
             }
@@ -873,6 +974,89 @@
                     this.showMessage('Game reset successfully', 'success');
                     this.saveGameState();
                 }
+            }
+
+            // Initialize definition modal
+            initializeDefinitionModal() {
+                this.definitionModal = document.getElementById('definitionModal');
+                this.definitionWord = document.getElementById('definitionWord');
+                this.definitionBody = document.getElementById('definitionBody');
+                this.definitionClose = document.getElementById('definitionClose');
+
+                // Close modal when clicking the X or outside the modal
+                this.definitionClose.addEventListener('click', () => {
+                    this.closeDefinitionModal();
+                });
+
+                this.definitionModal.addEventListener('click', (e) => {
+                    if (e.target === this.definitionModal) {
+                        this.closeDefinitionModal();
+                    }
+                });
+
+                // Close modal with Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.definitionModal.style.display === 'flex') {
+                        this.closeDefinitionModal();
+                    }
+                });
+            }
+
+            // Show definition for a word
+            async showDefinition(word) {
+                this.definitionWord.textContent = word.toUpperCase();
+                this.definitionBody.innerHTML = '<div class="definition-loading">Loading definition...</div>';
+                this.definitionModal.style.display = 'flex';
+
+                try {
+                    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Definition not found');
+                    }
+
+                    const data = await response.json();
+                    this.displayDefinition(data[0]);
+                } catch (error) {
+                    this.definitionBody.innerHTML = `
+                        <div class="definition-error">
+                            Sorry, no definition found for "${word}".
+                        </div>
+                    `;
+                }
+            }
+
+            // Display definition data
+            displayDefinition(data) {
+                let html = '';
+                
+                if (data.meanings && data.meanings.length > 0) {
+                    // Show first 3 meanings to keep it brief
+                    const meanings = data.meanings.slice(0, 3);
+                    
+                    meanings.forEach(meaning => {
+                        if (meaning.definitions && meaning.definitions.length > 0) {
+                            const definition = meaning.definitions[0]; // Show first definition
+                            html += `
+                                <div class="definition-meaning">
+                                    <span class="definition-part">${meaning.partOfSpeech}</span>
+                                    ${definition.definition}
+                                </div>
+                            `;
+                        }
+                    });
+                }
+
+                if (!html) {
+                    html = '<div class="definition-error">No definition available.</div>';
+                }
+
+                this.definitionBody.innerHTML = html;
+            }
+
+            // Close definition modal
+            closeDefinitionModal() {
+                this.definitionModal.style.display = 'none';
             }
 
             // Update attempted words display
