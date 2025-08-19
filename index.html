@@ -1378,6 +1378,10 @@
                     if (!this.elements.categoryCurrentBtn.contains(e.target)) {
                         this.elements.categoryOptions.classList.remove('show');
                     }
+                    // Close hint modal when clicking outside
+                    if (e.target === this.elements.hintChoiceModal) {
+                        this.closeHintChoiceModal();
+                    }
                 });
 
                 this.elements.scrambleSubmit.addEventListener('click', () => {
@@ -1839,9 +1843,22 @@
             }
 
             watchAdForHint() {
-                this.simulateAdWatch(this.elements.basicHintBtn, () => {
-                    this.showBasicHint();
+                this.showMessage('Watching ad...', 'info');
+                this.simulateAd(() => {
+                    this.showHintChoiceModal();
                 });
+            }
+            
+            showHintChoiceModal() {
+                this.elements.hintChoiceModal.style.display = 'flex';
+            }
+            
+            closeHintChoiceModal() {
+                this.elements.hintChoiceModal.style.display = 'none';
+            }
+            
+            applySelectedHint(type) {
+                this.applyHint(type);
             }
 
             simulateAdWatch(button, callback) {
@@ -1991,35 +2008,104 @@
                 }, 10000);
                 
                 this.showMessage('Hint unlocked! Thanks for watching! 🎉', 'success');
+            }
+            
+            applyHint(type) {
+                const remainingWords = this.getRemainingWords();
+                
+                if (remainingWords.length === 0) {
+                    this.showMessage('All words discovered! No hints needed.', 'info');
+                    return;
+                }
+                
+                switch(type) {
+                    case 'letter':
+                        this.showLetterHint(remainingWords);
+                        break;
+                    case 'keyboard':
+                        this.grayOutUnusedLetters();
+                        break;
+                    case 'basic':
+                        this.showBasicHint(remainingWords);
+                        break;
+                    case 'scramble':
+                        this.startScrambleGame();
+                        break;
+                }
+            }
+            
+            showLetterHint(remainingWords) {
+                const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+                const randomLetter = randomWord[Math.floor(Math.random() * randomWord.length)];
+                
+                this.elements.hintDisplay.innerHTML = `💡 <strong>Letter Hint:</strong> One word contains the letter "<span style="color: #6aaa64; text-transform: uppercase;">${randomLetter}</span>"`;
+                this.elements.hintDisplay.style.display = 'block';
+                
+                setTimeout(() => {
+                    this.elements.hintDisplay.style.display = 'none';
+                }, 10000);
+                
+                this.showMessage('Letter hint revealed!', 'success');
+            }
+            
+            showBasicHint(remainingWords) {
+                if (remainingWords.length <= 3) {
+                    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+                    this.elements.hintDisplay.innerHTML = `💡 <strong>Hint:</strong> Try the word "<span style="color: #6aaa64; text-transform: uppercase;">${randomWord}</span>"`;
+                } else {
+                    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+                    const randomLetter = randomWord[Math.floor(Math.random() * randomWord.length)];
+                    this.elements.hintDisplay.innerHTML = `💡 <strong>Hint:</strong> One word starts with "<span style="color: #6aaa64; text-transform: uppercase;">${randomWord[0]}</span>"`;
+                }
+                
+                this.elements.hintDisplay.style.display = 'block';
+                
+                setTimeout(() => {
+                    this.elements.hintDisplay.style.display = 'none';
+                }, 10000);
+                
+                this.showMessage('Basic hint revealed!', 'success');
+            }
+            
             // Category Management
-            createCategoryButtons() {
-                this.elements.categoryButtons.innerHTML = '';
+            createCategoryDropdown() {
+                this.elements.categoryOptions.innerHTML = '';
                 
                 Object.keys(this.categories).forEach(categoryKey => {
-                    const button = document.createElement('button');
-                    button.className = 'category-btn';
-                    button.textContent = this.categories[categoryKey];
-                    button.dataset.category = categoryKey;
+                    const option = document.createElement('button');
+                    option.className = 'category-option';
+                    option.textContent = this.categories[categoryKey];
                     
-                    if (categoryKey === this.currentCategory) {
-                        button.classList.add('active');
-                    } else if (this.unlockedCategories[categoryKey]) {
-                        button.classList.add('unlocked');
+                    if (!this.unlockedCategories[categoryKey] && categoryKey !== 'general') {
+                        option.classList.add('locked');
+                        option.innerHTML = `${this.categories[categoryKey]} <span>🔒</span>`;
+                        option.addEventListener('click', () => {
+                            this.showMessage('Watch an ad to unlock this category!', 'info');
+                            this.simulateAd(() => {
+                                this.unlockedCategories[categoryKey] = true;
+                                this.createCategoryDropdown();
+                                this.saveGameState();
+                            });
+                            this.elements.categoryOptions.classList.remove('show');
+                        });
                     } else {
-                        button.classList.add('locked');
-                        button.disabled = true;
+                        option.addEventListener('click', () => {
+                            if (categoryKey !== this.currentCategory) {
+                                this.switchCategory(categoryKey);
+                            }
+                            this.elements.categoryOptions.classList.remove('show');
+                        });
                     }
                     
-                    button.addEventListener('click', () => {
-                        if (this.unlockedCategories[categoryKey]) {
-                            this.switchCategory(categoryKey);
-                        } else {
-                            this.unlockCategoryWithAd(categoryKey);
-                        }
-                    });
-                    
-                    this.elements.categoryButtons.appendChild(button);
+                    this.elements.categoryOptions.appendChild(option);
                 });
+                
+                // Update current category display
+                this.elements.currentCategoryName.textContent = this.categories[this.currentCategory];
+            }
+            
+            toggleCategoryDropdown() {
+                this.elements.categoryOptions.classList.toggle('show');
             }
 
             switchCategory(categoryKey) {
@@ -2039,7 +2125,7 @@
                 this.updateInputMaxLength();
                 this.updateDisplay();
                 this.updateAttemptedWordsDisplay();
-                this.createCategoryButtons();
+                this.createCategoryDropdown();
                 this.createLevelButtons();
                 this.saveGameState();
                 
@@ -2053,7 +2139,7 @@
                 
                 setTimeout(() => {
                     this.unlockedCategories[categoryKey] = true;
-                    this.createCategoryButtons();
+                    this.createCategoryDropdown();
                     this.saveGameState();
                     this.showMessage(`${this.categories[categoryKey]} category unlocked! Thanks for watching!`, 'success');
                 }, 2000);
@@ -2219,7 +2305,13 @@
                     achievements: this.gameStats.achievements.length
                 };
                 
-                const shareText = `🎮 Progressive Wordle Grind Stats:\\n🔥 ${stats.streak} day streak\\n📝 ${stats.totalWords} words found\\n🏆 ${stats.totalLevels} levels completed\\n🏅 ${stats.achievements} achievements unlocked\\n\\nPlay at: ${window.location.href}`;
+                const shareText = `🎮 Progressive Wordle Grind Stats:
+🔥 ${stats.streak} day streak
+📝 ${stats.totalWords} words found
+🏆 ${stats.totalLevels} levels completed
+🏅 ${stats.achievements} achievements unlocked
+
+Play at: ${window.location.href}`;
                 
                 if (navigator.share) {
                     navigator.share({
