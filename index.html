@@ -164,6 +164,65 @@
             color: #c9b458;
         }
 
+        .game-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .attempted-words-box {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .attempted-words-box h3 {
+            margin-bottom: 10px;
+            color: #6aaa64;
+            font-size: 1rem;
+        }
+
+        .attempted-words-list {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #3a3a3a;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #1a1a1a;
+        }
+
+        .attempted-word {
+            padding: 4px 8px;
+            margin: 2px 0;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .attempted-word.found {
+            background-color: rgba(106, 170, 100, 0.3);
+            color: #6aaa64;
+        }
+
+        .attempted-word.not-found {
+            background-color: rgba(255, 0, 0, 0.2);
+            color: #ff6666;
+        }
+
+        @media (max-width: 900px) {
+            .game-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .attempted-words-box {
+                height: 200px;
+            }
+        }
+
         .words-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -327,10 +386,17 @@
         <div class="feedback" id="feedback"></div>
         <div class="message" id="message"></div>
 
-        <div class="found-words">
-            <h3>Found Words (<span id="foundWordsCount">0</span>)</h3>
-            <div class="unlock-info" id="unlockInfo"></div>
-            <div class="words-grid" id="foundWordsGrid"></div>
+        <div class="game-content">
+            <div class="found-words">
+                <h3>Found Words (<span id="foundWordsCount">0</span>)</h3>
+                <div class="unlock-info" id="unlockInfo"></div>
+                <div class="words-grid" id="foundWordsGrid"></div>
+            </div>
+            
+            <div class="attempted-words-box" id="attemptedWordsBox">
+                <h3>All Attempts</h3>
+                <div class="attempted-words-list" id="attemptedWordsList"></div>
+            </div>
         </div>
 
         <div class="controls">
@@ -356,17 +422,20 @@
                 this.maxLevel = Object.keys(this.wordLists).length;
                 this.currentLevel = 1;
                 this.foundWords = {};
+                this.attemptedWords = {}; // Track all word attempts per level
                 this.gameProgress = {};
                 
-                // Initialize found words arrays for each level
+                // Initialize found words and attempted words arrays for each level
                 for (let level = 1; level <= this.maxLevel; level++) {
                     this.foundWords[level] = [];
+                    this.attemptedWords[level] = [];
                 }
 
                 this.loadGameState();
                 this.initializeUI();
                 this.bindEvents();
                 this.updateDisplay();
+                this.updateAttemptedWordsDisplay();
             }
 
             // Load game state from localStorage
@@ -377,12 +446,16 @@
                         const data = JSON.parse(saved);
                         this.currentLevel = data.currentLevel || 1;
                         this.foundWords = data.foundWords || {};
+                        this.attemptedWords = data.attemptedWords || {};
                         this.gameProgress = data.gameProgress || {};
                         
                         // Ensure all levels have arrays
                         for (let level = 1; level <= this.maxLevel; level++) {
                             if (!this.foundWords[level]) {
                                 this.foundWords[level] = [];
+                            }
+                            if (!this.attemptedWords[level]) {
+                                this.attemptedWords[level] = [];
                             }
                         }
                     } catch (e) {
@@ -396,6 +469,7 @@
                 const data = {
                     currentLevel: this.currentLevel,
                     foundWords: this.foundWords,
+                    attemptedWords: this.attemptedWords,
                     gameProgress: this.gameProgress
                 };
                 localStorage.setItem('progressiveWordleGame', JSON.stringify(data));
@@ -416,6 +490,8 @@
                     foundWordsCount: document.getElementById('foundWordsCount'),
                     foundWordsGrid: document.getElementById('foundWordsGrid'),
                     unlockInfo: document.getElementById('unlockInfo'),
+                    attemptedWordsBox: document.getElementById('attemptedWordsBox'),
+                    attemptedWordsList: document.getElementById('attemptedWordsList'),
                     resetLevelBtn: document.getElementById('resetLevelBtn'),
                     resetGameBtn: document.getElementById('resetGameBtn'),
                     levelButtons: document.getElementById('levelButtons')
@@ -520,6 +596,7 @@
                 this.currentLevel = level;
                 this.updateInputMaxLength();
                 this.updateDisplay();
+                this.updateAttemptedWordsDisplay();
                 this.createLevelButtons();
                 this.clearFeedback();
                 this.saveGameState();
@@ -573,31 +650,44 @@
                     return;
                 }
 
-                // Check if word exists in current level's available word list
+                // Check if player has reached the available word limit
                 const availableWords = this.getAvailableWords(this.currentLevel);
-                const allWordsInLevel = this.wordLists[wordLength];
+                const foundInLevel = this.foundWords[this.currentLevel];
                 
-                if (!allWordsInLevel.includes(guess)) {
-                    this.showMessage('Word not found in dictionary', 'error');
-                    this.showFeedback(guess, '');
+                if (foundInLevel.length >= availableWords.length) {
+                    this.showMessage(`Level limit reached! You've found all ${availableWords.length} available words. Progress in previous levels to unlock more.`, 'error');
                     return;
                 }
                 
-                if (!availableWords.includes(guess)) {
-                    this.showMessage('Word not yet unlocked! Complete more words in previous levels.', 'error');
+                // Check if word exists in dictionary
+                const allWordsInLevel = this.wordLists[wordLength];
+                if (!allWordsInLevel.includes(guess)) {
+                    this.showMessage('Word not found in dictionary', 'error');
                     this.showFeedback(guess, '');
+                    // Still track the attempt
+                    this.addAttemptedWord(guess);
                     return;
                 }
 
                 // Check if word was already found
-                if (this.foundWords[this.currentLevel].includes(guess)) {
+                if (foundInLevel.includes(guess)) {
                     this.showMessage('Word already found!', 'error');
                     this.showFeedback(guess, guess);
+                    this.addAttemptedWord(guess);
+                    return;
+                }
+
+                // Check if this word is in the available words for this level
+                if (!availableWords.includes(guess)) {
+                    this.showMessage('Word found but not yet unlocked for this level! Progress in previous levels.', 'error');
+                    this.showFeedback(guess, '');
+                    this.addAttemptedWord(guess);
                     return;
                 }
 
                 // Add word to found words
                 this.foundWords[this.currentLevel].push(guess);
+                this.addAttemptedWord(guess);
                 this.showMessage('Word found!', 'success');
                 this.showFeedback(guess, guess);
                 
@@ -606,8 +696,8 @@
                 this.createLevelButtons();
                 
                 // Check if all available words in level are found
-                const foundInLevel = this.foundWords[this.currentLevel];
-                const allAvailableFound = availableWords.every(word => foundInLevel.includes(word));
+                const updatedFoundInLevel = this.foundWords[this.currentLevel];
+                const allAvailableFound = availableWords.every(word => updatedFoundInLevel.includes(word));
                 
                 if (allAvailableFound && availableWords.length === this.wordLists[wordLength].length) {
                     // Only show completion if ALL words in the level are found
@@ -699,6 +789,7 @@
 
                 // Update found words display
                 this.updateFoundWordsDisplay();
+                this.updateAttemptedWordsDisplay();
             }
 
             // Update the found words grid
@@ -736,11 +827,22 @@
                 });
             }
 
+            // Add attempted word to tracking
+            addAttemptedWord(word) {
+                if (!this.attemptedWords[this.currentLevel].includes(word)) {
+                    this.attemptedWords[this.currentLevel].push(word);
+                    this.updateAttemptedWordsDisplay();
+                    this.saveGameState();
+                }
+            }
+
             // Reset current level
             resetCurrentLevel() {
-                if (confirm(`Are you sure you want to reset Level ${this.currentLevel}? All found words will be lost.`)) {
+                if (confirm(`Are you sure you want to reset Level ${this.currentLevel}? All found words and attempts will be lost.`)) {
                     this.foundWords[this.currentLevel] = [];
+                    this.attemptedWords[this.currentLevel] = [];
                     this.updateDisplay();
+                    this.updateAttemptedWordsDisplay();
                     this.createLevelButtons();
                     this.clearFeedback();
                     this.showMessage('Level reset successfully', 'success');
@@ -753,20 +855,46 @@
                 if (confirm('Are you sure you want to reset the entire game? All progress will be lost.')) {
                     this.currentLevel = 1;
                     this.foundWords = {};
+                    this.attemptedWords = {};
                     this.gameProgress = {};
                     
-                    // Initialize found words arrays for each level
+                    // Initialize found words and attempted words arrays for each level
                     for (let level = 1; level <= this.maxLevel; level++) {
                         this.foundWords[level] = [];
+                        this.attemptedWords[level] = [];
                     }
                     
                     this.updateInputMaxLength();
                     this.updateDisplay();
+                    this.updateAttemptedWordsDisplay();
                     this.createLevelButtons();
                     this.clearFeedback();
                     this.showMessage('Game reset successfully', 'success');
                     this.saveGameState();
                 }
+            }
+
+            // Update attempted words display
+            updateAttemptedWordsDisplay() {
+                const attempted = this.attemptedWords[this.currentLevel] || [];
+                const found = this.foundWords[this.currentLevel] || [];
+                this.elements.attemptedWordsList.innerHTML = '';
+
+                // Sort attempted words - found first (green), then not found (red)
+                const sortedAttempts = [...attempted].sort((a, b) => {
+                    const aFound = found.includes(a);
+                    const bFound = found.includes(b);
+                    if (aFound && !bFound) return -1;
+                    if (!aFound && bFound) return 1;
+                    return a.localeCompare(b);
+                });
+
+                sortedAttempts.forEach(word => {
+                    const wordDiv = document.createElement('div');
+                    wordDiv.className = found.includes(word) ? 'attempted-word found' : 'attempted-word not-found';
+                    wordDiv.textContent = word.toUpperCase();
+                    this.elements.attemptedWordsList.appendChild(wordDiv);
+                });
             }
         }
 
