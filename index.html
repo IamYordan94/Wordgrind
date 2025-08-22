@@ -416,68 +416,56 @@
         }
 
         .level-btn {
+            background-color: #4caf50;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
             padding: 12px 20px;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s ease-in-out;
         }
 
         .level-btn:hover:not(.locked) {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .level-btn.unlocked {
-            background: linear-gradient(135deg, #6aaa64, #5a9954);
-            color: white;
-            border: 2px solid transparent;
-        }
-
-        .level-btn.unlocked:hover {
-            background: linear-gradient(135deg, #5a9954, #4a8844);
+            background-color: #45a049;
+            transform: scale(1.08);
         }
 
         .level-btn.current {
-            background: linear-gradient(135deg, #c9b458, #b8a348);
-            color: white;
-            border: 2px solid #d4c470;
-            box-shadow: 0 0 15px rgba(201, 180, 88, 0.5);
+            background-color: gold;
+            color: black;
         }
 
         .level-btn.current:hover {
-            background: linear-gradient(135deg, #b8a348, #a79238);
-            box-shadow: 0 0 20px rgba(201, 180, 88, 0.7);
-        }
-
-        .level-btn.locked {
-            background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
-            color: #666;
-            cursor: not-allowed;
-            border: 2px solid #4a4a4a;
+            background-color: #ffd700;
+            transform: scale(1.08);
         }
 
         .level-btn.completed {
-            background: linear-gradient(135deg, #2a7a2a, #1a6a1a);
+            background-color: #4caf50;
             color: white;
-            border: 2px solid #3a8a3a;
         }
 
         .level-btn.completed:hover {
-            background: linear-gradient(135deg, #1a6a1a, #0a5a0a);
+            background-color: #45a049;
+            transform: scale(1.08);
         }
 
-        .level-btn.completed::after {
-            content: '✓';
-            position: absolute;
-            top: 2px;
-            right: 6px;
-            font-size: 12px;
-            opacity: 0.7;
+        .level-btn.locked {
+            background-color: #666;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .level-btn.unlocked {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .level-btn.unlocked:hover {
+            background-color: #45a049;
+            transform: scale(1.08);
         }
 
         @media (max-width: 600px) {
@@ -1053,7 +1041,8 @@
                 for (let level = 1; level <= this.maxLevel; level++) {
                     const button = document.createElement('button');
                     button.className = 'level-btn';
-                    button.textContent = `${level + 1} Letters`;
+                    const letterCount = level + 1;
+                    button.textContent = letterCount + ' Letters';
                     button.dataset.level = level;
                     
                     // Determine button state
