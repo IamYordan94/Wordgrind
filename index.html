@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progressive Wordle Grind</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUHJvZ3Jlc3NpdmUgV29yZGxlIEdyaW5kIiwic2hvcnRfbmFtZSI6IldvcmRsZUdyaW5kIiwic3RhcnRfdXJsIjoiLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMxYTFhMWEiLCJ0aGVtZV9jb2xvciI6IiM2YWFhNjQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTWpVMklpQm9aV2xuYUhROUlqSTFOaUlnZG1sbGQwSnZlRDBpTUNBd0lESTFOaUF5TlRZaUlIaHRiRzV6UFNKb2RIUndPaTh2ZDNkM0xuY3pMbTl5Wnk4eU1EQXdMM04yWnlJK1BISmxZM1FnZUQwaU1DSWdlVDBpTUNJZ2QybGtkR2c5SWpJMU5pSWdhR1ZwWjJoMFBTSXlOVFlpSUdacGJHdzlJaU0yWVdGaE5qUWlMejQ4ZEdWNGRDQjRQU0l4TWpnaUlIazlJakV6TUNJZ1ptbHNiRDBpSTJabVptWm1aaUlnWm05dWRDMW1ZVzFwYkhrOUlpZEJjbWxoYkN3Z2MyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0l6TW1GMGV6WnRZWGcxTkNJK1YxOHZVM1J5YjJWZUpDNThMMlIzWmpwaTBBPSIsInNpemVzIjoiMjU2eDI1NiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <meta name="theme-color" content="#6aaa64">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         * {
             box-sizing: border-box;
@@ -309,6 +313,99 @@
             display: none;
         }
 
+        .install-section {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .install-prompt {
+            background: linear-gradient(135deg, #6aaa64, #5a9954);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .install-prompt h3 {
+            margin: 0 0 10px 0;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .install-prompt p {
+            margin: 0 0 15px 0;
+            color: white;
+            opacity: 0.9;
+        }
+
+        .install-btn {
+            padding: 12px 24px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .install-btn:not(.secondary) {
+            background-color: white;
+            color: #6aaa64;
+        }
+
+        .install-btn:not(.secondary):hover {
+            background-color: #f0f0f0;
+            transform: translateY(-1px);
+        }
+
+        .install-btn.secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+
+        .install-btn.secondary:hover {
+            border-color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .limited-access-info {
+            background-color: #d4a953;
+            color: black;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .word-item.locked {
+            background-color: #666;
+            color: #999;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .word-item.locked::after {
+            content: "🔒";
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
         .scrambled-letters {
             background-color: #333;
             border-radius: 5px;
@@ -576,6 +673,16 @@
             <div class="hint-display" id="hintDisplay"></div>
         </div>
 
+        <!-- Install Prompt -->
+        <div class="install-section" id="installSection" style="display: none;">
+            <div class="install-prompt">
+                <h3>🎮 Unlock Full Game!</h3>
+                <p>You've discovered <span id="wordsFound">0</span> words! Install the app to access all words and play offline.</p>
+                <button class="install-btn" id="installBtn">Install App</button>
+                <button class="install-btn secondary" id="dismissInstall">Maybe Later</button>
+            </div>
+        </div>
+
         <div class="game-content">
             <div class="left-section">
                 <div class="level-info-box">
@@ -630,10 +737,13 @@
     <script>
         // Game configuration
         const MAX_LEVELS = 6; // 2-letter to 7-letter words
+        const WORDS_PER_LEVEL_LIMIT = 30; // Limit for non-installed users
         let currentLevel = 1;
         let foundWords = {};
         let attemptedWords = [];
         let gameWords = {};
+        let isInstalled = false;
+        let deferredPrompt = null;
 
         // Grammar explanations
         const grammarInfo = {
@@ -883,8 +993,24 @@
             const wordLength = currentLevel + 1;
             const found = foundWords[wordLength] || [];
             const grid = document.getElementById('foundWordsGrid');
+            const foundWordsBox = document.querySelector('.found-words');
             
             document.getElementById('foundWordsCount').textContent = found.length;
+            
+            // Add limitation info if user isn't installed
+            let limitInfo = foundWordsBox.querySelector('.limited-access-info');
+            if (shouldLimitWords()) {
+                if (!limitInfo) {
+                    limitInfo = document.createElement('div');
+                    limitInfo.className = 'limited-access-info';
+                    foundWordsBox.insertBefore(limitInfo, document.getElementById('foundWordsGrid'));
+                }
+                const totalWords = gameWords[wordLength]?.length || 0;
+                const remaining = Math.max(0, WORDS_PER_LEVEL_LIMIT - found.length);
+                limitInfo.innerHTML = `Free Version: ${remaining}/${WORDS_PER_LEVEL_LIMIT} words remaining<br><small>Install app to access all ${totalWords} words!</small>`;
+            } else if (limitInfo) {
+                limitInfo.remove();
+            }
             
             grid.innerHTML = '';
             found.forEach(wordData => {
@@ -894,20 +1020,37 @@
                 wordElement.onclick = () => showDefinition(wordData);
                 grid.appendChild(wordElement);
             });
+
+            // Show locked words if limited
+            if (shouldLimitWords()) {
+                const allWords = gameWords[wordLength] || [];
+                const lockedWords = allWords.slice(WORDS_PER_LEVEL_LIMIT);
+                lockedWords.slice(0, 10).forEach(() => { // Show 10 locked slots
+                    const lockedElement = document.createElement('div');
+                    lockedElement.className = 'word-item locked';
+                    lockedElement.textContent = '???';
+                    grid.appendChild(lockedElement);
+                });
+            }
+
+            // Check if should show install prompt
+            setTimeout(showInstallPrompt, 1000);
         }
 
         function updateProgress() {
             const wordLength = currentLevel + 1;
-            const totalWords = gameWords[wordLength] || [];
+            const allWords = gameWords[wordLength] || [];
             const found = foundWords[wordLength] || [];
             
             const foundCount = found.length;
-            const totalCount = totalWords.length;
+            const displayTotal = shouldLimitWords() ? 
+                Math.min(WORDS_PER_LEVEL_LIMIT, allWords.length) : 
+                allWords.length;
             
             document.getElementById('foundCount').textContent = foundCount;
-            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('totalCount').textContent = displayTotal;
             
-            const percentage = totalCount > 0 ? (foundCount / totalCount) * 100 : 0;
+            const percentage = displayTotal > 0 ? (foundCount / displayTotal) * 100 : 0;
             document.getElementById('progressFill').style.width = `${percentage}%`;
         }
 
@@ -962,7 +1105,8 @@
             }
             
             // Check if valid word
-            const validWords = gameWords[wordLength] || [];
+            const allValidWords = gameWords[wordLength] || [];
+            const validWords = getLimitedWords(allValidWords);
             const wordData = validWords.find(w => w.word.toLowerCase() === word);
             
             if (!wordData) {
@@ -1200,6 +1344,26 @@
             document.getElementById('hintDefinitionBtn').onclick = showDefinitionHint;
             document.getElementById('hintScrambledBtn').onclick = showScrambledHint;
             
+            // Install buttons
+            document.getElementById('installBtn').onclick = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        deferredPrompt = null;
+                    }
+                } else {
+                    // Fallback instructions
+                    alert('To install:\n• On iOS: Tap Share button → Add to Home Screen\n• On Android: Tap menu → Add to Home Screen\n• On Desktop: Look for install icon in address bar');
+                }
+            };
+            
+            document.getElementById('dismissInstall').onclick = () => {
+                document.getElementById('installSection').style.display = 'none';
+                // Show again after finding 20 more words
+                localStorage.setItem('installDismissed', Date.now());
+            };
+            
             // Close modals on outside click
             window.onclick = (event) => {
                 const defModal = document.getElementById('definitionModal');
@@ -1214,8 +1378,67 @@
             };
         }
 
+        // PWA Installation Logic
+        function detectInstallation() {
+            // Check if app is installed (running in standalone mode)
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone || 
+                document.referrer.includes('android-app://')) {
+                isInstalled = true;
+                console.log('App is installed');
+            }
+        }
+
+        function shouldLimitWords() {
+            return !isInstalled;
+        }
+
+        function getLimitedWords(words) {
+            if (!shouldLimitWords()) return words;
+            return words.slice(0, WORDS_PER_LEVEL_LIMIT);
+        }
+
+        function showInstallPrompt() {
+            if (isInstalled) return;
+            
+            const totalFound = Object.values(foundWords).reduce((total, levelWords) => 
+                total + (levelWords ? levelWords.length : 0), 0);
+            
+            // Show prompt after finding 20 words or hitting word limit
+            if (totalFound >= 20 || hasHitWordLimit()) {
+                document.getElementById('wordsFound').textContent = totalFound;
+                document.getElementById('installSection').style.display = 'block';
+            }
+        }
+
+        function hasHitWordLimit() {
+            if (!shouldLimitWords()) return false;
+            
+            const wordLength = currentLevel + 1;
+            const availableWords = gameWords[wordLength] || [];
+            const found = foundWords[wordLength] || [];
+            
+            return found.length >= WORDS_PER_LEVEL_LIMIT && availableWords.length > WORDS_PER_LEVEL_LIMIT;
+        }
+
+        // PWA Event Listeners
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        window.addEventListener('appinstalled', () => {
+            isInstalled = true;
+            document.getElementById('installSection').style.display = 'none';
+            updateFoundWordsDisplay();
+            updateUnlockInfo();
+        });
+
         // Initialize game when page loads
-        document.addEventListener('DOMContentLoaded', initGame);
+        document.addEventListener('DOMContentLoaded', () => {
+            detectInstallation();
+            initGame();
+        });
     </script>
 </body>
 </html>
