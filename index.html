@@ -750,7 +750,7 @@
         </div>
 
         <div class="controls">
-            <button class="ad-btn" id="watchAdBtn">📺 Watch Ad - Reveal Word</button>
+            <button class="ad-btn" id="watchAdBtn">Watch Ad for Definition</button>
             <button class="control-btn" id="resetLevelBtn">Reset Current Level</button>
             <button class="control-btn" id="resetGameBtn">Reset Entire Game</button>
         </div>
@@ -1284,7 +1284,7 @@
             // Disable button during ad
             const adBtn = document.getElementById('watchAdBtn');
             adBtn.disabled = true;
-            adBtn.textContent = '📺 Watching Ad...';
+            adBtn.textContent = 'Watching Ad...';
             
             // Simulate watching ad (3 seconds)
             showMessage('Watching ad... Please wait!', 'warning');
@@ -1313,7 +1313,7 @@
                 // Re-enable button after cooldown
                 setTimeout(() => {
                     adBtn.disabled = false;
-                    adBtn.textContent = '📺 Watch Ad - Reveal Word';
+                    adBtn.textContent = 'Watch Ad for Definition';
                 }, 5000); // 5 second cooldown
                 
             }, 3000); // 3 second ad simulation
