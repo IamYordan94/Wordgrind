@@ -424,12 +424,6 @@
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .level-btn:hover:not(.locked) {
-            background-color: #45a049;
-            transform: scale(1.08);
         }
 
         .level-btn.current {
@@ -437,19 +431,9 @@
             color: black;
         }
 
-        .level-btn.current:hover {
-            background-color: #ffd700;
-            transform: scale(1.08);
-        }
-
         .level-btn.completed {
             background-color: #4caf50;
             color: white;
-        }
-
-        .level-btn.completed:hover {
-            background-color: #45a049;
-            transform: scale(1.08);
         }
 
         .level-btn.locked {
@@ -461,11 +445,6 @@
         .level-btn.unlocked {
             background-color: #4caf50;
             color: white;
-        }
-
-        .level-btn.unlocked:hover {
-            background-color: #45a049;
-            transform: scale(1.08);
         }
 
         @media (max-width: 600px) {
