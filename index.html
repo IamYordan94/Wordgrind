@@ -597,6 +597,27 @@
             background-color: #666;
         }
 
+        .ad-btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .ad-btn:hover {
+            background-color: #f57c00;
+        }
+
+        .ad-btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
         @media (max-width: 900px) {
             .game-content {
                 grid-template-columns: 1fr;
@@ -729,6 +750,7 @@
         </div>
 
         <div class="controls">
+            <button class="ad-btn" id="watchAdBtn">📺 Watch Ad - Reveal Word</button>
             <button class="control-btn" id="resetLevelBtn">Reset Current Level</button>
             <button class="control-btn" id="resetGameBtn">Reset Entire Game</button>
         </div>
@@ -1243,6 +1265,60 @@
             document.getElementById('grammarModal').style.display = 'block';
         }
 
+        function watchAdForHint() {
+            const wordLength = currentLevel + 1;
+            const allWords = gameWords[wordLength] || [];
+            const found = foundWords[wordLength] || [];
+            const foundWordsList = found.map(w => w.word.toLowerCase());
+            
+            // Find words not yet discovered
+            const undiscoveredWords = allWords.filter(w => 
+                !foundWordsList.includes(w.word.toLowerCase())
+            );
+            
+            if (undiscoveredWords.length === 0) {
+                showMessage('You\'ve already found all words for this level!', 'success');
+                return;
+            }
+            
+            // Disable button during ad
+            const adBtn = document.getElementById('watchAdBtn');
+            adBtn.disabled = true;
+            adBtn.textContent = '📺 Watching Ad...';
+            
+            // Simulate watching ad (3 seconds)
+            showMessage('Watching ad... Please wait!', 'warning');
+            
+            setTimeout(() => {
+                // Pick random undiscovered word
+                const randomWord = undiscoveredWords[Math.floor(Math.random() * undiscoveredWords.length)];
+                
+                // Add it to found words
+                if (!foundWords[wordLength]) {
+                    foundWords[wordLength] = [];
+                }
+                foundWords[wordLength].push(randomWord);
+                
+                // Update displays
+                updateFoundWordsDisplay();
+                updateProgress();
+                updateUnlockInfo();
+                
+                // Save progress
+                saveProgress();
+                
+                // Show success message
+                showMessage(`🎁 Ad complete! Revealed word: "${randomWord.word.toUpperCase()}"`, 'success');
+                
+                // Re-enable button after cooldown
+                setTimeout(() => {
+                    adBtn.disabled = false;
+                    adBtn.textContent = '📺 Watch Ad - Reveal Word';
+                }, 5000); // 5 second cooldown
+                
+            }, 3000); // 3 second ad simulation
+        }
+
         function showMessage(text, type = '') {
             const messageEl = document.getElementById('message');
             messageEl.textContent = text;
@@ -1341,6 +1417,7 @@
             document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             
             // Control buttons
+            document.getElementById('watchAdBtn').onclick = watchAdForHint;
             document.getElementById('resetLevelBtn').onclick = resetLevel;
             document.getElementById('resetGameBtn').onclick = resetGame;
             
