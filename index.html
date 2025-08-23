@@ -910,8 +910,8 @@
 
             const wordLength = currentLevel + 1;
             const availableWords = gameWords[wordLength] || [];
-            const foundWords = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
-            const unfoundWords = availableWords.filter(w => !foundWords.includes(w.word.toLowerCase()));
+            const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
+            const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
 
             if (unfoundWords.length === 0) {
                 showMessage('No more words to find at this level!', 'warning');
@@ -1225,7 +1225,7 @@
                 return;
             }
 
-            simulateAd(() => {
+            simulateAdViewing(() => {
                 revealRandomWord();
             });
         }
