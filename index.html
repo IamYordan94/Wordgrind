@@ -1433,8 +1433,19 @@
             };
 
             // Add event listener for the tip emoji
-            document.getElementById('tipEmoji').onclick = () => {
-                window.open('https://buy.stripe.com/8x228s1nKcfn7312m02wU02', '_blank');
+            document.getElementById('tipEmoji').onclick = (e) => {
+                e.preventDefault();
+                const donationUrl = 'https://buy.stripe.com/8x228s1nKcfn7312m02wU02';
+                console.log('Opening donation URL:', donationUrl);
+                
+                // Create a temporary link element and click it
+                const link = document.createElement('a');
+                link.href = donationUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             };
         }
 
