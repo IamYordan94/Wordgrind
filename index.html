@@ -1451,12 +1451,40 @@
 
         // PWA Installation Logic
         function detectInstallation() {
-            // Check if app is installed (running in standalone mode)
-            if (window.matchMedia('(display-mode: standalone)').matches || 
-                window.navigator.standalone || 
-                document.referrer.includes('android-app://')) {
+            console.log('Checking installation status...');
+            
+            // Multiple ways to detect if PWA is installed
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            const isIOS = window.navigator.standalone;
+            const isAndroidApp = document.referrer.includes('android-app://');
+            const isMinimalUI = window.matchMedia('(display-mode: minimal-ui)').matches;
+            const isFullscreen = window.matchMedia('(display-mode: fullscreen)').matches;
+            const hasWebAppCapable = window.navigator.standalone !== undefined;
+            
+            console.log('Detection results:', {
+                isStandalone,
+                isIOS, 
+                isAndroidApp,
+                isMinimalUI,
+                isFullscreen,
+                hasWebAppCapable,
+                userAgent: navigator.userAgent,
+                referrer: document.referrer
+            });
+            
+            // Check if any installation indicators are true
+            if (isStandalone || isIOS || isAndroidApp || isMinimalUI || isFullscreen) {
                 isInstalled = true;
-                console.log('App is installed');
+                console.log('✅ App detected as INSTALLED');
+                
+                // Immediately update UI
+                setTimeout(() => {
+                    updateFoundWordsDisplay();
+                    updateUnlockInfo();
+                    showInstallPrompt();
+                }, 100);
+            } else {
+                console.log('❌ App detected as NOT INSTALLED');
             }
         }
 
@@ -1470,10 +1498,14 @@
         }
 
         function showInstallPrompt() {
+            console.log('showInstallPrompt called, isInstalled:', isInstalled);
             // Install section is now always visible unless user is already installed
             if (isInstalled) {
+                console.log('Hiding install elements because app is installed');
                 document.getElementById('installSection').style.display = 'none';
                 document.getElementById('permanentDownloadBtn').style.display = 'none';
+            } else {
+                console.log('Showing install elements because app is not installed');
             }
         }
 
