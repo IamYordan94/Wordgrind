@@ -655,12 +655,12 @@
         </div>
 
         <!-- Install Prompt -->
-        <div class="install-section" id="installSection" style="display: none;">
+        <div class="install-section" id="installSection">
             <div class="install-prompt">
-                <h3>🎮 Unlock Full Game!</h3>
-                <p>Install the app to access all words and play offline.</p>
-                <button class="install-btn" id="installBtn">Install App</button>
-                <button class="install-btn secondary" id="dismissInstall">Maybe Later</button>
+                <h3>🎮 Download App</h3>
+                <p>Install to access all words and play offline!</p>
+                <button class="install-btn" id="installBtn">Download App</button>
+                <button class="install-btn secondary" id="dismissInstall">Hide</button>
             </div>
         </div>
 
@@ -1424,15 +1424,9 @@
         }
 
         function showInstallPrompt() {
-            if (isInstalled) return;
-
-            const totalFound = Object.values(foundWords).reduce((total, levelWords) => 
-                total + (levelWords ? levelWords.length : 0), 0);
-
-            // Show prompt after finding 20 words or hitting word limit
-            if (totalFound >= 20 || hasHitWordLimit()) {
-                document.getElementById('wordsFound').textContent = totalFound;
-                document.getElementById('installSection').style.display = 'block';
+            // Install section is now always visible unless user is already installed
+            if (isInstalled) {
+                document.getElementById('installSection').style.display = 'none';
             }
         }
 
