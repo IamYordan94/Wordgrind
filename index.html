@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progressive Word Grind</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUHJvZ3Jlc3NpdmUgV29yZCBHcmluZCIsInNob3J0X25hbWUiOiJXb3JkR3JpbmQiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFhMWExYSIsInRoZW1lX2NvbG9yIjoiIzZhYWE2NCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlNalUySWlCb1pXbG5hSFE5SWpJMU5pSWdkbWxsZDBKdmVEMGlNQ0F3SURFMU5pQXlOVFlpSUhodGJHNXpQU0pvZEhSd09pOHZkM2QzTG5jekxtOXlaeTh5TURBd0wzTjJaeUkrUEhKbFkzUWdlRDBpTUNJZ2VUMGlNQ0lnZDJsa2RHZzlJakkxTmlJZ2FHVnBaMmgwUFNJeU5UWWlJR1pwYkdzOUlpTTJZV0ZoTmpRaUx6NDhkR1Y0ZENCNFBTSTVNalEwT0NJZ2VUMGlPVFJxT0NJZ1ptbHNiRDBpSTJabVptWm1aaUlnWm05dWRDMXdZVzFwYkhrOUlpZEJjbWxoYkN3Z2MyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0k5TmpraURsOXNJRWRjWEM5VVIxOWNJRDBpZVRNeElpQXJJQjVOUVRFOUlpNDBOQ0lnWTI5c2IzSTlJaU5tWmlJK1EwbHNZU0I5UEM5VVdDMDhaYSZQQUtaQU1hSDJGU0pMTVJzNlRseGxhTU1LWVR4elN5OTZNUmpTelNDSXBlY1gxQVR6OXJCSE4xQVlJNThqN1d5Q2t6VmdFamJYMlFreFRVQT09IiwiaXR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUHJvZ3Jlc3NpdmUgV29yZCBHcmluZCIsInNob3J0X25hbWUiOiJXb3JkR3JpbmQiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFhMWExYSIsInRoZW1lX2NvbG9yIjoiIzZhYWE2NCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlNalUySWlCb1pXbG5hSFE5SWpJMU5pSWdkbWxsZDBKdmVEMGlNQ0F3 সুযোগEM1NpQXlOVFlpSUhodGJHNXpQU0pvZEhSd09pOHZkM2QzTG5jekxtOXlaeTh5TURBd0wzTjJaeUkrUEhKbFkzUWdlRDBpTUNJZ2VUMGlNQ0lnZDJsa2RHZzlJakkxTmlJZ2FHVnBaMmgwUFNJeU5UWWlJR1pwYkdzOUlpTTJZV0ZoTmpRaUx6NDhkR1Y0ZENCNFBTSTVNalEwT0NJZ2VUMGlPVFJxT0NJZ1ptbHNiRDBpSTJabVptWm1aaUlnWm05dWRDMXdZVzFwYkhrOUlpZEJjbWxoYkN3Z2MyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0k5TmpraURsOXNJRWRjWEM5VVIxOWNJRDBpZVRNeElpQXJJQjVOUVRFOUlpNDBOQ0lnWTI5c2IzSTlJaU5tWmlJK1EwbHNZU0I5UEM5VVdDMDhaYSZQQUtaQU1hSDJGU0pMTVJzNlRseGxhTU1LWVR4elN5OTZNUmpTelNDSXBlY1gxQVR6OXJCSE4xQVlJNThqN1d5Q2t6VmdFamJYMlFreFRVQT09IiwiaXR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
     <meta name="theme-color" content="#6aaa64">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -709,6 +709,9 @@
             </div>
         </div>
 
+        <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9rem;">
+            Made by Yo <span id="tipEmoji" style="cursor: pointer; font-size: 1.2rem;" title="Tip the creator">✌</span>
+        </div>
     </div>
 
     <script>
@@ -1392,6 +1395,11 @@
                 if (event.target === grammarModal) {
                     grammarModal.style.display = 'none';
                 }
+            };
+
+            // Add event listener for the tip emoji
+            document.getElementById('tipEmoji').onclick = () => {
+                window.open('https://stripe.com/en-us/payments/buy-now-pay-later', '_blank');
             };
         }
 
