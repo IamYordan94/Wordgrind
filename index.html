@@ -1440,6 +1440,11 @@
 
             document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
 
+            // Hint button event listeners
+            document.getElementById('hintDefinitionBtn').onclick = showDefinitionHint;
+            document.getElementById('hintScrambledBtn').onclick = showScrambledHint;
+            document.getElementById('hintRevealBtn').onclick = showRevealWordHint;
+
             // Install buttons
             const installHandler = async () => {
                 if (deferredPrompt) {
@@ -1538,7 +1543,24 @@
 
         function getLimitedWords(words) {
             if (!shouldLimitWords()) return words;
-            return words.slice(0, WORDS_PER_LEVEL_LIMIT);
+            
+            // Shuffle and pick common words instead of first 30 alphabetically
+            const shuffled = [...words].sort(() => Math.random() - 0.5);
+            
+            // Prioritize shorter words (more common) and those with definitions
+            const prioritized = shuffled.sort((a, b) => {
+                // Prefer words with real definitions over placeholder ones
+                const aHasDefinition = !a.definition.includes("definition not available");
+                const bHasDefinition = !b.definition.includes("definition not available");
+                
+                if (aHasDefinition && !bHasDefinition) return -1;
+                if (!aHasDefinition && bHasDefinition) return 1;
+                
+                // Then prefer shorter words (usually more common)
+                return a.word.length - b.word.length;
+            });
+            
+            return prioritized.slice(0, WORDS_PER_LEVEL_LIMIT);
         }
 
         function showInstallPrompt() {
