@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progressive Wordle Grind</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUHJvZ3Jlc3NpdmUgV29yZGxlIEdyaW5kIiwic2hvcnRfbmFtZSI6IldvcmRsZUdyaW5kIiwic3RhcnRfdXJsIjoiLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMxYTFhMWEiLCJ0aGVtZV9jb2xvciI6IiM2YWFhNjQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTWpVMklpQm9aV2xuYUhROUlqSTFOaUlnZG1sbGQwSnZlRDBpTUNBd0lESTFOaUF5TlRZaUlIaHRiRzV6UFNKb2RIUndPaTh2ZDNkM0xuY3pMbTl5Wnk4eU1EQXdMM04yWnlJK1BISmxZM1FnZUQwaU1DSWdlVDBpTUNJZ2QybGtkR2c5SWpJMU5pSWdhR1ZwWjJoMFBTSXlOVFlpSUdacGJHdzlJaU0yWVdGaE5qUWlMejQ4ZEdWNGRDQjRQU0l4TWpnaUlIazlJakV6TUNJZ1ptbHNiRDBpSTJabVptWm1aaUlnWm05dWRDMW1ZVzFwYkhrOUlpZEJjbWxoYkN3Z2MyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0l6TW1GMGV6WnRZWGcxTkNJK1YxOHZVM1J5YjJWZUpDNThMMlIzWmpwaTBBPSIsInNpemVzIjoiMjU2eDI1NiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <title>Progressive Word Grind</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUHJvZ3Jlc3NpdmUgV29yZCBHcmluZCIsInNob3J0X25hbWUiOiJXb3JkR3JpbmQiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFhMWExYSIsInRoZW1lX2NvbG9yIjoiIzZhYWE2NCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlNalUySWlCb1pXbG5hSFE5SWpJMU5pSWdkbWxsZDBKdmVEMGlNQ0F3SURFMU5pQXlOVFlpSUhodGJHNXpQU0pvZEhSd09pOHZkM2QzTG5jekxtOXlaeTh5TURBd0wzTjJaeUkrUEhKbFkzUWdlRDBpTUNJZ2VUMGlNQ0lnZDJsa2RHZzlJakkxTmlJZ2FHVnBaMmgwUFNJeU5UWWlJR1pwYkdzOUlpTTJZV0ZoTmpRaUx6NDhkR1Y0ZENCNFBTSTVNalEwT0NJZ2VUMGlPVFJxT0NJZ1ptbHNiRDBpSTJabVptWm1aaUlnWm05dWRDMXdZVzFwYkhrOUlpZEJjbWxoYkN3Z2MyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0k5TmpraURsOXNJRWRjWEM5VVIxOWNJRDBpZVRNeElpQXJJQjVOUVRFOUlpNDBOQ0lnWTI5c2IzSTlJaU5tWmlJK1EwbHNZU0I5UEM5VVdDMDhaYSZQQUtaQU1hSDJGU0pMTVJzNlRseGxhTU1LWVR4elN5OTZNUmpTelNDSXBlY1gxQVR6OXJCSE4xQVlJNThqN1d5Q2t6VmdFamJYMlFreFRVQT09IiwiaXR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
     <meta name="theme-color" content="#6aaa64">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -577,32 +577,11 @@
             margin-bottom: 8px;
         }
 
-        .controls {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .control-btn {
-            padding: 10px 20px;
-            margin: 0 10px;
-            background-color: #555;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .control-btn:hover {
-            background-color: #666;
-        }
-
-
         @media (max-width: 900px) {
             .game-content {
                 grid-template-columns: 1fr;
             }
-            
+
             .attempted-words-box {
                 height: 200px;
             }
@@ -642,8 +621,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Progressive Wordle Grind</h1>
-        
+        <h1>Progressive Word Grind</h1>
+
         <div class="level-selector" id="levelSelector">
             <h3>Select Level</h3>
             <div class="level-buttons" id="levelButtons"></div>
@@ -695,7 +674,7 @@
                         <span id="wordLength">2</span>-letter words
                     </div>
                 </div>
-                
+
                 <div class="found-words">
                     <h3>Found Words (<span id="foundWordsCount">0</span>)
                         <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>
@@ -704,13 +683,13 @@
                     <div class="words-grid" id="foundWordsGrid"></div>
                 </div>
             </div>
-            
+
             <div class="attempted-words-box" id="attemptedWordsBox">
                 <h3>All Attempts <small>(click words for definitions)</small></h3>
                 <div class="attempted-words-list" id="attemptedWordsList"></div>
             </div>
         </div>
-        
+
         <!-- Word Definition Modal -->
         <div class="modal" id="definitionModal">
             <div class="modal-content">
@@ -720,7 +699,7 @@
                 <p class="grammar-type" id="modalGrammarType"></p>
             </div>
         </div>
-        
+
         <!-- Grammar Info Modal -->
         <div class="modal" id="grammarModal">
             <div class="modal-content grammar-modal-content">
@@ -730,14 +709,6 @@
             </div>
         </div>
 
-        <div class="controls">
-            <button class="control-btn" id="resetLevelBtn">Reset Current Level</button>
-            <button class="control-btn" id="resetGameBtn">Reset Entire Game</button>
-        </div>
-        
-        <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9rem;">
-            Made by Yo ✌
-        </div>
     </div>
 
     <script>
@@ -776,7 +747,7 @@
                 // Load word data
                 const response = await fetch('words_data.json');
                 const data = await response.json();
-                
+
                 // Convert to gameWords format
                 for (let level = 2; level <= 7; level++) {
                     if (data[level.toString()]) {
@@ -786,16 +757,16 @@
 
                 // Load saved progress
                 loadProgress();
-                
+
                 // Initialize UI
                 createLevelButtons();
                 switchToLevel(currentLevel);
                 updateUnlockInfo();
                 updateHintButtons();
                 setupEventListeners();
-                
+
                 console.log('Game initialized successfully');
-                
+
             } catch (error) {
                 console.error('Error initializing game:', error);
                 showMessage('Error loading word data. Please refresh the page.', 'error');
@@ -805,7 +776,7 @@
         function createLevelButtons() {
             const buttonsContainer = document.getElementById('levelButtons');
             buttonsContainer.innerHTML = '';
-            
+
             for (let level = 1; level <= MAX_LEVELS; level++) {
                 const btn = document.createElement('button');
                 const wordLength = level + 1;
@@ -813,46 +784,46 @@
                 btn.className = 'level-btn';
                 btn.onclick = () => switchToLevel(level);
                 btn.id = `level-${level}`;
-                
+
                 // Set initial state
                 if (level === currentLevel) {
                     btn.classList.add('current');
                 } else if (isLevelUnlocked(level)) {
                     btn.classList.add('unlocked');
                 }
-                
+
                 buttonsContainer.appendChild(btn);
             }
         }
 
         function isLevelUnlocked(level) {
             if (level === 1) return true;
-            
+
             // Check submission limits based on previous progress
             const prevLevel = level - 1;
             const prevWordLength = prevLevel + 1;
             const prevWords = gameWords[prevWordLength] || [];
             const prevFound = foundWords[prevWordLength] || [];
-            
+
             // Calculate required submissions based on progress
             const progressRatio = prevFound.length / prevWords.length;
             const maxSubmissions = Math.max(50, Math.floor(prevWords.length * (1 + (1 - progressRatio) * 2)));
-            
+
             return true; // All levels are accessible, but submission limits vary
         }
 
         function switchToLevel(level) {
             if (level < 1 || level > MAX_LEVELS) return;
-            
+
             currentLevel = level;
             const wordLength = level + 1;
-            
+
             // Update UI
             document.getElementById('currentLevel').textContent = level;
             document.getElementById('wordLength').textContent = wordLength;
             document.getElementById('wordInput').maxLength = wordLength;
             document.getElementById('wordInput').placeholder = `Enter ${wordLength}-letter word`;
-            
+
             // Update button states
             const buttons = document.querySelectorAll('.level-btn');
             buttons.forEach((btn, index) => {
@@ -863,19 +834,19 @@
                     btn.classList.add('unlocked');
                 }
             });
-            
+
             // Clear input and feedback
             document.getElementById('wordInput').value = '';
             document.getElementById('feedback').innerHTML = '';
             document.getElementById('message').textContent = '';
             document.getElementById('hintDisplay').style.display = 'none';
-            
+
             // Update displays
             updateFoundWordsDisplay();
             updateProgress();
             updateUnlockInfo();
             updateHintButtons();
-            
+
             // Save progress
             saveProgress();
         }
@@ -883,7 +854,7 @@
         function updateHintButtons() {
             const wordLength = currentLevel + 1;
             const scrambledBtn = document.getElementById('hintScrambledBtn');
-            
+
             // Enable scrambled letters hint only for 4+ letter words
             if (wordLength >= 4) {
                 scrambledBtn.disabled = false;
@@ -897,18 +868,18 @@
         function simulateAdViewing(callback) {
             // Simulate ad viewing with a loading state
             showMessage('Loading ad...', 'warning');
-            
+
             setTimeout(() => {
                 showMessage('Ad completed! Here\'s your hint:', 'success');
                 callback();
-                
+
                 // Set cooldown to prevent spam
                 hintCooldown = true;
                 setTimeout(() => {
                     hintCooldown = false;
                     updateHintButtonStates();
                 }, 30000); // 30 second cooldown
-                
+
                 updateHintButtonStates();
             }, 3000); // 3 second simulated ad
         }
@@ -916,7 +887,7 @@
         function updateHintButtonStates() {
             const defBtn = document.getElementById('hintDefinitionBtn');
             const scrambledBtn = document.getElementById('hintScrambledBtn');
-            
+
             if (hintCooldown) {
                 defBtn.disabled = true;
                 defBtn.textContent = 'Please wait...';
@@ -933,22 +904,22 @@
 
         function showDefinitionHint() {
             if (hintCooldown) return;
-            
+
             const wordLength = currentLevel + 1;
             const availableWords = gameWords[wordLength] || [];
             const foundWords = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
             const unfoundWords = availableWords.filter(w => !foundWords.includes(w.word.toLowerCase()));
-            
+
             if (unfoundWords.length === 0) {
                 showMessage('No more words to find at this level!', 'warning');
                 return;
             }
-            
+
             simulateAdViewing(() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
-                
+
                 const hintDisplay = document.getElementById('hintDisplay');
                 hintDisplay.innerHTML = `
                     <strong>Definition:</strong><br>
@@ -961,22 +932,22 @@
 
         function showScrambledHint() {
             if (hintCooldown || currentLevel + 1 < 4) return;
-            
+
             const wordLength = currentLevel + 1;
             const availableWords = gameWords[wordLength] || [];
             const foundWordsSet = new Set((foundWords[wordLength] || []).map(w => w.word.toLowerCase()));
             const unfoundWords = availableWords.filter(w => !foundWordsSet.has(w.word.toLowerCase()));
-            
+
             if (unfoundWords.length === 0) {
                 showMessage('No more words to find at this level!', 'warning');
                 return;
             }
-            
+
             simulateAdViewing(() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
-                
+
                 // Scramble the letters
                 const letters = randomWord.word.toLowerCase().split('');
                 for (let i = letters.length - 1; i > 0; i--) {
@@ -984,7 +955,7 @@
                     [letters[i], letters[j]] = [letters[j], letters[i]];
                 }
                 const scrambled = letters.join('').toUpperCase();
-                
+
                 const hintDisplay = document.getElementById('hintDisplay');
                 hintDisplay.innerHTML = `
                     <strong>Scrambled Letters:</strong><br>
@@ -1000,9 +971,9 @@
             const found = foundWords[wordLength] || [];
             const grid = document.getElementById('foundWordsGrid');
             const foundWordsBox = document.querySelector('.found-words');
-            
+
             document.getElementById('foundWordsCount').textContent = found.length;
-            
+
             // Add limitation info if user isn't installed
             let limitInfo = foundWordsBox.querySelector('.limited-access-info');
             if (shouldLimitWords()) {
@@ -1017,7 +988,7 @@
             } else if (limitInfo) {
                 limitInfo.remove();
             }
-            
+
             grid.innerHTML = '';
             found.forEach(wordData => {
                 const wordElement = document.createElement('div');
@@ -1047,15 +1018,15 @@
             const wordLength = currentLevel + 1;
             const allWords = gameWords[wordLength] || [];
             const found = foundWords[wordLength] || [];
-            
+
             const foundCount = found.length;
             const displayTotal = shouldLimitWords() ? 
                 Math.min(WORDS_PER_LEVEL_LIMIT, allWords.length) : 
                 allWords.length;
-            
+
             document.getElementById('foundCount').textContent = foundCount;
             document.getElementById('totalCount').textContent = displayTotal;
-            
+
             const percentage = displayTotal > 0 ? (foundCount / displayTotal) * 100 : 0;
             document.getElementById('progressFill').style.width = `${percentage}%`;
         }
@@ -1065,16 +1036,16 @@
             const wordLength = currentLevel + 1;
             const found = foundWords[wordLength] || [];
             const totalWords = gameWords[wordLength] || [];
-            
+
             if (totalWords.length === 0) {
                 unlockInfo.textContent = 'Loading word data...';
                 return;
             }
-            
+
             const foundCount = found.length;
             const totalCount = totalWords.length;
             const percentage = Math.round((foundCount / totalCount) * 100);
-            
+
             if (foundCount === totalCount) {
                 unlockInfo.textContent = `🎉 Level Complete! All ${totalCount} words found (100%)`;
                 unlockInfo.style.backgroundColor = '#6aaa64';
@@ -1087,34 +1058,34 @@
         function submitWord() {
             const input = document.getElementById('wordInput');
             const word = input.value.toLowerCase().trim();
-            
+
             if (!word) {
                 showMessage('Please enter a word!', 'error');
                 return;
             }
-            
+
             const wordLength = currentLevel + 1;
             if (word.length !== wordLength) {
                 showMessage(`Word must be ${wordLength} letters long!`, 'error');
                 return;
             }
-            
+
             // Check if already attempted
             const alreadyAttempted = attemptedWords.some(attempt => 
                 attempt.word === word && attempt.level === currentLevel
             );
-            
+
             if (alreadyAttempted) {
                 showMessage('You already tried this word!', 'warning');
                 showWordieFeedback(word, 'duplicate');
                 return;
             }
-            
+
             // Check if valid word
             const allValidWords = gameWords[wordLength] || [];
             const validWords = getLimitedWords(allValidWords);
             const wordData = validWords.find(w => w.word.toLowerCase() === word);
-            
+
             if (!wordData) {
                 // Invalid word
                 showMessage('Not a valid word!', 'error');
@@ -1124,7 +1095,7 @@
                 // Valid word
                 const found = foundWords[wordLength] || [];
                 const alreadyFound = found.some(w => w.word.toLowerCase() === word);
-                
+
                 if (alreadyFound) {
                     showMessage('You already found this word!', 'warning');
                     showWordieFeedback(word, 'duplicate');
@@ -1135,16 +1106,16 @@
                         foundWords[wordLength] = [];
                     }
                     foundWords[wordLength].push(wordData);
-                    
+
                     showMessage(`Great! "${word.toUpperCase()}" is a valid word!`, 'success');
                     showWordieFeedback(word, 'valid');
                     addAttempt(word, 'valid');
-                    
+
                     // Update displays
                     updateFoundWordsDisplay();
                     updateProgress();
                     updateUnlockInfo();
-                    
+
                     // Check if level complete
                     const totalWords = validWords.length;
                     if (foundWords[wordLength].length === totalWords) {
@@ -1154,10 +1125,10 @@
                     }
                 }
             }
-            
+
             // Clear input
             input.value = '';
-            
+
             // Save progress
             saveProgress();
         }
@@ -1165,12 +1136,12 @@
         function showWordieFeedback(word, type) {
             const feedback = document.getElementById('feedback');
             feedback.innerHTML = '';
-            
+
             for (let i = 0; i < word.length; i++) {
                 const letterDiv = document.createElement('div');
                 letterDiv.className = 'letter-feedback';
                 letterDiv.textContent = word[i].toUpperCase();
-                
+
                 if (type === 'valid') {
                     letterDiv.classList.add('correct');
                 } else if (type === 'duplicate') {
@@ -1178,7 +1149,7 @@
                 } else {
                     letterDiv.classList.add('absent');
                 }
-                
+
                 feedback.appendChild(letterDiv);
             }
         }
@@ -1190,25 +1161,25 @@
                 type: type,
                 timestamp: Date.now()
             });
-            
+
             // Keep only recent attempts
             if (attemptedWords.length > 100) {
                 attemptedWords = attemptedWords.slice(0, 100);
             }
-            
+
             updateAttemptsList();
         }
 
         function updateAttemptsList() {
             const list = document.getElementById('attemptedWordsList');
             const levelAttempts = attemptedWords.filter(a => a.level === currentLevel);
-            
+
             list.innerHTML = '';
             levelAttempts.forEach(attempt => {
                 const div = document.createElement('div');
                 div.className = `attempt-item ${attempt.type}`;
                 div.textContent = attempt.word.toUpperCase();
-                
+
                 // Add click handler for definitions
                 if (attempt.type === 'valid') {
                     const wordLength = currentLevel + 1;
@@ -1219,7 +1190,7 @@
                         div.style.cursor = 'pointer';
                     }
                 }
-                
+
                 list.appendChild(div);
             });
         }
@@ -1234,14 +1205,14 @@
         function showGrammarInfo() {
             const grammarList = document.getElementById('grammarList');
             grammarList.innerHTML = '';
-            
+
             Object.entries(grammarInfo).forEach(([type, description]) => {
                 const div = document.createElement('div');
                 div.className = 'grammar-item';
                 div.innerHTML = `<h3>${type}</h3><p>${description}</p>`;
                 grammarList.appendChild(div);
             });
-            
+
             document.getElementById('grammarModal').style.display = 'block';
         }
 
@@ -1250,45 +1221,45 @@
                 showMessage('Please wait before requesting another hint!', 'warning');
                 return;
             }
-            
+
             simulateAd(() => {
                 revealRandomWord();
             });
         }
-        
+
         function revealRandomWord() {
             const wordLength = currentLevel + 1;
             const allWords = gameWords[wordLength] || [];
             const found = foundWords[wordLength] || [];
             const foundWordsList = found.map(w => w.word.toLowerCase());
-            
+
             // Find words not yet discovered
             const undiscoveredWords = allWords.filter(w => 
                 !foundWordsList.includes(w.word.toLowerCase())
             );
-            
+
             if (undiscoveredWords.length === 0) {
                 showMessage('You\'ve already found all words for this level!', 'success');
                 return;
             }
-            
+
             // Pick random undiscovered word
             const randomWord = undiscoveredWords[Math.floor(Math.random() * undiscoveredWords.length)];
-            
+
             // Add it to found words
             if (!foundWords[wordLength]) {
                 foundWords[wordLength] = [];
             }
             foundWords[wordLength].push(randomWord);
-            
+
             // Update displays
             updateFoundWordsDisplay();
             updateProgress();
             updateUnlockInfo();
-            
+
             // Save progress
             saveProgress();
-            
+
             // Show success message
             showMessage(`🎁 Ad complete! Revealed word: "${randomWord.word.toUpperCase()}"`, 'success');
         }
@@ -1297,7 +1268,7 @@
             const messageEl = document.getElementById('message');
             messageEl.textContent = text;
             messageEl.className = `message ${type}`;
-            
+
             if (type) {
                 setTimeout(() => {
                     messageEl.textContent = '';
@@ -1311,13 +1282,13 @@
                 const wordLength = currentLevel + 1;
                 foundWords[wordLength] = [];
                 attemptedWords = attemptedWords.filter(a => a.level !== currentLevel);
-                
+
                 updateFoundWordsDisplay();
                 updateProgress();
                 updateUnlockInfo();
                 updateAttemptsList();
                 saveProgress();
-                
+
                 showMessage('Level reset!', 'success');
             }
         }
@@ -1327,13 +1298,13 @@
                 foundWords = {};
                 attemptedWords = [];
                 currentLevel = 1;
-                
+
                 localStorage.removeItem('wordleGrindProgress');
-                
+
                 switchToLevel(1);
                 createLevelButtons();
                 updateAttemptsList();
-                
+
                 showMessage('Game reset!', 'success');
             }
         }
@@ -1366,39 +1337,30 @@
             // Input and submit
             const input = document.getElementById('wordInput');
             const submitBtn = document.getElementById('submitBtn');
-            
+
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     submitWord();
                 }
             });
-            
+
             input.addEventListener('input', (e) => {
                 e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '');
             });
-            
+
             submitBtn.addEventListener('click', submitWord);
-            
+
             // Modal controls
             document.getElementById('closeModal').onclick = () => {
                 document.getElementById('definitionModal').style.display = 'none';
             };
-            
+
             document.getElementById('closeGrammarModal').onclick = () => {
                 document.getElementById('grammarModal').style.display = 'none';
             };
-            
+
             document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
-            
-            // Control buttons
-            document.getElementById('resetLevelBtn').onclick = resetLevel;
-            document.getElementById('resetGameBtn').onclick = resetGame;
-            
-            // Hint buttons
-            document.getElementById('hintDefinitionBtn').onclick = showDefinitionHint;
-            document.getElementById('hintScrambledBtn').onclick = showScrambledHint;
-            document.getElementById('hintRevealBtn').onclick = showRevealWordHint;
-            
+
             // Install buttons
             document.getElementById('installBtn').onclick = async () => {
                 if (deferredPrompt) {
@@ -1412,18 +1374,18 @@
                     alert('To install:\n• On iOS: Tap Share button → Add to Home Screen\n• On Android: Tap menu → Add to Home Screen\n• On Desktop: Look for install icon in address bar');
                 }
             };
-            
+
             document.getElementById('dismissInstall').onclick = () => {
                 document.getElementById('installSection').style.display = 'none';
                 // Show again after finding 20 more words
                 localStorage.setItem('installDismissed', Date.now());
             };
-            
+
             // Close modals on outside click
             window.onclick = (event) => {
                 const defModal = document.getElementById('definitionModal');
                 const grammarModal = document.getElementById('grammarModal');
-                
+
                 if (event.target === defModal) {
                     defModal.style.display = 'none';
                 }
@@ -1455,10 +1417,10 @@
 
         function showInstallPrompt() {
             if (isInstalled) return;
-            
+
             const totalFound = Object.values(foundWords).reduce((total, levelWords) => 
                 total + (levelWords ? levelWords.length : 0), 0);
-            
+
             // Show prompt after finding 20 words or hitting word limit
             if (totalFound >= 20 || hasHitWordLimit()) {
                 document.getElementById('wordsFound').textContent = totalFound;
@@ -1468,11 +1430,11 @@
 
         function hasHitWordLimit() {
             if (!shouldLimitWords()) return false;
-            
+
             const wordLength = currentLevel + 1;
             const availableWords = gameWords[wordLength] || [];
             const found = foundWords[wordLength] || [];
-            
+
             return found.length >= WORDS_PER_LEVEL_LIMIT && availableWords.length > WORDS_PER_LEVEL_LIMIT;
         }
 
