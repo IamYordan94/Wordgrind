@@ -778,15 +778,51 @@
 
         // Initialize game
         async function initGame() {
+            console.log('Starting game initialization...');
+            
             try {
-                // Load word data
-                const response = await fetch('words_data.json');
-                const data = await response.json();
+                // Load word data with multiple fallback paths
+                let response;
+                let data;
+                
+                const possiblePaths = [
+                    './words_data.json',
+                    '/words_data.json',
+                    'words_data.json',
+                    window.location.origin + '/words_data.json'
+                ];
+                
+                console.log('Trying to load word data from multiple paths...');
+                
+                for (const path of possiblePaths) {
+                    try {
+                        console.log('Attempting to load from:', path);
+                        response = await fetch(path);
+                        
+                        if (response.ok) {
+                            console.log('Successfully loaded from:', path);
+                            data = await response.json();
+                            break;
+                        } else {
+                            console.log('Failed to load from:', path, 'Status:', response.status);
+                        }
+                    } catch (fetchError) {
+                        console.log('Fetch error for path:', path, fetchError.message);
+                        continue;
+                    }
+                }
+                
+                if (!data) {
+                    throw new Error('Could not load word data from any path');
+                }
+
+                console.log('Word data loaded successfully, converting to game format...');
 
                 // Convert to gameWords format
                 for (let level = 2; level <= 7; level++) {
                     if (data[level.toString()]) {
                         gameWords[level] = data[level.toString()];
+                        console.log(`Level ${level}: ${data[level.toString()].length} words loaded`);
                     }
                 }
 
@@ -804,7 +840,15 @@
 
             } catch (error) {
                 console.error('Error initializing game:', error);
-                showMessage('Error loading word data. Please refresh the page.', 'error');
+                const errorDetails = error.message || 'Unknown error';
+                showMessage(`Failed to load game data: ${errorDetails}. Try refreshing or check your internet connection.`, 'error');
+                
+                // Show a retry button
+                setTimeout(() => {
+                    if (confirm('Game failed to load. Would you like to try again?')) {
+                        window.location.reload();
+                    }
+                }, 2000);
             }
         }
 
