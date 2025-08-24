@@ -15,10 +15,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Progressive Wordle Game"
+args = "Progressive Wordle Game v2"
 
 [[workflows.workflow]]
-name = "Progressive Wordle Game"
+name = "Progressive Wordle Game v2"
 author = "agent"
 
 [[workflows.workflow.tasks]]
