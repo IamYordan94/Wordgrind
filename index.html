@@ -931,23 +931,55 @@
             }
         }
 
-        function simulateAdViewing(callback) {
-            // Simulate ad viewing with a loading state
-            showMessage('Loading ad...', 'warning');
-
-            setTimeout(() => {
-                showMessage('Ad completed! Here\'s your hint:', 'success');
-                callback();
-
-                // Set cooldown to prevent spam
-                hintCooldown = true;
-                setTimeout(() => {
-                    hintCooldown = false;
+        function showRealAdSense(callback) {
+            const adContainer = document.getElementById('adContainer');
+            const hintDisplay = document.getElementById('hintDisplay');
+            
+            // Hide hint display and show ad container
+            hintDisplay.style.display = 'none';
+            adContainer.style.display = 'block';
+            
+            // Load fresh AdSense ad
+            try {
+                // Clear previous ad content
+                const existingAd = adContainer.querySelector('.adsbygoogle');
+                if (existingAd && existingAd.innerHTML) {
+                    existingAd.innerHTML = '';
+                }
+                
+                // Initialize new ad
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                showMessage('📺 Real AdSense ad loaded! Please watch and then click the button below.', 'info');
+                
+                // Set up the "watched ad" button  
+                const watchedBtn = document.getElementById('adWatchedBtn');
+                watchedBtn.onclick = () => {
+                    adContainer.style.display = 'none';
+                    callback();
+                    // Set cooldown to prevent spam
+                    hintCooldown = true;
+                    setTimeout(() => {
+                        hintCooldown = false;
+                        updateHintButtonStates();
+                    }, 30000); // 30 second cooldown
                     updateHintButtonStates();
-                }, 30000); // 30 second cooldown
-
-                updateHintButtonStates();
-            }, 3000); // 3 second simulated ad
+                };
+                
+            } catch (error) {
+                console.log('AdSense loading, using fallback for now...');
+                showMessage('📺 Ad loading... Please wait and click when ready.', 'warning');
+                const watchedBtn = document.getElementById('adWatchedBtn');
+                watchedBtn.onclick = () => {
+                    adContainer.style.display = 'none';
+                    callback();
+                    hintCooldown = true;
+                    setTimeout(() => {
+                        hintCooldown = false;
+                        updateHintButtonStates();
+                    }, 30000);
+                    updateHintButtonStates();
+                };
+            }
         }
 
         function updateHintButtonStates() {
@@ -981,7 +1013,7 @@
                 return;
             }
 
-            simulateAdViewing(() => {
+            showRealAdSense(() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
@@ -1009,7 +1041,7 @@
                 return;
             }
 
-            simulateAdViewing(() => {
+            showRealAdSense(() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
@@ -1265,7 +1297,7 @@
                 return;
             }
 
-            simulateAdViewing(() => {
+            showRealAdSense(() => {
                 revealRandomWord();
             });
         }
