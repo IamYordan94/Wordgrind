@@ -1,0 +1,4 @@
+# ads.txt file for wordgrind.replit.app
+# Replace pub-XXXXXXXXXXXXXXXXX with your actual Google AdSense Publisher ID
+
+google.com, pub-XXXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
