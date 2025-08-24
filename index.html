@@ -1031,7 +1031,8 @@
             if (hintCooldown) return;
 
             const wordLength = currentLevel + 1;
-            const availableWords = gameWords[wordLength] || [];
+            const allWords = gameWords[wordLength] || [];
+            const availableWords = getLimitedWords(allWords);
             const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
             const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
 
@@ -1059,7 +1060,8 @@
             if (hintCooldown || currentLevel + 1 < 4) return;
 
             const wordLength = currentLevel + 1;
-            const availableWords = gameWords[wordLength] || [];
+            const allWords = gameWords[wordLength] || [];
+            const availableWords = getLimitedWords(allWords);
             const foundWordsSet = new Set((foundWords[wordLength] || []).map(w => w.word.toLowerCase()));
             const unfoundWords = availableWords.filter(w => !foundWordsSet.has(w.word.toLowerCase()));
 
@@ -1206,9 +1208,10 @@
                 return;
             }
 
-            // Check if valid word
+            // Get the appropriate word set (limited for non-installed users)
             const allValidWords = gameWords[wordLength] || [];
-            const wordData = allValidWords.find(w => w.word.toLowerCase() === word);
+            const validWords = getLimitedWords(allValidWords);
+            const wordData = validWords.find(w => w.word.toLowerCase() === word);
 
             if (!wordData) {
                 // Invalid word
@@ -1354,11 +1357,12 @@
         function revealRandomWord() {
             const wordLength = currentLevel + 1;
             const allWords = gameWords[wordLength] || [];
+            const availableWords = getLimitedWords(allWords);
             const found = foundWords[wordLength] || [];
             const foundWordsList = found.map(w => w.word.toLowerCase());
 
             // Find words not yet discovered
-            const undiscoveredWords = allWords.filter(w => 
+            const undiscoveredWords = availableWords.filter(w => 
                 !foundWordsList.includes(w.word.toLowerCase())
             );
 
