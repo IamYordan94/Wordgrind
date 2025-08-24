@@ -3,15 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Progressive Word Grind v2.0</title>
+    <title>Progressive Word Grind</title>
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUHJvZ3Jlc3NpdmUgV29yZCBHcmluZCIsInNob3J0X25hbWUiOiJXb3JkR3JpbmQiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFhMWExYSIsInRoZW1lX2NvbG9yIjoiIzZhYWE2NCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlNalUySWlCb1pXbG5hSFE5SWpJMU5pSWdkbWxsZDBKdmVEMGlNQ0F3 সুযোগEM1NpQXlOVFlpSUhodGJHNXpQU0pvZEhSd09pOHZkM2QzTG5jekxtOXlaeTh5TURBd0wzTjJaeUkrUEhKbFkzUWdlRDBpTUNJZ2VUMGlNQ0lnZDJsa2RHZzlJakkxTmlJZ2FHVnBaMmgwUFNJeU5UWWlJR1pwYkdzOUlpTTJZV0ZoTmpRaUx6NDhkR1Y0ZENCNFBTSTVNalEwT0NJZ2VUMGlPVFJxT0NJZ1ptbHNiRDBpSTJabVptWm1aaUlnWm05dWRDMXdZVzFwYkhrOUlpZEJjbWxoYkN3Z2MyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0k5TmpraURsOXNJRWRjWEM5VVIxOWNJRDBpZVRNeElpQXJJQjVOUVRFOUlpNDBOQ0lnWTI5c2IzSTlJaU5tWmlJK1EwbHNZU0I5UEM5VVdDMDhaYSZQQUtaQU1hSDJGU0pMTVJzNlRseGxhTU1LWVR4elN5OTZNUmpTelNDSXBlY1gxQVR6OXJCSE4xQVlJNThqN1d5Q2t6VmdFamJYMlFreFRVQT09IiwiaXR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
     <meta name="theme-color" content="#6aaa64">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="google-adsense-account" content="ca-pub-9007185070437670">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9007185070437670"
          crossorigin="anonymous"></script>
     <style>
@@ -416,7 +412,20 @@
 
         /* Removed limitation display from new UX */
 
-        /* Removed locked word styling from new UX */
+        .word-item.locked {
+            background-color: #666;
+            color: #999;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .word-item.locked::after {
+            content: "🔒";
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
         .scrambled-letters {
             background-color: #333;
@@ -666,18 +675,6 @@
             <button class="hint-btn" id="hintDefinitionBtn">Watch Ad for Definition</button>
             <button class="hint-btn" id="hintScrambledBtn" disabled>Watch Ad for Scrambled Letters</button>
             <button class="hint-btn" id="hintRevealBtn">Watch Ad to Reveal Word</button>
-            
-            <!-- Ad Container -->
-            <div class="ad-container" id="adContainer" style="display: none;">
-                <p style="text-align: center; margin-bottom: 10px;">Watch this ad to unlock your hint:</p>
-                <ins class="adsbygoogle"
-                     style="display:block; width: 300px; height: 250px; margin: 0 auto;"
-                     data-ad-client="ca-pub-9007185070437670"
-                     data-ad-slot="auto"
-                     data-ad-format="rectangle"></ins>
-                <button id="adWatchedBtn" style="margin-top: 10px; padding: 8px 16px; background: #4b79a1; color: white; border: none; border-radius: 4px; cursor: pointer;">I watched the ad - Get my hint!</button>
-            </div>
-            
             <div class="hint-display" id="hintDisplay"></div>
         </div>
 
@@ -733,7 +730,7 @@
 
     <!-- Creator credit with donation link -->
     <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9rem;">
-        <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" style="text-decoration: none; color: #6aaa64; cursor: pointer; border-bottom: 1px dotted #6aaa64;">Made by Yo ✌️ 🥚</a>
+        <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" style="text-decoration: none; color: #888;">Made by Yo ✌ 🥚</a>
     </div>
 
     <script>
@@ -915,7 +912,6 @@
             updateProgress();
             updateUnlockInfo();
             updateHintButtons();
-            updateAttemptsList();
 
             // Save progress
             saveProgress();
@@ -935,54 +931,23 @@
             }
         }
 
-        function showRealAd(callback) {
-            // Show real Google AdSense ad
-            const adContainer = document.getElementById('adContainer');
-            const hintDisplay = document.getElementById('hintDisplay');
-            
-            // Hide hint display and show ad container
-            hintDisplay.style.display = 'none';
-            adContainer.style.display = 'block';
-            
-            // Initialize the ad
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                showMessage('Ad loaded! Please watch and then click the button below.', 'info');
-            } catch (error) {
-                console.log('AdSense not ready, using fallback');
-                showMessage('Loading ad...', 'warning');
-                // Fallback for development/testing
-                setTimeout(() => {
-                    simulateAdComplete(callback);
-                }, 3000);
-                return;
-            }
-            
-            // Set up the "I watched the ad" button
-            document.getElementById('adWatchedBtn').onclick = () => {
-                simulateAdComplete(callback);
-            };
-        }
-        
-        function simulateAdComplete(callback) {
-            const adContainer = document.getElementById('adContainer');
-            const hintDisplay = document.getElementById('hintDisplay');
-            
-            // Hide ad container and show hint
-            adContainer.style.display = 'none';
-            hintDisplay.style.display = 'block';
-            
-            showMessage('Thanks for watching! Here\'s your hint:', 'success');
-            callback();
-
-            // Set cooldown to prevent spam
-            hintCooldown = true;
-            updateHintButtonStates();
+        function simulateAdViewing(callback) {
+            // Simulate ad viewing with a loading state
+            showMessage('Loading ad...', 'warning');
 
             setTimeout(() => {
-                hintCooldown = false;
+                showMessage('Ad completed! Here\'s your hint:', 'success');
+                callback();
+
+                // Set cooldown to prevent spam
+                hintCooldown = true;
+                setTimeout(() => {
+                    hintCooldown = false;
+                    updateHintButtonStates();
+                }, 30000); // 30 second cooldown
+
                 updateHintButtonStates();
-            }, 30000); // 30-second cooldown
+            }, 3000); // 3 second simulated ad
         }
 
         function updateHintButtonStates() {
@@ -1016,7 +981,7 @@
                 return;
             }
 
-            showRealAd(() => {
+            simulateAdViewing(() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
@@ -1044,7 +1009,7 @@
                 return;
             }
 
-            showRealAd(() => {
+            simulateAdViewing(() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
@@ -1071,8 +1036,24 @@
             const wordLength = currentLevel + 1;
             const found = foundWords[wordLength] || [];
             const grid = document.getElementById('foundWordsGrid');
+            const foundWordsBox = document.querySelector('.found-words');
 
             document.getElementById('foundWordsCount').textContent = found.length;
+
+            // Add limitation info if user isn't installed
+            let limitInfo = foundWordsBox.querySelector('.limited-access-info');
+            if (shouldLimitWords()) {
+                if (!limitInfo) {
+                    limitInfo = document.createElement('div');
+                    limitInfo.className = 'limited-access-info';
+                    foundWordsBox.insertBefore(limitInfo, document.getElementById('foundWordsGrid'));
+                }
+                const totalWords = gameWords[wordLength]?.length || 0;
+                const remaining = Math.max(0, WORDS_PER_LEVEL_LIMIT - found.length);
+                limitInfo.innerHTML = `Free Version: ${remaining}/${WORDS_PER_LEVEL_LIMIT} words remaining<br><small>Install app to access all ${totalWords} words!</small>`;
+            } else if (limitInfo) {
+                limitInfo.remove();
+            }
 
             grid.innerHTML = '';
             found.forEach(wordData => {
@@ -1083,7 +1064,17 @@
                 grid.appendChild(wordElement);
             });
 
-            // No locked words display in new UX design
+            // Show locked words if limited
+            if (shouldLimitWords()) {
+                const allWords = gameWords[wordLength] || [];
+                const lockedWords = allWords.slice(WORDS_PER_LEVEL_LIMIT);
+                lockedWords.slice(0, 10).forEach(() => { // Show 10 locked slots
+                    const lockedElement = document.createElement('div');
+                    lockedElement.className = 'word-item locked';
+                    lockedElement.textContent = '???';
+                    grid.appendChild(lockedElement);
+                });
+            }
 
             // Check if should show install prompt
             setTimeout(showInstallPrompt, 1000);
@@ -1145,34 +1136,21 @@
                 return;
             }
 
-            // Check if already attempted (case insensitive)
+            // Check if already attempted
             const alreadyAttempted = attemptedWords.some(attempt => 
-                attempt.word.toLowerCase() === word.toLowerCase() && attempt.level === currentLevel
+                attempt.word === word && attempt.level === currentLevel
             );
-            
-            // Clean duplicate checking
 
             if (alreadyAttempted) {
-                // Check if the word is valid to determine color feedback
-                const allValidWords = gameWords[wordLength] || [];
-                const wordData = allValidWords.find(w => w.word.toLowerCase() === word);
-                
-                if (wordData) {
-                    showMessage('You already tried this valid word!', 'warning');
-                    showWordieFeedback(word, 'duplicate-valid');
-                } else {
-                    showMessage('You already tried this invalid word!', 'warning');
-                    showWordieFeedback(word, 'duplicate-invalid');
-                }
+                showMessage('You already tried this word!', 'warning');
+                showWordieFeedback(word, 'duplicate');
                 return;
             }
 
-            // Check if valid word (accept ALL dictionary words)
+            // Check if valid word
             const allValidWords = gameWords[wordLength] || [];
-            const wordData = allValidWords.find(w => w.word.toLowerCase() === word);
-            
-            // Get limited set only for display/completion checking
-            const limitedWords = getLimitedWords(allValidWords);
+            const validWords = getLimitedWords(allValidWords);
+            const wordData = validWords.find(w => w.word.toLowerCase() === word);
 
             if (!wordData) {
                 // Invalid word
@@ -1204,10 +1182,11 @@
                     updateProgress();
                     updateUnlockInfo();
 
-                    // Check if reached 30 words limit for free users
-                    if (shouldLimitWords() && foundWords[wordLength].length === 30) {
+                    // Check if level complete
+                    const totalWords = validWords.length;
+                    if (foundWords[wordLength].length === totalWords) {
                         setTimeout(() => {
-                            showThirtyWordMessage();
+                            showMessage(`🎉 Level ${currentLevel} Complete! All ${totalWords} words found!`, 'success');
                         }, 1000);
                     }
                 }
@@ -1231,19 +1210,10 @@
 
                 if (type === 'valid') {
                     letterDiv.classList.add('correct');
-                } else if (type === 'duplicate-valid') {
-                    // Alternating yellow and green for repeated valid words
-                    if (i % 2 === 0) {
-                        letterDiv.classList.add('present'); // Yellow
-                    } else {
-                        letterDiv.classList.add('correct'); // Green
-                    }
-                } else if (type === 'duplicate-invalid') {
-                    letterDiv.classList.add('present'); // All yellow for repeated invalid words
                 } else if (type === 'duplicate') {
-                    letterDiv.classList.add('present'); // Standard duplicate (yellow)
+                    letterDiv.classList.add('present');
                 } else {
-                    letterDiv.classList.add('absent'); // Red for invalid
+                    letterDiv.classList.add('absent');
                 }
 
                 feedback.appendChild(letterDiv);
@@ -1252,7 +1222,7 @@
 
         function addAttempt(word, type) {
             attemptedWords.unshift({
-                word: word.toLowerCase(),
+                word: word,
                 level: currentLevel,
                 type: type,
                 timestamp: Date.now()
@@ -1318,28 +1288,29 @@
                 return;
             }
 
-            showRealAd(() => {
+            simulateAdViewing(() => {
                 revealRandomWord();
             });
         }
 
         function revealRandomWord() {
             const wordLength = currentLevel + 1;
-            const availableWords = gameWords[wordLength] || [];
+            // Use LIMITED words for free users to ensure hints show valid words
+            const playableWords = shouldLimitWords() ? getLimitedWords(wordLength) : gameWords[wordLength] || [];
             const found = foundWords[wordLength] || [];
             const foundWordsList = found.map(w => w.word.toLowerCase());
 
-            // Find words not yet discovered
-            const undiscoveredWords = availableWords.filter(w => 
+            // Find words not yet discovered from playable set
+            const undiscoveredWords = playableWords.filter(w => 
                 !foundWordsList.includes(w.word.toLowerCase())
             );
 
             if (undiscoveredWords.length === 0) {
-                showMessage('You\'ve already found all words for this level!', 'success');
+                showMessage('You\'ve already found all available words for this level!', 'success');
                 return;
             }
 
-            // Pick random undiscovered word
+            // Pick random undiscovered word from valid set
             const randomWord = undiscoveredWords[Math.floor(Math.random() * undiscoveredWords.length)];
 
             // Add it to found words
@@ -1422,9 +1393,7 @@
                     const progress = JSON.parse(saved);
                     currentLevel = progress.currentLevel || 1;
                     foundWords = progress.foundWords || {};
-                    
-                    // Reset attempted words to fix duplicate bug
-                    attemptedWords = [];
+                    attemptedWords = progress.attemptedWords || [];
                 }
             } catch (error) {
                 console.error('Error loading progress:', error);
@@ -1519,27 +1488,8 @@
                 referrer: document.referrer
             });
             
-            // Additional robust detection methods
-            const isInWebAppChrome = window.matchMedia('(display-mode: standalone)').matches;
-            const isPWAContext = window.outerHeight === window.innerHeight; // No browser UI
-            const hasReducedUI = (window.outerHeight - window.innerHeight) < 40; // Minimal browser UI
-            const isWebAppMode = window.navigator.standalone === true; // iOS specific
-            const hasNoAddressBar = window.location !== window.parent.location; // Frame detection
-            
-            console.log('Additional detection:', {
-                isInWebAppChrome,
-                isPWAContext,
-                hasReducedUI,
-                isWebAppMode,
-                hasNoAddressBar,
-                outerHeight: window.outerHeight,
-                innerHeight: window.innerHeight,
-                heightDiff: window.outerHeight - window.innerHeight
-            });
-            
             // Check if any installation indicators are true
-            if (isStandalone || isIOS || isAndroidApp || isMinimalUI || isFullscreen || 
-                isInWebAppChrome || isPWAContext || hasReducedUI || isWebAppMode) {
+            if (isStandalone || isIOS || isAndroidApp || isMinimalUI || isFullscreen) {
                 isInstalled = true;
                 console.log('✅ App detected as INSTALLED');
                 
@@ -1558,28 +1508,11 @@
             return !isInstalled;
         }
 
-        // Cache for consistent word sets per level
-        const limitedWordsCache = {};
-        
         function getLimitedWords(words) {
             if (!shouldLimitWords()) return words;
             
-            const wordLength = words.length > 0 ? words[0].word.length : 0;
-            
-            // Use cached version if available
-            if (limitedWordsCache[wordLength]) {
-                return limitedWordsCache[wordLength];
-            }
-            
-            // Create deterministic seed based on word length for consistent selection
-            const seed = wordLength * 12345;
-            const seededRandom = (function(seed) {
-                let x = Math.sin(seed) * 10000;
-                return x - Math.floor(x);
-            });
-            
-            // Shuffle with seeded random for consistency
-            const shuffled = [...words].sort(() => seededRandom(seed + Math.random()));
+            // Shuffle and pick common words instead of first 30 alphabetically
+            const shuffled = [...words].sort(() => Math.random() - 0.5);
             
             // Prioritize shorter words (more common) and those with definitions
             const prioritized = shuffled.sort((a, b) => {
@@ -1594,10 +1527,7 @@
                 return a.word.length - b.word.length;
             });
             
-            // Cache the result for consistency
-            const limited = prioritized.slice(0, WORDS_PER_LEVEL_LIMIT);
-            limitedWordsCache[wordLength] = limited;
-            return limited;
+            return prioritized.slice(0, WORDS_PER_LEVEL_LIMIT);
         }
 
         function showInstallPrompt() {
@@ -1649,7 +1579,7 @@
 
         // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🎯 NEW UX VERSION LOADED - v2.0 Clean Interface');
+            console.log('🎯 CLEAN UX VERSION LOADED - No limitations shown!');
             detectInstallation();
             initGame();
         });
