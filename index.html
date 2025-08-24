@@ -742,7 +742,7 @@
         </div>
 
         <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9rem;">
-            Made by Yo <span id="tipEmoji" style="cursor: pointer; font-size: 1.2rem;" title="Tip the creator">✌</span>
+            Made by Yo <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-size: 1.2rem;" title="Tip the creator">💰</a>
         </div>
     </div>
 
@@ -1481,21 +1481,7 @@
                 }
             };
 
-            // Add event listener for the tip emoji
-            document.getElementById('tipEmoji').onclick = (e) => {
-                e.preventDefault();
-                const donationUrl = 'https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03';
-                console.log('Opening donation URL:', donationUrl);
-                
-                // Create a temporary link element and click it
-                const link = document.createElement('a');
-                link.href = donationUrl;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            };
+            // Tip link is now a direct HTML link for better mobile compatibility
         }
 
         // PWA Installation Logic
