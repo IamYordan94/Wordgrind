@@ -1595,11 +1595,28 @@
             return !isInstalled;
         }
 
+        // Cache for consistent word sets per level
+        const limitedWordsCache = {};
+        
         function getLimitedWords(words) {
             if (!shouldLimitWords()) return words;
             
-            // Shuffle and pick common words instead of first 30 alphabetically
-            const shuffled = [...words].sort(() => Math.random() - 0.5);
+            const wordLength = words.length > 0 ? words[0].word.length : 0;
+            
+            // Use cached version if available
+            if (limitedWordsCache[wordLength]) {
+                return limitedWordsCache[wordLength];
+            }
+            
+            // Create deterministic seed based on word length for consistent selection
+            const seed = wordLength * 12345;
+            const seededRandom = (function(seed) {
+                let x = Math.sin(seed) * 10000;
+                return x - Math.floor(x);
+            });
+            
+            // Shuffle with seeded random for consistency
+            const shuffled = [...words].sort(() => seededRandom(seed + Math.random()));
             
             // Prioritize shorter words (more common) and those with definitions
             const prioritized = shuffled.sort((a, b) => {
@@ -1614,7 +1631,10 @@
                 return a.word.length - b.word.length;
             });
             
-            return prioritized.slice(0, WORDS_PER_LEVEL_LIMIT);
+            // Cache the result for consistency
+            const limited = prioritized.slice(0, WORDS_PER_LEVEL_LIMIT);
+            limitedWordsCache[wordLength] = limited;
+            return limited;
         }
 
         function showInstallPrompt() {
