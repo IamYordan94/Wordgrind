@@ -411,30 +411,9 @@
             background-color: rgba(255,255,255,0.1);
         }
 
-        .limited-access-info {
-            background-color: #d4a953;
-            color: black;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
-            font-weight: bold;
-        }
+        /* Removed limitation display from new UX */
 
-        .word-item.locked {
-            background-color: #666;
-            color: #999;
-            cursor: not-allowed;
-            position: relative;
-        }
-
-        .word-item.locked::after {
-            content: "🔒";
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+        /* Removed locked word styling from new UX */
 
         .scrambled-letters {
             background-color: #333;
@@ -653,7 +632,7 @@
     <div class="container">
         <div class="header-section">
             <h1>Progressive Word Grind</h1>
-            <button class="permanent-download-btn" id="permanentDownloadBtn" title="Install app for offline play">📱 Download App</button>
+            <button class="permanent-download-btn" id="permanentDownloadBtn" title="Add to Home Screen">⬇️</button>
         </div>
 
         <div class="level-selector" id="levelSelector">
@@ -699,15 +678,8 @@
             <div class="hint-display" id="hintDisplay"></div>
         </div>
 
-        <!-- Install Prompt -->
-        <div class="install-section" id="installSection">
-            <div class="install-prompt">
-                <h3>🎮 Download App</h3>
-                <p>Install to access all words and play offline!</p>
-                <button class="install-btn" id="installBtn">Download App</button>
-                <button class="install-btn secondary" id="dismissInstall">Hide</button>
-            </div>
-        </div>
+        <!-- Hidden install section -->
+        <div class="install-section" id="installSection" style="display: none;"></div>
 
         <div class="game-content">
             <div class="left-section">
@@ -1096,24 +1068,8 @@
             const wordLength = currentLevel + 1;
             const found = foundWords[wordLength] || [];
             const grid = document.getElementById('foundWordsGrid');
-            const foundWordsBox = document.querySelector('.found-words');
 
             document.getElementById('foundWordsCount').textContent = found.length;
-
-            // Add limitation info if user isn't installed
-            let limitInfo = foundWordsBox.querySelector('.limited-access-info');
-            if (shouldLimitWords()) {
-                if (!limitInfo) {
-                    limitInfo = document.createElement('div');
-                    limitInfo.className = 'limited-access-info';
-                    foundWordsBox.insertBefore(limitInfo, document.getElementById('foundWordsGrid'));
-                }
-                const totalWords = gameWords[wordLength]?.length || 0;
-                const remaining = Math.max(0, WORDS_PER_LEVEL_LIMIT - found.length);
-                limitInfo.innerHTML = `Free Version: ${remaining}/${WORDS_PER_LEVEL_LIMIT} words remaining<br><small>Install app to access all ${totalWords} words!</small>`;
-            } else if (limitInfo) {
-                limitInfo.remove();
-            }
 
             grid.innerHTML = '';
             found.forEach(wordData => {
@@ -1124,17 +1080,7 @@
                 grid.appendChild(wordElement);
             });
 
-            // Show locked words if limited
-            if (shouldLimitWords()) {
-                const allWords = gameWords[wordLength] || [];
-                const lockedWords = allWords.slice(WORDS_PER_LEVEL_LIMIT);
-                lockedWords.slice(0, 10).forEach(() => { // Show 10 locked slots
-                    const lockedElement = document.createElement('div');
-                    lockedElement.className = 'word-item locked';
-                    lockedElement.textContent = '???';
-                    grid.appendChild(lockedElement);
-                });
-            }
+            // No locked words display in new UX design
 
             // Check if should show install prompt
             setTimeout(showInstallPrompt, 1000);
@@ -1201,10 +1147,7 @@
                 attempt.word.toLowerCase() === word.toLowerCase() && attempt.level === currentLevel
             );
             
-            // Debug logging
-            console.log(`Checking word "${word}" at level ${currentLevel}`);
-            console.log('Current attemptedWords:', attemptedWords.filter(a => a.level === currentLevel));
-            console.log('Already attempted?', alreadyAttempted);
+            // Clean duplicate checking
 
             if (alreadyAttempted) {
                 // Check if the word is valid to determine color feedback
@@ -1258,11 +1201,10 @@
                     updateProgress();
                     updateUnlockInfo();
 
-                    // Check if level complete (based on limited set for free users)
-                    const totalWords = limitedWords.length;
-                    if (foundWords[wordLength].length >= totalWords) {
+                    // Check if reached 30 words limit for free users
+                    if (shouldLimitWords() && foundWords[wordLength].length === 30) {
                         setTimeout(() => {
-                            showMessage(`🎉 Level ${currentLevel} Complete! All ${totalWords} words found!`, 'success');
+                            showThirtyWordMessage();
                         }, 1000);
                     }
                 }
@@ -1478,9 +1420,8 @@
                     currentLevel = progress.currentLevel || 1;
                     foundWords = progress.foundWords || {};
                     
-                    // COMPLETELY RESET attempted words to fix duplicate bug
+                    // Reset attempted words to fix duplicate bug
                     attemptedWords = [];
-                    console.log('Reset attemptedWords to fix duplicate bug');
                 }
             } catch (error) {
                 console.error('Error loading progress:', error);
@@ -1534,14 +1475,7 @@
                 }
             };
 
-            document.getElementById('installBtn').onclick = installHandler;
             document.getElementById('permanentDownloadBtn').onclick = installHandler;
-
-            document.getElementById('dismissInstall').onclick = () => {
-                document.getElementById('installSection').style.display = 'none';
-                // Show again after finding 20 more words
-                localStorage.setItem('installDismissed', Date.now());
-            };
 
             // Close modals on outside click
             window.onclick = (event) => {
@@ -1665,14 +1599,26 @@
 
         function showInstallPrompt() {
             console.log('showInstallPrompt called, isInstalled:', isInstalled);
-            // Install section is now always visible unless user is already installed
+            // Hide download button if installed
             if (isInstalled) {
                 console.log('Hiding install elements because app is installed');
-                document.getElementById('installSection').style.display = 'none';
                 document.getElementById('permanentDownloadBtn').style.display = 'none';
-            } else {
-                console.log('Showing install elements because app is not installed');
             }
+        }
+        
+        function showThirtyWordMessage() {
+            const message = `🎉 Amazing! You've found 30 words on this level! 
+            
+            💡 **Want to find ALL words?** Try another level or add this game to your home screen for unlimited access!
+            
+            📱 **How to install:**
+            • **iPhone/iPad**: Tap the Share button (□) → "Add to Home Screen"
+            • **Android**: Tap the menu (⋮) → "Add to Home Screen" 
+            • **Desktop**: Look for the install icon (⬇️) in your address bar
+            
+            Once installed, you'll have unlimited words on every level! 🚀`;
+            
+            alert(message);
         }
 
         function hasHitWordLimit() {
