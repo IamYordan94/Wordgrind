@@ -1040,20 +1040,7 @@
 
             document.getElementById('foundWordsCount').textContent = found.length;
 
-            // Add limitation info if user isn't installed
-            let limitInfo = foundWordsBox.querySelector('.limited-access-info');
-            if (shouldLimitWords()) {
-                if (!limitInfo) {
-                    limitInfo = document.createElement('div');
-                    limitInfo.className = 'limited-access-info';
-                    foundWordsBox.insertBefore(limitInfo, document.getElementById('foundWordsGrid'));
-                }
-                const totalWords = gameWords[wordLength]?.length || 0;
-                const remaining = Math.max(0, WORDS_PER_LEVEL_LIMIT - found.length);
-                limitInfo.innerHTML = `Free Version: ${remaining}/${WORDS_PER_LEVEL_LIMIT} words remaining<br><small>Install app to access all ${totalWords} words!</small>`;
-            } else if (limitInfo) {
-                limitInfo.remove();
-            }
+            // No limitation info in clean UX
 
             grid.innerHTML = '';
             found.forEach(wordData => {
@@ -1064,17 +1051,7 @@
                 grid.appendChild(wordElement);
             });
 
-            // Show locked words if limited
-            if (shouldLimitWords()) {
-                const allWords = gameWords[wordLength] || [];
-                const lockedWords = allWords.slice(WORDS_PER_LEVEL_LIMIT);
-                lockedWords.slice(0, 10).forEach(() => { // Show 10 locked slots
-                    const lockedElement = document.createElement('div');
-                    lockedElement.className = 'word-item locked';
-                    lockedElement.textContent = '???';
-                    grid.appendChild(lockedElement);
-                });
-            }
+            // No locked words display in clean UX
 
             // Check if should show install prompt
             setTimeout(showInstallPrompt, 1000);
@@ -1327,7 +1304,18 @@
             // Save progress
             saveProgress();
 
-            // Show success message
+            // Show word in hint display AND success message
+            const hintDisplay = document.getElementById('hintDisplay');
+            hintDisplay.innerHTML = `
+                <strong>🎁 Revealed Word:</strong><br>
+                <div style="font-size: 1.5em; color: #6aaa64; font-weight: bold; margin: 10px 0;">
+                    ${randomWord.word.toUpperCase()}
+                </div>
+                <small>Definition: "${randomWord.definition}"</small><br>
+                <small>Part of speech: ${randomWord.pos}</small>
+            `;
+            hintDisplay.style.display = 'block';
+            
             showMessage(`🎁 Ad complete! Revealed word: "${randomWord.word.toUpperCase()}"`, 'success');
         }
 
@@ -1510,6 +1498,12 @@
 
         function getLimitedWords(words) {
             if (!shouldLimitWords()) return words;
+            
+            // Safety check - ensure words is an array
+            if (!Array.isArray(words)) {
+                console.error('getLimitedWords called with non-array:', words);
+                return [];
+            }
             
             // Shuffle and pick common words instead of first 30 alphabetically
             const shuffled = [...words].sort(() => Math.random() - 0.5);
