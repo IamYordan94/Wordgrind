@@ -1164,8 +1164,7 @@
 
             // Check if valid word
             const allValidWords = gameWords[wordLength] || [];
-            const validWords = getLimitedWords(allValidWords);
-            const wordData = validWords.find(w => w.word.toLowerCase() === word);
+            const wordData = allValidWords.find(w => w.word.toLowerCase() === word);
 
             if (!wordData) {
                 // Invalid word
@@ -1509,8 +1508,27 @@
                 referrer: document.referrer
             });
             
+            // Additional robust detection methods
+            const isInWebAppChrome = window.matchMedia('(display-mode: standalone)').matches;
+            const isPWAContext = window.outerHeight === window.innerHeight; // No browser UI
+            const hasReducedUI = (window.outerHeight - window.innerHeight) < 40; // Minimal browser UI
+            const isWebAppMode = window.navigator.standalone === true; // iOS specific
+            const hasNoAddressBar = window.location !== window.parent.location; // Frame detection
+            
+            console.log('Additional detection:', {
+                isInWebAppChrome,
+                isPWAContext,
+                hasReducedUI,
+                isWebAppMode,
+                hasNoAddressBar,
+                outerHeight: window.outerHeight,
+                innerHeight: window.innerHeight,
+                heightDiff: window.outerHeight - window.innerHeight
+            });
+            
             // Check if any installation indicators are true
-            if (isStandalone || isIOS || isAndroidApp || isMinimalUI || isFullscreen) {
+            if (isStandalone || isIOS || isAndroidApp || isMinimalUI || isFullscreen || 
+                isInWebAppChrome || isPWAContext || hasReducedUI || isWebAppMode) {
                 isInstalled = true;
                 console.log('✅ App detected as INSTALLED');
                 
