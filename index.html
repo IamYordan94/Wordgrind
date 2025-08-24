@@ -1273,7 +1273,8 @@
         function revealRandomWord() {
             const wordLength = currentLevel + 1;
             // Use LIMITED words for free users to ensure hints show valid words
-            const playableWords = shouldLimitWords() ? getLimitedWords(wordLength) : gameWords[wordLength] || [];
+            const allWords = gameWords[wordLength] || [];
+            const playableWords = shouldLimitWords() ? getLimitedWords(allWords) : allWords;
             const found = foundWords[wordLength] || [];
             const foundWordsList = found.map(w => w.word.toLowerCase());
 
