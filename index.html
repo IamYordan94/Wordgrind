@@ -1200,6 +1200,11 @@
             const alreadyAttempted = attemptedWords.some(attempt => 
                 attempt.word.toLowerCase() === word.toLowerCase() && attempt.level === currentLevel
             );
+            
+            // Debug logging
+            console.log(`Checking word "${word}" at level ${currentLevel}`);
+            console.log('Current attemptedWords:', attemptedWords.filter(a => a.level === currentLevel));
+            console.log('Already attempted?', alreadyAttempted);
 
             if (alreadyAttempted) {
                 // Check if the word is valid to determine color feedback
@@ -1472,15 +1477,10 @@
                     const progress = JSON.parse(saved);
                     currentLevel = progress.currentLevel || 1;
                     foundWords = progress.foundWords || {};
-                    attemptedWords = progress.attemptedWords || [];
                     
-                    // Clean up any duplicate or invalid entries
-                    attemptedWords = attemptedWords.filter((attempt, index, self) => 
-                        index === self.findIndex(a => 
-                            a.word.toLowerCase() === attempt.word.toLowerCase() && 
-                            a.level === attempt.level
-                        )
-                    );
+                    // COMPLETELY RESET attempted words to fix duplicate bug
+                    attemptedWords = [];
+                    console.log('Reset attemptedWords to fix duplicate bug');
                 }
             } catch (error) {
                 console.error('Error loading progress:', error);
