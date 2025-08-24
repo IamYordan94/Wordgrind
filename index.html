@@ -976,25 +976,64 @@
                 
                 // Initialize new ad
                 (adsbygoogle = window.adsbygoogle || []).push({});
-                showMessage('📺 Real AdSense ad loaded! Please watch and then click the button below.', 'info');
                 
-                // Set up the "watched ad" button  
-                const watchedBtn = document.getElementById('adWatchedBtn');
-                watchedBtn.onclick = () => {
-                    adContainer.style.display = 'none';
-                    callback();
-                    // Set cooldown to prevent spam
-                    hintCooldown = true;
-                    setTimeout(() => {
-                        hintCooldown = false;
+                // Check if ads are actually loading after a short delay
+                setTimeout(() => {
+                    const adContent = existingAd ? existingAd.innerHTML : '';
+                    
+                    if (!adContent || adContent.trim() === '') {
+                        // AdSense not ready yet - show getting ready message
+                        adContainer.innerHTML = `
+                            <p style="color: #d4a953; font-weight: bold; margin-bottom: 15px;">
+                                ⏳ AdSense Status: "Getting Ready"<br>
+                                <small>Your account is approved! Real ads will show in 24-48 hours.</small>
+                            </p>
+                            <div style="width: 320px; height: 250px; margin: 0 auto; background: linear-gradient(45deg, #333, #444); border: 2px dashed #666; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                <div style="text-align: center; color: #999;">
+                                    <div style="font-size: 48px;">📺</div>
+                                    <div>AdSense Getting Ready...</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">Simulating ad experience</div>
+                                </div>
+                            </div>
+                            <button id="adWatchedBtn" style="margin-top: 15px; padding: 10px 20px; background: #d4a953; color: black; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ Continue after ad simulation</button>
+                        `;
+                        showMessage('⏳ AdSense approved but still getting ready. Simulating ad experience...', 'info');
+                    } else {
+                        showMessage('📺 Real AdSense ad loaded! Please watch and then click the button below.', 'info');
+                    }
+                    
+                    // Set up the "watched ad" button  
+                    const watchedBtn = document.getElementById('adWatchedBtn');
+                    watchedBtn.onclick = () => {
+                        adContainer.style.display = 'none';
+                        callback();
+                        // Set cooldown to prevent spam
+                        hintCooldown = true;
+                        setTimeout(() => {
+                            hintCooldown = false;
+                            updateHintButtonStates();
+                        }, 30000); // 30 second cooldown
                         updateHintButtonStates();
-                    }, 30000); // 30 second cooldown
-                    updateHintButtonStates();
-                };
+                    };
+                }, 1000); // Give AdSense 1 second to load
                 
             } catch (error) {
-                console.log('AdSense loading, using fallback for now...');
-                showMessage('📺 Ad loading... Please wait and click when ready.', 'warning');
+                console.log('AdSense not ready, using simulation...');
+                adContainer.innerHTML = `
+                    <p style="color: #d4a953; font-weight: bold; margin-bottom: 15px;">
+                        ⏳ AdSense Status: "Getting Ready"<br>
+                        <small>Your account is approved! Real ads will show in 24-48 hours.</small>
+                    </p>
+                    <div style="width: 320px; height: 250px; margin: 0 auto; background: linear-gradient(45deg, #333, #444); border: 2px dashed #666; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                        <div style="text-align: center; color: #999;">
+                            <div style="font-size: 48px;">📺</div>
+                            <div>AdSense Getting Ready...</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Simulating ad experience</div>
+                        </div>
+                    </div>
+                    <button id="adWatchedBtn" style="margin-top: 15px; padding: 10px 20px; background: #d4a953; color: black; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ Continue after ad simulation</button>
+                `;
+                showMessage('⏳ AdSense approved but still getting ready. Simulating ad experience...', 'warning');
                 const watchedBtn = document.getElementById('adWatchedBtn');
                 watchedBtn.onclick = () => {
                     adContainer.style.display = 'none';
