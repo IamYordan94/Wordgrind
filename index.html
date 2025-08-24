@@ -1196,9 +1196,9 @@
                 return;
             }
 
-            // Check if already attempted
+            // Check if already attempted (case insensitive)
             const alreadyAttempted = attemptedWords.some(attempt => 
-                attempt.word === word && attempt.level === currentLevel
+                attempt.word.toLowerCase() === word.toLowerCase() && attempt.level === currentLevel
             );
 
             if (alreadyAttempted) {
@@ -1302,7 +1302,7 @@
 
         function addAttempt(word, type) {
             attemptedWords.unshift({
-                word: word,
+                word: word.toLowerCase(),
                 level: currentLevel,
                 type: type,
                 timestamp: Date.now()
@@ -1473,6 +1473,14 @@
                     currentLevel = progress.currentLevel || 1;
                     foundWords = progress.foundWords || {};
                     attemptedWords = progress.attemptedWords || [];
+                    
+                    // Clean up any duplicate or invalid entries
+                    attemptedWords = attemptedWords.filter((attempt, index, self) => 
+                        index === self.findIndex(a => 
+                            a.word.toLowerCase() === attempt.word.toLowerCase() && 
+                            a.level === attempt.level
+                        )
+                    );
                 }
             } catch (error) {
                 console.error('Error loading progress:', error);
