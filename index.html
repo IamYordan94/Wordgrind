@@ -1031,8 +1031,7 @@
             if (hintCooldown) return;
 
             const wordLength = currentLevel + 1;
-            const allWords = gameWords[wordLength] || [];
-            const availableWords = getLimitedWords(allWords);
+            const availableWords = gameWords[wordLength] || [];
             const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
             const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
 
@@ -1060,8 +1059,7 @@
             if (hintCooldown || currentLevel + 1 < 4) return;
 
             const wordLength = currentLevel + 1;
-            const allWords = gameWords[wordLength] || [];
-            const availableWords = getLimitedWords(allWords);
+            const availableWords = gameWords[wordLength] || [];
             const foundWordsSet = new Set((foundWords[wordLength] || []).map(w => w.word.toLowerCase()));
             const unfoundWords = availableWords.filter(w => !foundWordsSet.has(w.word.toLowerCase()));
 
@@ -1208,10 +1206,12 @@
                 return;
             }
 
-            // Get the appropriate word set (limited for non-installed users)
+            // Check if valid word (accept ALL dictionary words)
             const allValidWords = gameWords[wordLength] || [];
-            const validWords = getLimitedWords(allValidWords);
-            const wordData = validWords.find(w => w.word.toLowerCase() === word);
+            const wordData = allValidWords.find(w => w.word.toLowerCase() === word);
+            
+            // Get limited set only for display/completion checking
+            const limitedWords = getLimitedWords(allValidWords);
 
             if (!wordData) {
                 // Invalid word
@@ -1243,9 +1243,9 @@
                     updateProgress();
                     updateUnlockInfo();
 
-                    // Check if level complete
-                    const totalWords = validWords.length;
-                    if (foundWords[wordLength].length === totalWords) {
+                    // Check if level complete (based on limited set for free users)
+                    const totalWords = limitedWords.length;
+                    if (foundWords[wordLength].length >= totalWords) {
                         setTimeout(() => {
                             showMessage(`🎉 Level ${currentLevel} Complete! All ${totalWords} words found!`, 'success');
                         }, 1000);
@@ -1356,8 +1356,7 @@
 
         function revealRandomWord() {
             const wordLength = currentLevel + 1;
-            const allWords = gameWords[wordLength] || [];
-            const availableWords = getLimitedWords(allWords);
+            const availableWords = gameWords[wordLength] || [];
             const found = foundWords[wordLength] || [];
             const foundWordsList = found.map(w => w.word.toLowerCase());
 
