@@ -758,7 +758,7 @@
 
     <!-- Creator credit with donation link -->
     <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9rem;">
-        <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" style="text-decoration: none; color: #888;">Made by Yo ✌ 🥚</a>
+        <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" style="text-decoration: none; color: #6aaa64; cursor: pointer; border-bottom: 1px dotted #6aaa64;">Made by Yo ✌️ 🥚</a>
     </div>
 
     <script>
@@ -1202,8 +1202,17 @@
             );
 
             if (alreadyAttempted) {
-                showMessage('You already tried this word!', 'warning');
-                showWordieFeedback(word, 'duplicate');
+                // Check if the word is valid to determine color feedback
+                const allValidWords = gameWords[wordLength] || [];
+                const wordData = allValidWords.find(w => w.word.toLowerCase() === word);
+                
+                if (wordData) {
+                    showMessage('You already tried this valid word!', 'warning');
+                    showWordieFeedback(word, 'duplicate-valid');
+                } else {
+                    showMessage('You already tried this invalid word!', 'warning');
+                    showWordieFeedback(word, 'duplicate-invalid');
+                }
                 return;
             }
 
@@ -1272,10 +1281,19 @@
 
                 if (type === 'valid') {
                     letterDiv.classList.add('correct');
+                } else if (type === 'duplicate-valid') {
+                    // Alternating yellow and green for repeated valid words
+                    if (i % 2 === 0) {
+                        letterDiv.classList.add('present'); // Yellow
+                    } else {
+                        letterDiv.classList.add('correct'); // Green
+                    }
+                } else if (type === 'duplicate-invalid') {
+                    letterDiv.classList.add('present'); // All yellow for repeated invalid words
                 } else if (type === 'duplicate') {
-                    letterDiv.classList.add('present');
+                    letterDiv.classList.add('present'); // Standard duplicate (yellow)
                 } else {
-                    letterDiv.classList.add('absent');
+                    letterDiv.classList.add('absent'); // Red for invalid
                 }
 
                 feedback.appendChild(letterDiv);
