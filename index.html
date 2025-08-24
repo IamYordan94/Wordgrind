@@ -911,9 +911,6 @@
 
             currentLevel = level;
             const wordLength = level + 1;
-            
-            // Clear word cache to prevent stale data
-            Object.keys(limitedWordsCache).forEach(key => delete limitedWordsCache[key]);
 
             // Update UI
             document.getElementById('currentLevel').textContent = level;
