@@ -683,6 +683,18 @@
             <button class="hint-btn" id="hintDefinitionBtn">Watch Ad for Definition</button>
             <button class="hint-btn" id="hintScrambledBtn" disabled>Watch Ad for Scrambled Letters</button>
             <button class="hint-btn" id="hintRevealBtn">Watch Ad to Reveal Word</button>
+            
+            <!-- Ad Container -->
+            <div class="ad-container" id="adContainer" style="display: none;">
+                <p style="text-align: center; margin-bottom: 10px;">Watch this ad to unlock your hint:</p>
+                <ins class="adsbygoogle"
+                     style="display:block; width: 300px; height: 250px; margin: 0 auto;"
+                     data-ad-client="ca-pub-9007185070437670"
+                     data-ad-slot="auto"
+                     data-ad-format="rectangle"></ins>
+                <button id="adWatchedBtn" style="margin-top: 10px; padding: 8px 16px; background: #4b79a1; color: white; border: none; border-radius: 4px; cursor: pointer;">I watched the ad - Get my hint!</button>
+            </div>
+            
             <div class="hint-display" id="hintDisplay"></div>
         </div>
 
@@ -946,23 +958,54 @@
             }
         }
 
-        function simulateAdViewing(callback) {
-            // Simulate ad viewing with a loading state
-            showMessage('Loading ad...', 'warning');
+        function showRealAd(callback) {
+            // Show real Google AdSense ad
+            const adContainer = document.getElementById('adContainer');
+            const hintDisplay = document.getElementById('hintDisplay');
+            
+            // Hide hint display and show ad container
+            hintDisplay.style.display = 'none';
+            adContainer.style.display = 'block';
+            
+            // Initialize the ad
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                showMessage('Ad loaded! Please watch and then click the button below.', 'info');
+            } catch (error) {
+                console.log('AdSense not ready, using fallback');
+                showMessage('Loading ad...', 'warning');
+                // Fallback for development/testing
+                setTimeout(() => {
+                    simulateAdComplete(callback);
+                }, 3000);
+                return;
+            }
+            
+            // Set up the "I watched the ad" button
+            document.getElementById('adWatchedBtn').onclick = () => {
+                simulateAdComplete(callback);
+            };
+        }
+        
+        function simulateAdComplete(callback) {
+            const adContainer = document.getElementById('adContainer');
+            const hintDisplay = document.getElementById('hintDisplay');
+            
+            // Hide ad container and show hint
+            adContainer.style.display = 'none';
+            hintDisplay.style.display = 'block';
+            
+            showMessage('Thanks for watching! Here\'s your hint:', 'success');
+            callback();
+
+            // Set cooldown to prevent spam
+            hintCooldown = true;
+            updateHintButtonStates();
 
             setTimeout(() => {
-                showMessage('Ad completed! Here\'s your hint:', 'success');
-                callback();
-
-                // Set cooldown to prevent spam
-                hintCooldown = true;
-                setTimeout(() => {
-                    hintCooldown = false;
-                    updateHintButtonStates();
-                }, 30000); // 30 second cooldown
-
+                hintCooldown = false;
                 updateHintButtonStates();
-            }, 3000); // 3 second simulated ad
+            }, 30000); // 30-second cooldown
         }
 
         function updateHintButtonStates() {
@@ -996,7 +1039,7 @@
                 return;
             }
 
-            simulateAdViewing(() => {
+            showRealAd(() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
@@ -1024,7 +1067,7 @@
                 return;
             }
 
-            simulateAdViewing(() => {
+            showRealAd(() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
@@ -1302,7 +1345,7 @@
                 return;
             }
 
-            simulateAdViewing(() => {
+            showRealAd(() => {
                 revealRandomWord();
             });
         }
