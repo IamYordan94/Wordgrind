@@ -1309,7 +1309,13 @@
                 letterDiv.textContent = word[i].toUpperCase();
 
                 if (type === 'valid') {
-                    letterDiv.classList.add('correct');
+                    // Split letters: first half (rounded up) green, second half yellow
+                    const greenCount = Math.ceil(word.length / 2);
+                    if (i < greenCount) {
+                        letterDiv.classList.add('correct'); // Green
+                    } else {
+                        letterDiv.classList.add('present'); // Yellow
+                    }
                 } else if (type === 'duplicate') {
                     letterDiv.classList.add('present');
                 } else {
