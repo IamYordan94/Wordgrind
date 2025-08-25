@@ -748,12 +748,12 @@
     <script>
         // Game configuration
         const MAX_LEVELS = 6; // 2-letter to 7-letter words
-        const WORDS_PER_LEVEL_LIMIT = 30; // Limit for non-installed users
+        const WORDS_PER_LEVEL_LIMIT = 30; // Limit for browser users (unlocked when added to home screen)
         let currentLevel = 1;
         let foundWords = {};
         let attemptedWords = [];
         let gameWords = {};
-        let isInstalled = false;
+        let isAddedToHomeScreen = false;
         let deferredPrompt = null;
 
         // Grammar explanations
@@ -1151,8 +1151,8 @@
 
             // No locked words display in clean UX
 
-            // Check if should show install prompt
-            setTimeout(showInstallPrompt, 1000);
+            // Check if should show add to home screen prompt
+            setTimeout(showAddToHomeScreenPrompt, 1000);
         }
 
         function updateProgress() {
@@ -1520,8 +1520,8 @@
             document.getElementById('hintScrambledBtn').onclick = showScrambledHint;
             document.getElementById('hintRevealBtn').onclick = showRevealWordHint;
 
-            // Install buttons
-            const installHandler = async () => {
+            // Add to home screen handler
+            const addToHomeScreenHandler = async () => {
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
@@ -1530,11 +1530,11 @@
                     }
                 } else {
                     // Fallback instructions
-                    alert('To install:\n• On iOS: Tap Share button → Add to Home Screen\n• On Android: Tap menu → Add to Home Screen\n• On Desktop: Look for install icon in address bar');
+                    alert('To add to home screen:\n• On iOS: Tap Share button → Add to Home Screen\n• On Android: Tap menu → Add to Home Screen\n• On Desktop: Look for the add icon in address bar');
                 }
             };
 
-            document.getElementById('permanentDownloadBtn').onclick = installHandler;
+            document.getElementById('permanentDownloadBtn').onclick = addToHomeScreenHandler;
 
             // Close modals on outside click
             window.onclick = (event) => {
@@ -1552,11 +1552,11 @@
             // Tip link is now a direct HTML link for better mobile compatibility
         }
 
-        // PWA Installation Logic
+        // PWA Home Screen Detection Logic  
         function detectInstallation() {
-            console.log('Checking installation status...');
+            console.log('Checking if app is running from home screen...');
             
-            // Multiple ways to detect if PWA is installed
+            // Multiple ways to detect if PWA is added to home screen
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
             const isIOS = window.navigator.standalone;
             const isAndroidApp = document.referrer.includes('android-app://');
@@ -1577,22 +1577,22 @@
             
             // Check if any installation indicators are true
             if (isStandalone || isIOS || isAndroidApp || isMinimalUI || isFullscreen) {
-                isInstalled = true;
-                console.log('✅ App detected as INSTALLED');
+                isAddedToHomeScreen = true;
+                console.log('✅ App detected as ADDED TO HOME SCREEN');
                 
                 // Immediately update UI
                 setTimeout(() => {
                     updateFoundWordsDisplay();
                     updateUnlockInfo();
-                    showInstallPrompt();
+                    showAddToHomeScreenPrompt();
                 }, 100);
             } else {
-                console.log('❌ App detected as NOT INSTALLED');
+                console.log('❌ App detected as RUNNING IN BROWSER');
             }
         }
 
         function shouldLimitWords() {
-            return !isInstalled;
+            return !isAddedToHomeScreen;
         }
 
         function getLimitedWords(words) {
@@ -1623,11 +1623,11 @@
             return prioritized.slice(0, WORDS_PER_LEVEL_LIMIT);
         }
 
-        function showInstallPrompt() {
-            console.log('showInstallPrompt called, isInstalled:', isInstalled);
-            // Hide download button if installed
-            if (isInstalled) {
-                console.log('Hiding install elements because app is installed');
+        function showAddToHomeScreenPrompt() {
+            console.log('showAddToHomeScreenPrompt called, isAddedToHomeScreen:', isAddedToHomeScreen);
+            // Hide add button if already added
+            if (isAddedToHomeScreen) {
+                console.log('Hiding add button because app is on home screen');
                 document.getElementById('permanentDownloadBtn').style.display = 'none';
             }
         }
@@ -1637,12 +1637,12 @@
             
             💡 **Want to find ALL words?** Try another level or add this game to your home screen for unlimited access!
             
-            📱 **How to install:**
+            📱 **How to add to home screen:**
             • **iPhone/iPad**: Tap the Share button (□) → "Add to Home Screen"
             • **Android**: Tap the menu (⋮) → "Add to Home Screen" 
-            • **Desktop**: Look for the install icon (⬇️) in your address bar
+            • **Desktop**: Look for the add icon (⬇️) in your address bar
             
-            Once installed, you'll have unlimited words on every level! 🚀`;
+            Once added to your home screen, you'll have unlimited words on every level! 🚀`;
             
             alert(message);
         }
@@ -1664,7 +1664,7 @@
         });
 
         window.addEventListener('appinstalled', () => {
-            isInstalled = true;
+            isAddedToHomeScreen = true;
             document.getElementById('installSection').style.display = 'none';
             updateFoundWordsDisplay();
             updateUnlockInfo();
