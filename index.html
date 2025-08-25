@@ -1235,10 +1235,15 @@
                 return;
             }
 
-            // Check if valid word
+            // Check if valid word - include revealed hint word
             const allValidWords = gameWords[wordLength] || [];
             const validWords = getLimitedWords(allValidWords);
-            const wordData = validWords.find(w => w.word.toLowerCase() === word);
+            let wordData = validWords.find(w => w.word.toLowerCase() === word);
+            
+            // Also check if this is a revealed hint word (always valid when revealed)
+            if (!wordData && currentHintWord && currentHintWord.word.toLowerCase() === word) {
+                wordData = currentHintWord;
+            }
 
             if (!wordData) {
                 // Invalid word
@@ -1261,7 +1266,14 @@
                     }
                     foundWords[wordLength].push(wordData);
 
-                    showMessage(`Great! "${word.toUpperCase()}" is a valid word!`, 'success');
+                    // Clear hint word if this was the revealed word
+                    if (currentHintWord && currentHintWord.word.toLowerCase() === word) {
+                        showMessage(`🎁 Perfect! You typed the revealed word "${word.toUpperCase()}" correctly!`, 'success');
+                        currentHintWord = null; // Clear the hint word
+                    } else {
+                        showMessage(`Great! "${word.toUpperCase()}" is a valid word!`, 'success');
+                    }
+                    
                     showWordieFeedback(word, 'valid');
                     addAttempt(word, 'valid');
 
@@ -1402,19 +1414,9 @@
             // Pick random undiscovered word from valid set
             const randomWord = undiscoveredWords[Math.floor(Math.random() * undiscoveredWords.length)];
 
-            // Add it to found words
-            if (!foundWords[wordLength]) {
-                foundWords[wordLength] = [];
-            }
-            foundWords[wordLength].push(randomWord);
-
-            // Update displays
-            updateFoundWordsDisplay();
-            updateProgress();
-            updateUnlockInfo();
-
-            // Save progress
-            saveProgress();
+            // DON'T add it to found words yet - let user type it first
+            // Store it for validation when typed
+            currentHintWord = randomWord;
 
             // Show word in hint display AND success message
             const hintDisplay = document.getElementById('hintDisplay');
@@ -1424,11 +1426,12 @@
                     ${randomWord.word.toUpperCase()}
                 </div>
                 <small>Definition: "${randomWord.definition}"</small><br>
-                <small>Part of speech: ${randomWord.pos}</small>
+                <small>Part of speech: ${randomWord.pos}</small><br>
+                <small style="color: #d4a953;">💡 Type this word to add it to your collection!</small>
             `;
             hintDisplay.style.display = 'block';
             
-            showMessage(`🎁 Ad complete! Revealed word: "${randomWord.word.toUpperCase()}"`, 'success');
+            showMessage(`🎁 Revealed: "${randomWord.word.toUpperCase()}" - Type it to collect!`, 'success');
         }
 
         function showMessage(text, type = '') {
