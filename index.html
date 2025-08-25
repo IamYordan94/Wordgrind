@@ -751,6 +751,16 @@
             </div>
         </div>
 
+        <!-- Level Complete Modal -->
+        <div id="levelCompleteModal" class="modal">
+            <div class="modal-content" style="text-align: center; max-width: 400px;">
+                <span class="close" id="closeLevelCompleteModal">&times;</span>
+                <h2 style="color: #6aaa64; margin-bottom: 20px;">🎉 LEVEL COMPLETE! 🎉</h2>
+                <div id="levelCompleteContent"></div>
+                <button onclick="closeLevelCompleteModal()" style="background: #6aaa64; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 1.1em; margin-top: 20px; cursor: pointer;">Continue Playing!</button>
+            </div>
+        </div>
+
     </div>
 
     <!-- Creator credit with donation link -->
@@ -970,7 +980,7 @@
                     setTimeout(() => {
                         hintCooldown = false;
                         updateHintButtonStates();
-                    }, 30000);
+                    }, 3000); // 3 second cooldown for max revenue
                 }, 3000);
                 return;
             }
@@ -1025,7 +1035,7 @@
                         setTimeout(() => {
                             hintCooldown = false;
                             updateHintButtonStates();
-                        }, 30000); // 30 second cooldown
+                        }, 3000); // 3 second cooldown for max revenue
                         updateHintButtonStates();
                     };
                 }, 1000); // Give AdSense 1 second to load
@@ -1055,7 +1065,7 @@
                     setTimeout(() => {
                         hintCooldown = false;
                         updateHintButtonStates();
-                    }, 30000);
+                    }, 3000); // 3 second cooldown for max revenue
                     updateHintButtonStates();
                 };
             }
@@ -1286,7 +1296,7 @@
                     const totalWords = validWords.length;
                     if (foundWords[wordLength].length === totalWords) {
                         setTimeout(() => {
-                            showMessage(`🎉 Level ${currentLevel} Complete! All ${totalWords} words found!`, 'success');
+                            showLevelCompleteModal(currentLevel, totalWords);
                         }, 1000);
                     }
                 }
@@ -1440,6 +1450,35 @@
             showMessage(`🎁 Revealed: "${randomWord.word.toUpperCase()}" - Type it to collect!`, 'success');
         }
 
+        function showLevelCompleteModal(level, totalWords) {
+            const modal = document.getElementById('levelCompleteModal');
+            const content = document.getElementById('levelCompleteContent');
+            
+            // Create congratulations content
+            content.innerHTML = `
+                <div style="font-size: 3em; margin: 20px 0;">🏆</div>
+                <h3 style="color: #6aaa64; margin: 15px 0;">
+                    Level ${level} Complete!
+                </h3>
+                <p style="color: #ccc; font-size: 1.1em; margin: 10px 0;">
+                    You found all <strong>${totalWords}</strong> words!
+                </p>
+                <div style="background: rgba(106, 170, 100, 0.1); padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p style="color: #6aaa64; margin: 5px 0;">🎯 Amazing word skills!</p>
+                    <p style="color: #6aaa64; margin: 5px 0;">💪 Ready for the next challenge?</p>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+            
+            // Also show the regular success message
+            showMessage(`🎉 Level ${level} Complete! All ${totalWords} words found!`, 'success');
+        }
+
+        function closeLevelCompleteModal() {
+            document.getElementById('levelCompleteModal').style.display = 'none';
+        }
+
         function showMessage(text, type = '') {
             const messageEl = document.getElementById('message');
             messageEl.textContent = text;
@@ -1558,16 +1597,23 @@
 
             document.getElementById('permanentDownloadBtn').onclick = addToHomeScreenHandler;
 
+            // Level Complete Modal handlers
+            document.getElementById('closeLevelCompleteModal').onclick = closeLevelCompleteModal;
+
             // Close modals on outside click
             window.onclick = (event) => {
                 const defModal = document.getElementById('definitionModal');
                 const grammarModal = document.getElementById('grammarModal');
+                const levelCompleteModal = document.getElementById('levelCompleteModal');
 
                 if (event.target === defModal) {
                     defModal.style.display = 'none';
                 }
                 if (event.target === grammarModal) {
                     grammarModal.style.display = 'none';
+                }
+                if (event.target === levelCompleteModal) {
+                    levelCompleteModal.style.display = 'none';
                 }
             };
 
