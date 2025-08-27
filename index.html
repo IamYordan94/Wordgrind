@@ -23,6 +23,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9007185070437670"
          crossorigin="anonymous"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9007185070437670",
+            enable_page_level_ads: true
+        });
+    </script>
     <style>
         * {
             box-sizing: border-box;
@@ -726,9 +732,10 @@
                 </div>
 
                 <div class="found-words">
-                    <h3 id="foundWordsHeader">Found Words<span id="foundWordsCount" style="display:none;">0</span>
+                    <h3 id="foundWordsHeader">Found Words
                         <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>
                     </h3>
+                    <span id="foundWordsCount" style="display:none;">0</span>
                     <div class="unlock-info" id="unlockInfo"></div>
                     <div class="words-grid" id="foundWordsGrid"></div>
                 </div>
@@ -1167,16 +1174,17 @@
             const grid = document.getElementById('foundWordsGrid');
             const foundWordsBox = document.querySelector('.found-words');
 
+            // Keep the hidden count element updated  
             document.getElementById('foundWordsCount').textContent = found.length;
-
+            
             // Always hide count for browser users - completely invisible
             if (shouldLimitWords()) {
-                document.getElementById('foundWordsHeader').innerHTML = `Found Words<span id="foundWordsCount" style="display:none;">${found.length}</span>
+                document.getElementById('foundWordsHeader').innerHTML = `Found Words
                     <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>`;
                 document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             } else {
                 // Always show count for home screen users
-                document.getElementById('foundWordsHeader').innerHTML = `Found Words (<span id="foundWordsCount">${found.length}</span>)
+                document.getElementById('foundWordsHeader').innerHTML = `Found Words (${found.length})
                     <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>`;
                 document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             }
@@ -1790,8 +1798,8 @@
 
         // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🎯 CLEAN UX VERSION v2.1 LOADED - Cache Bust 007 - All fixes applied!');
-            console.log('✅ 10-word limit active, honest language, real AdSense ready');
+            console.log('🎯 CLEAN UX VERSION v2.2 LOADED - Cache Bust 008 - Word count hidden + Auto AdSense!');
+            console.log('✅ 10-word limit active, honest language, auto AdSense ready');
             detectInstallation();
             initGame();
         });
