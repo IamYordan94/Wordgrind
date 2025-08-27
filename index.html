@@ -718,7 +718,7 @@
                 </div>
 
                 <div class="found-words">
-                    <h3>Found Words (<span id="foundWordsCount">0</span>)
+                    <h3 id="foundWordsHeader">Found Words<span id="foundWordsCount" style="display:none;">0</span>
                         <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>
                     </h3>
                     <div class="unlock-info" id="unlockInfo"></div>
@@ -1161,7 +1161,21 @@
 
             document.getElementById('foundWordsCount').textContent = found.length;
 
-            // No limitation info in clean UX
+            // Hide count for browser users until they hit limit
+            if (shouldLimitWords() && found.length < WORDS_PER_LEVEL_LIMIT) {
+                // Hide the count for browser users
+                document.getElementById('foundWordsHeader').innerHTML = `Found Words<span id="foundWordsCount" style="display:none;">${found.length}</span>
+                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>`;
+                document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
+            } else if (shouldLimitWords() && found.length >= WORDS_PER_LEVEL_LIMIT) {
+                // Show count with limit warning when limit reached
+                showWordCountDisplay();
+            } else if (!shouldLimitWords()) {
+                // Always show count for home screen users
+                document.getElementById('foundWordsHeader').innerHTML = `Found Words (<span id="foundWordsCount">${found.length}</span>)
+                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>`;
+                document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
+            }
 
             grid.innerHTML = '';
             found.forEach(wordData => {
@@ -1245,10 +1259,9 @@
                 return;
             }
 
-            // Check if valid word - include revealed hint word
+            // Check if valid word - ALWAYS check against full dictionary for validation
             const allValidWords = gameWords[wordLength] || [];
-            const validWords = getLimitedWords(allValidWords);
-            let wordData = validWords.find(w => w.word.toLowerCase() === word);
+            let wordData = allValidWords.find(w => w.word.toLowerCase() === word);
             
             // Also check if this is a revealed hint word (always valid when revealed)
             if (!wordData && currentHintWord && currentHintWord.word.toLowerCase() === word) {
@@ -1270,7 +1283,23 @@
                     showWordieFeedback(word, 'duplicate');
                     addAttempt(word, 'duplicate');
                 } else {
-                    // New valid word found!
+                    // New valid word found! But check if we can add it (for browser users with limits)
+                    const limitedWords = getLimitedWords(allValidWords);
+                    const isInLimitedSet = limitedWords.some(w => w.word.toLowerCase() === word);
+                    const currentFound = foundWords[wordLength] || [];
+                    
+                    // Check if hitting the limit
+                    if (shouldLimitWords() && !isInLimitedSet && currentFound.length >= WORDS_PER_LEVEL_LIMIT) {
+                        showMessage(`🎯 "${word.toUpperCase()}" is valid! Add to home screen to collect unlimited words!`, 'warning');
+                        showWordieFeedback(word, 'valid');
+                        addAttempt(word, 'valid');
+                        
+                        // Show limit message
+                        showLimitReachedMessage();
+                        return;
+                    }
+                    
+                    // Add to found words
                     if (!foundWords[wordLength]) {
                         foundWords[wordLength] = [];
                     }
@@ -1293,10 +1322,10 @@
                     updateUnlockInfo();
 
                     // Check if level complete
-                    const totalWords = validWords.length;
-                    if (foundWords[wordLength].length === totalWords) {
+                    const limitedWordsForCompletion = getLimitedWords(allValidWords);
+                    if (foundWords[wordLength].length === limitedWordsForCompletion.length) {
                         setTimeout(() => {
-                            showLevelCompleteModal(currentLevel, totalWords);
+                            showLevelCompleteModal(currentLevel, limitedWordsForCompletion.length);
                         }, 1000);
                     }
                 }
@@ -1713,6 +1742,40 @@
             Once added to your home screen, you'll have unlimited words on every level! 🚀`;
             
             alert(message);
+        }
+
+        function showLimitReachedMessage() {
+            const message = `🎉 Amazing! You've found 10 words on this level! 
+            
+            💡 **To experience the full game** - Add this game to your home screen for unlimited access!
+            
+            📱 **How to add to home screen:**
+            • **iPhone/iPad**: Tap the Share button (□) → "Add to Home Screen"
+            • **Android**: Tap Menu (⋮) → "Add to Home screen"
+            • **Desktop**: Click the install icon in your browser's address bar
+            
+            When you add to home screen, you'll unlock:
+            ✅ All words for every level (no limits!)
+            ✅ Offline play capability
+            ✅ Faster loading times
+            ✅ App-like experience
+            `;
+            
+            alert(message);
+            
+            // Show the word count now that they've hit the limit
+            showWordCountDisplay();
+        }
+
+        function showWordCountDisplay() {
+            const foundWordsHeader = document.querySelector('.found-words h3');
+            if (foundWordsHeader) {
+                foundWordsHeader.innerHTML = `Found Words (<span id="foundWordsCount">${document.getElementById('foundWordsCount').textContent}</span>/10 limit - add to home screen for unlimited!)
+                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>`;
+                
+                // Reattach the grammar info button
+                document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
+            }
         }
 
         function hasHitWordLimit() {
