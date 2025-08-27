@@ -868,8 +868,16 @@
                     }
                 }
 
-                // Load saved progress
-                loadProgress();
+                // CLEAR ALL SAVED PROGRESS FOR FRESH START
+                localStorage.clear();
+                
+                // Force fresh game state
+                foundWords = {};
+                attemptedWords = [];
+                currentLevel = 2; // Level 3 (4-letter words)
+                unlockedLevels = [true, true, true, true, true, true];
+                
+                // Don't load old progress - start fresh
 
                 // Initialize UI
                 createLevelButtons();
@@ -883,7 +891,7 @@
                 updateHintButtons();
                 setupEventListeners();
 
-                console.log('Game initialized successfully - Level 3 unlocked! Try "game" now!');
+                console.log('🎮 FRESH START: Level 3 active, all progress cleared, "game" and "word" ready!');
 
             } catch (error) {
                 console.error('Error initializing game:', error);
