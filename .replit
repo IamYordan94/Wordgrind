@@ -15,15 +15,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Progressive Wordle Game v2"
+args = "Word Game Fresh v3"
 
 [[workflows.workflow]]
-name = "Progressive Wordle Game v2"
+name = "Word Game Fresh v3"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 -m http.server 5000 --bind 0.0.0.0"
+args = "python3 -m http.server 5000"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
