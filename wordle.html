@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Word Grind</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #1a1a1a; color: #fff; min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; color: #6aaa64; margin-bottom: 30px; }
+        .input-section { text-align: center; margin-bottom: 30px; }
+        input { padding: 15px; font-size: 18px; border: 2px solid #333; background: #2a2a2a; color: #fff; border-radius: 5px; width: 300px; text-align: center; }
+        button { padding: 15px 30px; font-size: 16px; background: #6aaa64; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .message { text-align: center; padding: 10px; margin: 20px 0; border-radius: 5px; }
+        .success { background: #2d5a2d; }
+        .error { background: #5a2d2d; }
+        .warning { background: #5a5a2d; }
+        .words-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin: 20px 0; }
+        .word-item { background: #333; padding: 10px; border-radius: 5px; text-align: center; cursor: pointer; }
+        .feedback { text-align: center; margin: 20px 0; }
+        .letter-box { display: inline-block; width: 40px; height: 40px; margin: 2px; border: 2px solid #333; background: #2a2a2a; text-align: center; line-height: 36px; font-weight: bold; }
+        .correct { background: #6aaa64 !important; border-color: #6aaa64; }
+        .present { background: #c9b458 !important; border-color: #c9b458; }
+        .absent { background: #787c7e !important; border-color: #787c7e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Progressive Word Grind</h1>
+        <p style="text-align: center; color: #b0b0b0; margin-bottom: 30px;">🎯 Discover ALL possible words starting with 2-letter words, then unlock 3-letter words, and beyond!</p>
+        
+        <div class="input-section">
+            <div>Current Level: <span id="currentLevel">3</span> (4-letter words)</div>
+            <input type="text" id="wordInput" placeholder="Enter a 4-letter word" maxlength="4">
+            <button onclick="submitWord()">Submit</button>
+        </div>
+        
+        <div id="message" class="message" style="display: none;"></div>
+        <div id="feedback" class="feedback"></div>
+        
+        <div>
+            <h3>Found Words</h3>
+            <div id="wordsGrid" class="words-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🎯 FRESH WORDLE VERSION - Testing word validation!');
+        
+        let gameWords = {};
+        let foundWords = [];
+        let attemptedWords = [];
+        let currentLevel = 3; // 4-letter words
+        
+        // Load words and start game
+        async function loadGame() {
+            try {
+                const response = await fetch('./words_data.json');
+                const data = await response.json();
+                
+                // Load 4-letter words
+                gameWords = data['4'] || [];
+                console.log('Loaded', gameWords.length, '4-letter words');
+                
+                updateDisplay();
+            } catch (error) {
+                console.error('Failed to load words:', error);
+                showMessage('Failed to load word data', 'error');
+            }
+        }
+        
+        function submitWord() {
+            const input = document.getElementById('wordInput');
+            const word = input.value.toLowerCase().trim();
+            
+            if (word.length !== 4) {
+                showMessage('Please enter a 4-letter word', 'error');
+                return;
+            }
+            
+            // Check if already attempted
+            if (attemptedWords.includes(word)) {
+                showMessage('You already tried this word!', 'warning');
+                return;
+            }
+            
+            // Find word in game data
+            const wordData = gameWords.find(w => w.word.toLowerCase() === word);
+            
+            if (!wordData) {
+                showMessage(`"${word.toUpperCase()}" is not a valid word`, 'error');
+                showFeedback(word, 'invalid');
+                attemptedWords.push(word);
+                return;
+            }
+            
+            // Check if already found
+            if (foundWords.find(w => w.word.toLowerCase() === word)) {
+                showMessage('You already found this word!', 'warning');
+                attemptedWords.push(word);
+                return;
+            }
+            
+            // Valid new word!
+            foundWords.push(wordData);
+            attemptedWords.push(word);
+            showMessage(`Great! "${word.toUpperCase()}" is valid!`, 'success');
+            showFeedback(word, 'valid');
+            
+            input.value = '';
+            updateDisplay();
+        }
+        
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.className = 'message ' + type;
+            msgDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 3000);
+        }
+        
+        function showFeedback(word, type) {
+            const feedbackDiv = document.getElementById('feedback');
+            let html = '';
+            
+            for (let i = 0; i < word.length; i++) {
+                const letter = word[i].toUpperCase();
+                let className = 'letter-box ';
+                
+                if (type === 'valid') {
+                    className += 'correct';
+                } else if (type === 'invalid') {
+                    className += 'absent';
+                }
+                
+                html += `<span class="${className}">${letter}</span>`;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+        
+        function updateDisplay() {
+            const grid = document.getElementById('wordsGrid');
+            grid.innerHTML = '';
+            
+            foundWords.forEach(wordData => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'word-item';
+                wordDiv.textContent = wordData.word.toLowerCase();
+                wordDiv.title = wordData.definition || 'Click for definition';
+                grid.appendChild(wordDiv);
+            });
+        }
+        
+        // Enter key support
+        document.getElementById('wordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitWord();
+            }
+        });
+        
+        // Start game
+        loadGame();
+    </script>
+</body>
+</html>
