@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progressive Word Grind</title>
-    <!-- AGGRESSIVE CACHE BUSTING -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <title>Progressive Word Grind</title>
+    <!-- SUPER AGGRESSIVE CACHE BUSTING -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="-1">
+    <script>window.cacheBust = Date.now();</script>
     <meta name="version" content="v2.1-final-aug25-cachebust-999">
     <!-- Force reload timestamp -->
     <script>
@@ -1798,8 +1802,8 @@
 
         // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🎯 CLEAN UX VERSION v2.2 LOADED - Cache Bust 008 - Word count hidden + Auto AdSense!');
-            console.log('✅ 10-word limit active, honest language, auto AdSense ready');
+            console.log('🎯 CLEAN UX VERSION v2.4 LOADED - TIMESTAMP: ' + Date.now() + ' - CACHE BROKEN!');
+            console.log('✅ Word count INVISIBLE, game description added, auto AdSense enabled');
             detectInstallation();
             initGame();
         });
