@@ -873,12 +873,17 @@
 
                 // Initialize UI
                 createLevelButtons();
+                
+                // UNLOCK ALL LEVELS FOR TESTING
+                unlockedLevels = [true, true, true, true, true, true];
+                currentLevel = 2; // Start on level 3 (4-letter words) so "game" works
+                
                 switchToLevel(currentLevel);
                 updateUnlockInfo();
                 updateHintButtons();
                 setupEventListeners();
 
-                console.log('Game initialized successfully');
+                console.log('Game initialized successfully - Level 3 unlocked! Try "game" now!');
 
             } catch (error) {
                 console.error('Error initializing game:', error);
