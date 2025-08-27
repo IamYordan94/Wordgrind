@@ -12,12 +12,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <script>window.cacheBust = Date.now();</script>
-    <meta name="version" content="v2.5-FINAL-CACHE-DESTROYED-99999">
+    <meta name="version" content="v2.1-final-aug25-cachebust-999">
     <!-- Force reload timestamp -->
     <script>
         // Force cache invalidation
-        if (localStorage.getItem('lastVersion') !== 'v2.5-99999') {
-            localStorage.setItem('lastVersion', 'v2.5-99999');
+        if (localStorage.getItem('lastVersion') !== 'v2.1-999') {
+            localStorage.setItem('lastVersion', 'v2.1-999');
             window.location.reload(true);
         }
     </script>
@@ -1803,8 +1803,8 @@
 
         // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🎯 NEW FILE VERSION v3.0 LOADED - CACHE BYPASSED WITH NEW FILE!');
-            console.log('✅ FRESH START: Word count invisible, game description ready, auto AdSense enabled!');
+            console.log('🎯 CLEAN UX VERSION v2.4 LOADED - TIMESTAMP: ' + Date.now() + ' - CACHE BROKEN!');
+            console.log('✅ Word count INVISIBLE, game description added, auto AdSense enabled');
             detectInstallation();
             initGame();
         });
