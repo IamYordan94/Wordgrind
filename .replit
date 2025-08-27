@@ -15,10 +15,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Word Game Fresh v3"
+args = "Word Game FINAL v4"
 
 [[workflows.workflow]]
-name = "Word Game Fresh v3"
+name = "Word Game FINAL v4"
 author = "agent"
 
 [[workflows.workflow.tasks]]
