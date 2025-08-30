@@ -27,12 +27,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9007185070437670"
          crossorigin="anonymous"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-9007185070437670",
-            enable_page_level_ads: true
-        });
-    </script>
     <style>
         * {
             box-sizing: border-box;
@@ -697,22 +691,22 @@
 
         <div class="hint-section">
             <h3>Need Help?</h3>
-            <button class="hint-btn" id="hintDefinitionBtn">Watch Ad for Definition</button>
-            <button class="hint-btn" id="hintScrambledBtn" disabled>Watch Ad for Scrambled Letters</button>
-            <button class="hint-btn" id="hintRevealBtn">Watch Ad to Reveal Word</button>
-            <!-- Real AdSense Ad Container -->
-            <div class="ad-container" id="adContainer" style="display: none; text-align: center; margin: 20px 0; padding: 15px; background: #333; border-radius: 8px;">
-                <p style="color: #6aaa64; font-weight: bold; margin-bottom: 15px;">📺 Please watch this real ad to unlock your hint:</p>
-                <ins class="adsbygoogle"
-                     style="display:block; width: 320px; height: 250px; margin: 0 auto; background: #f0f0f0; border: 1px solid #ddd;"
-                     data-ad-client="ca-pub-9007185070437670"
-                     data-ad-slot="auto"
-                     data-ad-format="rectangle"
-                     data-full-width-responsive="true"></ins>
-                <button id="adWatchedBtn" style="margin-top: 15px; padding: 10px 20px; background: #6aaa64; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ I watched the ad - Get my hint!</button>
-            </div>
-            
+            <button class="hint-btn" id="hintDefinitionBtn">Get Definition Hint</button>
+            <button class="hint-btn" id="hintScrambledBtn" disabled>Get Scrambled Letters</button>
+            <button class="hint-btn" id="hintRevealBtn">Reveal Random Word</button>
             <div class="hint-display" id="hintDisplay"></div>
+        </div>
+
+        <!-- AdSense Compliant Ad Placement -->
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background: #2a2a2a; border-radius: 8px;">
+            <h3 style="color: #6aaa64; margin-bottom: 15px;">Support This Game</h3>
+            <p style="color: #ccc; margin-bottom: 15px;">Enjoying Progressive Word Grind? This free game is supported by ads.</p>
+            <ins class="adsbygoogle"
+                 style="display:block; width: 320px; height: 250px; margin: 0 auto;"
+                 data-ad-client="ca-pub-9007185070437670"
+                 data-ad-slot="auto"
+                 data-ad-format="rectangle"
+                 data-full-width-responsive="true"></ins>
         </div>
 
         <!-- Hidden install section -->
@@ -992,109 +986,14 @@
             }
         }
 
-        function showRealAdSense(callback) {
-            const adContainer = document.getElementById('adContainer');
-            const hintDisplay = document.getElementById('hintDisplay');
-            
-            // Safety check for elements
-            if (!adContainer || !hintDisplay) {
-                console.error('Ad container or hint display not found, using fallback');
-                showMessage('📺 Ad loading... Please wait.', 'warning');
-                setTimeout(() => {
-                    callback();
-                    hintCooldown = true;
-                    setTimeout(() => {
-                        hintCooldown = false;
-                        updateHintButtonStates();
-                    }, 3000); // 3 second cooldown for max revenue
-                }, 3000);
-                return;
-            }
-            
-            // Hide hint display and show ad container
-            hintDisplay.style.display = 'none';
-            adContainer.style.display = 'block';
-            
-            // Load fresh AdSense ad
-            try {
-                // Clear previous ad content
-                const existingAd = adContainer.querySelector('.adsbygoogle');
-                if (existingAd && existingAd.innerHTML) {
-                    existingAd.innerHTML = '';
-                }
-                
-                // Initialize new ad
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                
-                // Check if ads are actually loading after a short delay
-                setTimeout(() => {
-                    const adContent = existingAd ? existingAd.innerHTML : '';
-                    
-                    if (!adContent || adContent.trim() === '') {
-                        // AdSense not ready yet - show getting ready message
-                        adContainer.innerHTML = `
-                            <p style="color: #d4a953; font-weight: bold; margin-bottom: 15px;">
-                                ⏳ AdSense Status: "Getting Ready"<br>
-                                <small>Your account is approved! Real ads will show in 24-48 hours.</small>
-                            </p>
-                            <div style="width: 320px; height: 250px; margin: 0 auto; background: linear-gradient(45deg, #333, #444); border: 2px dashed #666; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                                <div style="text-align: center; color: #999;">
-                                    <div style="font-size: 48px;">📺</div>
-                                    <div>AdSense Getting Ready...</div>
-                                    <div style="font-size: 12px; margin-top: 5px;">Simulating ad experience</div>
-                                </div>
-                            </div>
-                            <button id="adWatchedBtn" style="margin-top: 15px; padding: 10px 20px; background: #d4a953; color: black; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ Continue after ad simulation</button>
-                        `;
-                        showMessage('⏳ AdSense approved but still getting ready. Simulating ad experience...', 'info');
-                    } else {
-                        showMessage('📺 Real AdSense ad loaded! Please watch and then click the button below.', 'info');
-                    }
-                    
-                    // Set up the "watched ad" button  
-                    const watchedBtn = document.getElementById('adWatchedBtn');
-                    watchedBtn.onclick = () => {
-                        adContainer.style.display = 'none';
-                        callback();
-                        // Set cooldown to prevent spam
-                        hintCooldown = true;
-                        setTimeout(() => {
-                            hintCooldown = false;
-                            updateHintButtonStates();
-                        }, 15000); // 15 second cooldown
-                        updateHintButtonStates();
-                    };
-                }, 1000); // Give AdSense 1 second to load
-                
-            } catch (error) {
-                console.log('AdSense not ready, using simulation...');
-                adContainer.innerHTML = `
-                    <p style="color: #d4a953; font-weight: bold; margin-bottom: 15px;">
-                        ⏳ AdSense Status: "Getting Ready"<br>
-                        <small>Your account is approved! Real ads will show in 24-48 hours.</small>
-                    </p>
-                    <div style="width: 320px; height: 250px; margin: 0 auto; background: linear-gradient(45deg, #333, #444); border: 2px dashed #666; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                        <div style="text-align: center; color: #999;">
-                            <div style="font-size: 48px;">📺</div>
-                            <div>AdSense Getting Ready...</div>
-                            <div style="font-size: 12px; margin-top: 5px;">Simulating ad experience</div>
-                        </div>
-                    </div>
-                    <button id="adWatchedBtn" style="margin-top: 15px; padding: 10px 20px; background: #d4a953; color: black; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ Continue after ad simulation</button>
-                `;
-                showMessage('⏳ AdSense approved but still getting ready. Simulating ad experience...', 'warning');
-                const watchedBtn = document.getElementById('adWatchedBtn');
-                watchedBtn.onclick = () => {
-                    adContainer.style.display = 'none';
-                    callback();
-                    hintCooldown = true;
-                    setTimeout(() => {
-                        hintCooldown = false;
-                        updateHintButtonStates();
-                    }, 3000); // 3 second cooldown for max revenue
-                    updateHintButtonStates();
-                };
-            }
+        // Simplified hint cooldown system
+        function applyCooldown() {
+            hintCooldown = true;
+            updateHintButtonStates();
+            setTimeout(() => {
+                hintCooldown = false;
+                updateHintButtonStates();
+            }, 5000); // 5 second cooldown
         }
 
         function updateHintButtonStates() {
@@ -1128,19 +1027,18 @@
                 return;
             }
 
-            showRealAdSense(() => {
-                // Get random unfound word
-                const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
-                currentHintWord = randomWord;
+            // Get random unfound word
+            const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
+            currentHintWord = randomWord;
 
-                const hintDisplay = document.getElementById('hintDisplay');
-                hintDisplay.innerHTML = `
-                    <strong>Definition:</strong><br>
-                    "${randomWord.definition}"<br>
-                    <small>Part of speech: ${randomWord.pos}</small>
-                `;
-                hintDisplay.style.display = 'block';
-            });
+            const hintDisplay = document.getElementById('hintDisplay');
+            hintDisplay.innerHTML = `
+                <strong>Definition:</strong><br>
+                "${randomWord.definition}"<br>
+                <small>Part of speech: ${randomWord.pos}</small>
+            `;
+            hintDisplay.style.display = 'block';
+            applyCooldown();
         }
 
         function showScrambledHint() {
@@ -1156,27 +1054,26 @@
                 return;
             }
 
-            showRealAdSense(() => {
-                // Get random unfound word
-                const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
-                currentHintWord = randomWord;
+            // Get random unfound word
+            const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
+            currentHintWord = randomWord;
 
-                // Scramble the letters
-                const letters = randomWord.word.toLowerCase().split('');
-                for (let i = letters.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [letters[i], letters[j]] = [letters[j], letters[i]];
-                }
-                const scrambled = letters.join('').toUpperCase();
+            // Scramble the letters
+            const letters = randomWord.word.toLowerCase().split('');
+            for (let i = letters.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [letters[i], letters[j]] = [letters[j], letters[i]];
+            }
+            const scrambled = letters.join('').toUpperCase();
 
-                const hintDisplay = document.getElementById('hintDisplay');
-                hintDisplay.innerHTML = `
-                    <strong>Scrambled Letters:</strong><br>
-                    <div class="scrambled-letters">${scrambled}</div>
-                    <small>Unscramble these letters to form a ${wordLength}-letter word!</small>
-                `;
-                hintDisplay.style.display = 'block';
-            });
+            const hintDisplay = document.getElementById('hintDisplay');
+            hintDisplay.innerHTML = `
+                <strong>Scrambled Letters:</strong><br>
+                <div class="scrambled-letters">${scrambled}</div>
+                <small>Unscramble these letters to form a ${wordLength}-letter word!</small>
+            `;
+            hintDisplay.style.display = 'block';
+            applyCooldown();
         }
 
         function updateFoundWordsDisplay() {
@@ -1456,9 +1353,8 @@
                 return;
             }
 
-            showRealAdSense(() => {
-                revealRandomWord();
-            });
+            revealRandomWord();
+            applyCooldown();
         }
 
         function revealRandomWord() {
@@ -1813,6 +1709,15 @@
             console.log('✅ Word count INVISIBLE, game description added, auto AdSense enabled');
             detectInstallation();
             initGame();
+            
+            // Initialize AdSense ads after page loads
+            setTimeout(() => {
+                try {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (e) {
+                    console.log('AdSense not ready yet');
+                }
+            }, 1000);
         });
     </script>
 </body>
