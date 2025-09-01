@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Progressive Word Grind - Educational Word Game</title>
+    <meta name="description" content="Learn about Progressive Word Grind - an educational word discovery game that helps you build vocabulary through systematic word exploration.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6aaa64">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 10px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        .nav-links {
+            position: absolute;
+            left: 0;
+            top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-link {
+            background: #444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: #555;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            background: linear-gradient(45deg, #6aaa64, #c9b458);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .content-section h2 {
+            color: #6aaa64;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-section h3 {
+            color: #c9b458;
+            font-size: 1.4em;
+            margin: 20px 0 10px 0;
+        }
+
+        .content-section p {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            background: rgba(106, 170, 100, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #6aaa64;
+        }
+
+        .feature-list li strong {
+            color: #6aaa64;
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #6aaa64, #c9b458);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .play-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .highlight {
+            background: rgba(201, 180, 88, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #c9b458;
+        }
+
+        @media (max-width: 600px) {
+            .nav-links {
+                position: static;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">🎮 Play Game</a>
+                <a href="vocabulary.html" class="nav-link">📚 Vocabulary</a>
+            </div>
+            <h1>📖 About Progressive Word Grind</h1>
+            <p>Discover how this educational word game helps you build vocabulary through systematic exploration</p>
+        </div>
+
+        <div class="content-section">
+            <h2>🎯 What is Progressive Word Grind?</h2>
+            <p>Progressive Word Grind is an educational word discovery game that challenges you to find <strong>every possible word</strong> of each length, starting from simple 2-letter combinations and progressively advancing to longer, more complex words.</p>
+            <p>Unlike traditional word games where you guess a single daily word, this game requires you to discover <span class="highlight">all valid words</span> of a given length before unlocking the next level, creating an engaging "grind" experience with clear advancement milestones.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>🎓 Educational Benefits</h2>
+            <ul class="feature-list">
+                <li><strong>Vocabulary Building:</strong> Systematically discover new words and their meanings through interactive gameplay</li>
+                <li><strong>Progressive Learning:</strong> Start simple with 2-letter words and gradually build up to complex 7+ letter words</li>
+                <li><strong>Grammar Understanding:</strong> Learn word types (nouns, verbs, adjectives) with detailed definitions</li>
+                <li><strong>Pattern Recognition:</strong> Develop skills in recognizing word patterns and letter combinations</li>
+                <li><strong>Memory Enhancement:</strong> Track your discovered words and build a personal vocabulary database</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>🎮 How It Works</h2>
+            <h3>Level Progression System</h3>
+            <p>The game features a unique progression system where completing all words of one length unlocks the next level:</p>
+            <ul class="feature-list">
+                <li><strong>Level 1 (2-letter words):</strong> Start with simple combinations like "at", "is", "up"</li>
+                <li><strong>Level 2 (3-letter words):</strong> Progress to words like "cat", "run", "joy" (unlocked after completing 2-letter level)</li>
+                <li><strong>Level 3+ (4-7+ letter words):</strong> Continue building vocabulary with increasingly complex words</li>
+            </ul>
+
+            <h3>Game Mechanics</h3>
+            <p>Enter word guesses and receive immediate feedback:</p>
+            <ul class="feature-list">
+                <li><strong>Green letters:</strong> Correct letter in correct position</li>
+                <li><strong>Yellow letters:</strong> Correct letter in wrong position</li>
+                <li><strong>Gray letters:</strong> Letter not in the word</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>📚 Features</h2>
+            <ul class="feature-list">
+                <li><strong>Complete Word Discovery:</strong> Find every valid word for each level</li>
+                <li><strong>Vocabulary Tracking:</strong> Keep a permanent record of all your discovered words</li>
+                <li><strong>Educational Definitions:</strong> Click any discovered word to see its definition and grammar type</li>
+                <li><strong>Progress Persistence:</strong> Your progress is automatically saved between sessions</li>
+                <li><strong>Responsive Design:</strong> Play on any device - mobile, tablet, or desktop</li>
+            </ul>
+        </div>
+
+        <div class="content-section" style="text-align: center;">
+            <h2>🚀 Ready to Start Learning?</h2>
+            <p>Begin your vocabulary building journey today! Start with 2-letter words and work your way up to become a word master.</p>
+            <a href="index.html" class="play-button">🎮 Start Playing Now</a>
+        </div>
+    </div>
+
+    <script>
+        console.log('📖 About Page - Learn about Progressive Word Grind!');
+    </script>
+</body>
+</html>
