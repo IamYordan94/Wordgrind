@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Word Grind - Educational Vocabulary Builder</title>
+    <meta name="description" content="Educational word discovery game that builds vocabulary through progressive difficulty. Learn spellings, definitions, and grammar while discovering thousands of words!">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6aaa64">
+    
+    <!-- Google AdSense Auto Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6023334720926468"
+        crossorigin="anonymous"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-6023334720926468",
+            enable_page_level_ads: true
+        });
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 3.2em;
+            background: linear-gradient(45deg, #6aaa64, #c9b458);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-description {
+            background: rgba(106, 170, 100, 0.1);
+            border: 2px solid #6aaa64;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .main-description h2 {
+            color: #6aaa64;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .main-description p {
+            font-size: 1.1em;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        .start-playing-btn {
+            background: linear-gradient(45deg, #6aaa64, #5a9954);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 12px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(106, 170, 100, 0.4);
+        }
+
+        .start-playing-btn:hover {
+            background: linear-gradient(45deg, #5a9954, #4a8944);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(106, 170, 100, 0.5);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+            border-color: #6aaa64;
+        }
+
+        .feature-card h3 {
+            color: #c9b458;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #ccc;
+            font-size: 1em;
+        }
+
+        .educational-benefits {
+            background: rgba(201, 180, 88, 0.1);
+            border: 2px solid #c9b458;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 50px 0;
+        }
+
+        .educational-benefits h2 {
+            color: #c9b458;
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .benefit-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #c9b458;
+        }
+
+        .benefit-item h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .benefit-item p {
+            color: #ddd;
+        }
+
+        .how-to-play {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 50px 0;
+        }
+
+        .how-to-play h2 {
+            color: #6aaa64;
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        .steps-list {
+            list-style: none;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .steps-list li {
+            background: rgba(106, 170, 100, 0.1);
+            border: 1px solid #6aaa64;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            font-size: 1.1em;
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .steps-list li::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #6aaa64;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .steps-list {
+            counter-reset: step-counter;
+        }
+
+        .progression-overview {
+            background: linear-gradient(135deg, rgba(106, 170, 100, 0.1), rgba(201, 180, 88, 0.1));
+            border: 1px solid rgba(106, 170, 100, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 50px 0;
+            text-align: center;
+        }
+
+        .progression-overview h2 {
+            color: #6aaa64;
+            font-size: 2em;
+            margin-bottom: 25px;
+        }
+
+        .progression-overview p {
+            font-size: 1.1em;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .level-preview {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .level-badge {
+            background: rgba(106, 170, 100, 0.2);
+            border: 1px solid #6aaa64;
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: #90ee90;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 80px;
+            padding: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888;
+        }
+
+        .add-to-home {
+            background: rgba(106, 170, 100, 0.1);
+            border: 1px solid #6aaa64;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .add-to-home h3 {
+            color: #6aaa64;
+            margin-bottom: 10px;
+        }
+
+        .add-to-home p {
+            color: #ccc;
+            font-size: 0.95em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .subtitle {
+                font-size: 1.1em;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .level-preview {
+                gap: 10px;
+            }
+
+            .level-badge {
+                font-size: 0.8em;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Progressive Word Grind</h1>
+            <p class="subtitle">🎓 Educational word game for vocabulary building and spelling mastery</p>
+        </div>
+
+        <div class="main-description">
+            <h2>📚 Learn While You Play</h2>
+            <p>Progressive Word Grind is an educational word discovery game that builds your vocabulary through progressive difficulty. Start with 2-letter combinations and advance to complex 7-letter words as you master each level!</p>
+            <p><strong>Educational word game for vocabulary building</strong> - Learn definitions and grammar while playing through our comprehensive spelling reinforcement system.</p>
+            
+            <a href="game.html" class="start-playing-btn">🎮 Start Learning & Playing!</a>
+            <a href="vocabulary.html" style="background: #c9b458; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin: 20px 10px 0 10px; transition: all 0.3s ease;">📚 View My Vocabulary</a>
+        </div>
+
+        <div class="educational-benefits">
+            <h2>🎯 Educational Benefits</h2>
+            <p style="text-align: center; font-size: 1.1em; margin-bottom: 20px;">Transform your vocabulary skills while having fun!</p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <h4>📖 Vocabulary Expansion</h4>
+                    <p>Discover thousands of words through systematic exploration. Each found word includes definitions and usage examples to build comprehensive understanding.</p>
+                </div>
+                
+                <div class="benefit-item">
+                    <h4>✏️ Spelling Reinforcement</h4>
+                    <p>Progressive difficulty system strengthens spelling skills naturally. Start simple and advance as your confidence grows with each completed level.</p>
+                </div>
+                
+                <div class="benefit-item">
+                    <h4>📝 Grammar Learning</h4>
+                    <p>Learn parts of speech through interactive discovery. Click discovered words to see grammar explanations and deepen language understanding.</p>
+                </div>
+                
+                <div class="benefit-item">
+                    <h4>🧠 Cognitive Development</h4>
+                    <p>Enhance pattern recognition, memory retention, and problem-solving skills through engaging wordplay challenges.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🏆 Progressive Difficulty</h3>
+                <p>Master 2-letter words, then unlock 3-letter words, and progress all the way to challenging 7-letter combinations. Each level builds upon previous learning.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📚 Complete Dictionary</h3>
+                <p>Access thousands of real English words with definitions and grammar information. Learn while you discover new vocabulary.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🎯 Educational Hints</h3>
+                <p>Get definitions, scrambled letters, or word reveals to assist your learning journey. Every hint teaches you something new!</p>
+            </div>
+        </div>
+
+        <div class="how-to-play">
+            <h2>📋 How to Play & Learn</h2>
+            <ul class="steps-list">
+                <li><strong>Choose Your Level:</strong> Start with 2-letter words or jump to your comfort level. Each length offers unique learning opportunities.</li>
+                <li><strong>Enter Words:</strong> Type any word of the current level's length. Valid words are added to your vocabulary collection!</li>
+                <li><strong>Learn Definitions:</strong> Click on discovered words to see meanings, parts of speech, and grammar explanations.</li>
+                <li><strong>Use Educational Hints:</strong> Get definitions, scrambled letters, or revealed words to expand your learning.</li>
+                <li><strong>Progress Through Levels:</strong> Complete each level to unlock longer, more challenging words and build comprehensive vocabulary skills.</li>
+            </ul>
+        </div>
+
+        <div class="progression-overview">
+            <h2>🎯 Learning Progression System</h2>
+            <p>Our progressive difficulty system ensures steady vocabulary growth. Each completed level unlocks the next challenge, building your word knowledge systematically.</p>
+            <p><strong>From simple combinations to complex vocabulary mastery!</strong></p>
+            
+            <div class="level-preview">
+                <div class="level-badge">2 Letters</div>
+                <div class="level-badge">3 Letters</div>
+                <div class="level-badge">4 Letters</div>
+                <div class="level-badge">5 Letters</div>
+                <div class="level-badge">6 Letters</div>
+                <div class="level-badge">7 Letters</div>
+            </div>
+        </div>
+
+        <div class="add-to-home">
+            <h3>📱 Add to Home Screen for Enhanced Learning</h3>
+            <p>Add this educational game to your home screen for offline vocabulary practice, unlimited word discovery, and complete progress tracking!</p>
+        </div>
+
+        <div class="footer">
+            <p>🎓 Progressive Word Grind - Where education meets entertainment</p>
+            <p style="margin-top: 20px;">
+                <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" style="text-decoration: none; color: #888;">Made with ❤️ for learners everywhere</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🎓 Educational Word Game Home Page - Ready to start learning!');
+        
+        // Add some interactive educational messaging
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects for educational emphasis
+            const benefits = document.querySelectorAll('.benefit-item');
+            benefits.forEach(benefit => {
+                benefit.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.background = 'rgba(201, 180, 88, 0.1)';
+                });
+                
+                benefit.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.background = 'rgba(255, 255, 255, 0.05)';
+                });
+            });
+
+            // Educational tip rotation
+            const tips = [
+                "💡 Tip: Click discovered words to learn their definitions and grammar!",
+                "📚 Tip: Use hints to learn new vocabulary while playing!",
+                "🎯 Tip: Each level builds your spelling and vocabulary skills!",
+                "🧠 Tip: Progressive learning helps retain new words better!"
+            ];
+            
+            let tipIndex = 0;
+            const tipElement = document.createElement('div');
+            tipElement.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(106, 170, 100, 0.9); color: white; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; z-index: 1000; transition: opacity 0.5s;';
+            
+            function showTip() {
+                tipElement.textContent = tips[tipIndex];
+                document.body.appendChild(tipElement);
+                
+                setTimeout(() => {
+                    if (document.body.contains(tipElement)) {
+                        document.body.removeChild(tipElement);
+                    }
+                }, 4000);
+                
+                tipIndex = (tipIndex + 1) % tips.length;
+            }
+            
+            // Show first tip after page loads
+            setTimeout(showTip, 2000);
+            
+            // Show tips periodically
+            setInterval(showTip, 15000);
+        });
+    </script>
+</body>
+</html>
