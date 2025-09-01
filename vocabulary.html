@@ -487,15 +487,29 @@
 
         function loadVocabularyData() {
             // Load found words from localStorage (same format as game)
-            const foundWordsData = localStorage.getItem('foundWords');
+            const gameProgressData = localStorage.getItem('wordleGrindProgress');
             
-            if (!foundWordsData) {
+            if (!gameProgressData) {
+                showEmptyState();
+                return;
+            }
+            
+            let foundWordsData;
+            try {
+                const progress = JSON.parse(gameProgressData);
+                foundWordsData = progress.foundWords;
+                if (!foundWordsData || Object.keys(foundWordsData).length === 0) {
+                    showEmptyState();
+                    return;
+                }
+            } catch (e) {
+                console.error('Error parsing game progress:', e);
                 showEmptyState();
                 return;
             }
 
             try {
-                const foundWords = JSON.parse(foundWordsData);
+                const foundWords = foundWordsData;
                 allFoundWords = [];
 
                 // Convert found words object to flat array
