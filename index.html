@@ -660,12 +660,32 @@
             .level-btn {
                 width: 150px;
             }
+
+            .nav-links {
+                position: static !important;
+                justify-content: center;
+                margin-bottom: 15px;
+                gap: 8px !important;
+            }
+
+            .nav-link {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+            }
+
+            .header-section {
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header-section">
+            <div class="nav-links" style="position: absolute; left: 0; top: 0; display: flex; gap: 10px;">
+                <a href="vocabulary.html" class="nav-link" style="background: #c9b458; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px;">📚 Vocabulary</a>
+                <a href="#rules" class="nav-link" onclick="showRulesModal()" style="background: #444; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px; cursor: pointer;">📖 Rules</a>
+            </div>
             <h1>Progressive Word Grind</h1>
             <button class="permanent-download-btn" id="permanentDownloadBtn" title="Add to Home Screen">⬇️</button>
         </div>
@@ -759,6 +779,41 @@
                 <span class="close" id="closeGrammarModal">&times;</span>
                 <h2>Grammar Types Explained</h2>
                 <div class="grammar-list" id="grammarList"></div>
+            </div>
+        </div>
+
+        <!-- Rules Modal -->
+        <div class="modal" id="rulesModal">
+            <div class="modal-content">
+                <span class="close" id="closeRulesModal">&times;</span>
+                <h2>📖 How to Play Progressive Word Grind</h2>
+                <div style="text-align: left; line-height: 1.6;">
+                    <h3 style="color: #6aaa64; margin-top: 20px;">🎯 Objective</h3>
+                    <p>Discover all possible words of each length, starting from 2-letter words and progressing to longer words. Complete each level to unlock the next!</p>
+                    
+                    <h3 style="color: #6aaa64; margin-top: 20px;">🎮 How to Play</h3>
+                    <ul style="margin-left: 20px;">
+                        <li>Type a word and press Submit</li>
+                        <li>Valid words get added to your collection</li>
+                        <li>Find all words in a level to unlock the next one</li>
+                        <li>Use hints if you get stuck (watch ads for help)</li>
+                    </ul>
+                    
+                    <h3 style="color: #6aaa64; margin-top: 20px;">🎨 Color Feedback</h3>
+                    <div style="display: flex; gap: 10px; margin: 10px 0;">
+                        <div style="background: #6aaa64; padding: 8px; border-radius: 4px; color: white;">Green = Valid Word</div>
+                        <div style="background: #c9b458; padding: 8px; border-radius: 4px; color: white;">Yellow = Already Found</div>
+                        <div style="background: #787c7e; padding: 8px; border-radius: 4px; color: white;">Gray = Invalid</div>
+                    </div>
+                    
+                    <h3 style="color: #6aaa64; margin-top: 20px;">💡 Tips</h3>
+                    <ul style="margin-left: 20px;">
+                        <li>Try different word types: nouns, verbs, adjectives</li>
+                        <li>Think of common letter combinations</li>
+                        <li>Use the vocabulary section to review found words</li>
+                        <li>Add to home screen for unlimited word collection!</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -1435,6 +1490,10 @@
             document.getElementById('grammarModal').style.display = 'block';
         }
 
+        function showRulesModal() {
+            document.getElementById('rulesModal').style.display = 'block';
+        }
+
         function showRevealWordHint() {
             if (hintCooldown) {
                 showMessage('Please wait before requesting another hint!', 'warning');
@@ -1611,6 +1670,10 @@
                 document.getElementById('grammarModal').style.display = 'none';
             };
 
+            document.getElementById('closeRulesModal').onclick = () => {
+                document.getElementById('rulesModal').style.display = 'none';
+            };
+
             document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
 
             // Hint button event listeners
@@ -1641,6 +1704,7 @@
             window.onclick = (event) => {
                 const defModal = document.getElementById('definitionModal');
                 const grammarModal = document.getElementById('grammarModal');
+                const rulesModal = document.getElementById('rulesModal');
                 const levelCompleteModal = document.getElementById('levelCompleteModal');
 
                 if (event.target === defModal) {
@@ -1648,6 +1712,9 @@
                 }
                 if (event.target === grammarModal) {
                     grammarModal.style.display = 'none';
+                }
+                if (event.target === rulesModal) {
+                    rulesModal.style.display = 'none';
                 }
                 if (event.target === levelCompleteModal) {
                     levelCompleteModal.style.display = 'none';
