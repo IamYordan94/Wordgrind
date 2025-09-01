@@ -12,12 +12,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <script>window.cacheBust = Date.now();</script>
-    <meta name="version" content="v2.8-NO-COUNTER-INFO-ONLY-11111">
+    <meta name="version" content="v2.9-CLEAN-CONSOLE-22222">
     <!-- Force reload timestamp -->
     <script>
         // Force cache invalidation
-        if (localStorage.getItem('lastVersion') !== 'v2.8-11111') {
-            localStorage.setItem('lastVersion', 'v2.8-11111');
+        if (localStorage.getItem('lastVersion') !== 'v2.9-22222') {
+            localStorage.setItem('lastVersion', 'v2.9-22222');
             window.location.reload(true);
         }
     </script>
@@ -870,7 +870,7 @@
 
         // Initialize game
         async function initGame() {
-            console.log('Starting game initialization...');
+            console.log('🎯 Starting word discovery game...');
             
             try {
                 // Load word data with multiple fallback paths
@@ -928,7 +928,7 @@
                 updateHintButtons();
                 setupEventListeners();
 
-                console.log('Game initialized successfully');
+                console.log('✅ Game ready to play!');
 
             } catch (error) {
                 console.error('Error initializing game:', error);
@@ -1858,8 +1858,7 @@
 
         // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🎯 CLEAN UX VERSION v2.5 LOADED - TIMESTAMP: ' + Date.now() + ' - CACHE FINALLY BROKEN!!');
-            console.log('✅ FINAL VERSION: Word count HIDDEN, description shown, auto AdSense active!');
+            console.log('🎮 Progressive Word Grind - Home Page Loaded');
             detectInstallation();
             initGame();
         });
