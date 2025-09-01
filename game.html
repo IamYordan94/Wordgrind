@@ -173,16 +173,94 @@
             box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
         }
 
-        .level-btn.locked {
-            background: #333;
-            color: #666;
-            border-color: #333;
-            cursor: not-allowed;
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
         }
 
-        .level-btn.locked:hover {
-            transform: none;
-            background: #333;
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .current-level-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .current-level-section h3 {
+            color: #6aaa64;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .level-info .level-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .level-info .level-description {
+            color: #ccc;
+            font-size: 1em;
+        }
+
+        .found-words-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .found-words-section h3 {
+            color: #6aaa64;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .word-count-badge {
+            background: #6aaa64;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 50%;
+            font-size: 0.9em;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .progress-info {
+            color: #ccc;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .attempts-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+        }
+
+        .attempts-section h3 {
+            color: #6aaa64;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .info-note {
+            font-size: 0.8em;
+            color: #888;
+            font-weight: normal;
         }
 
         .game-info {
@@ -515,24 +593,13 @@
             <button class="permanent-download-btn" id="permanentDownloadBtn" title="Add to Home Screen for offline learning">⬇️</button>
         </div>
         
-        <div class="educational-note">
-            <h3>🎯 Learning While Playing</h3>
-            <p>Click on discovered words to see definitions and parts of speech. Each level builds your vocabulary progressively!</p>
-        </div>
-
         <div class="level-selector" id="levelSelector">
             <h3>Select Learning Level</h3>
             <div class="level-buttons" id="levelButtons"></div>
         </div>
 
-        <div class="game-info">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-        </div>
-
         <div class="input-section">
-            <input type="text" id="wordInput" placeholder="Enter your guess" maxlength="2">
+            <input type="text" id="wordInput" placeholder="Enter your guess" maxlength="4">
             <button class="submit-btn" id="submitBtn">Submit</button>
             <div class="input-progress-info">
                 Found: <span id="foundCount">0</span> / <span id="totalCount">0</span>
@@ -542,25 +609,38 @@
         <div class="feedback" id="feedback"></div>
         <div class="message" id="message"></div>
 
-        <div class="hint-section">
-            <h3>Learning Assistance</h3>
-            <button class="hint-btn" id="hintDefinitionBtn">Watch Ad for Definition</button>
-            <button class="hint-btn" id="hintScrambledBtn" disabled>Watch Ad for Scrambled Letters</button>
-            <button class="hint-btn" id="hintRevealBtn">Watch Ad to Reveal Word</button>
-        </div>
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="hint-section">
+                    <h3>Need Help?</h3>
+                    <button class="hint-btn" id="hintDefinitionBtn">Watch Ad for Definition</button>
+                    <button class="hint-btn" id="hintScrambledBtn" disabled>Watch Ad for Scrambled Letters</button>
+                    <button class="hint-btn" id="hintRevealBtn">Watch Ad to Reveal Word</button>
+                </div>
 
-        <div class="words-section">
-            <h3>Discovered Words</h3>
-            <div class="words-grid" id="wordsGrid"></div>
-        </div>
+                <div id="hintDisplay" class="hint-display" style="display: none;"></div>
 
-        <div id="unlockInfo" class="unlock-info" style="display: none;"></div>
+                <div class="current-level-section">
+                    <h3>Current Level</h3>
+                    <div class="level-info">
+                        <div class="level-number">Level <span id="currentLevelNum">3</span></div>
+                        <div class="level-description"><span id="currentLevelDesc">4-letter words</span></div>
+                    </div>
+                </div>
 
-        <div id="hintDisplay" class="hint-display" style="display: none;"></div>
+                <div class="found-words-section">
+                    <h3 id="foundWordsHeader">Found Words <span class="word-count-badge" id="foundWordsBadge">0</span></h3>
+                    <div class="progress-info">Progress: <span id="foundCount2">0</span>/<span id="totalCount2">0</span> words found (<span id="progressPercent">0</span>%)</div>
+                    <div class="words-grid" id="wordsGrid"></div>
+                </div>
+            </div>
 
-        <div class="attempts-section">
-            <h3>Recent Attempts</h3>
-            <div id="attemptedWordsList" class="attempts-list"></div>
+            <div class="right-panel">
+                <div class="attempts-section">
+                    <h3>All Attempts <span class="info-note">(click words for definitions)</span></h3>
+                    <div id="attemptedWordsList" class="attempts-list"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -618,7 +698,9 @@
                 // Initialize UI
                 createLevelButtons();
                 switchToLevel(currentLevel);
+                updateCurrentLevelDisplay();
                 updateProgress();
+                updateAttemptsList();
                 setupEventListeners();
 
                 console.log('🎮 Educational game ready! Start discovering words to build your vocabulary!');
@@ -674,6 +756,7 @@
             document.getElementById('message').style.display = 'none';
 
             // Update displays
+            updateCurrentLevelDisplay();
             updateFoundWordsDisplay();
             updateProgress();
         }
@@ -736,8 +819,10 @@
                     showWordieFeedback(word, 'valid');
                     addAttempt(word, 'valid');
 
+                    updateCurrentLevelDisplay();
                     updateFoundWordsDisplay();
                     updateProgress();
+                    updateAttemptsList();
                 }
             }
 
@@ -809,6 +894,9 @@
             const found = foundWords[wordLength] || [];
             const grid = document.getElementById('wordsGrid');
 
+            // Update badge count
+            document.getElementById('foundWordsBadge').textContent = found.length;
+
             grid.innerHTML = '';
             found.forEach(wordData => {
                 const wordElement = document.createElement('div');
@@ -830,11 +918,22 @@
                 Math.min(WORDS_PER_LEVEL_LIMIT, allWords.length) : 
                 allWords.length;
 
+            // Update both progress displays
             document.getElementById('foundCount').textContent = foundCount;
             document.getElementById('totalCount').textContent = displayTotal;
+            document.getElementById('foundCount2').textContent = foundCount;
+            document.getElementById('totalCount2').textContent = displayTotal;
 
-            const percentage = displayTotal > 0 ? (foundCount / displayTotal) * 100 : 0;
-            document.getElementById('progressFill').style.width = `${percentage}%`;
+            const percentage = displayTotal > 0 ? Math.round((foundCount / displayTotal) * 100) : 0;
+            document.getElementById('progressPercent').textContent = percentage;
+        }
+
+        function updateCurrentLevelDisplay() {
+            const levelNum = currentLevel + 1;
+            const wordLength = levelNum;
+            
+            document.getElementById('currentLevelNum').textContent = currentLevel;
+            document.getElementById('currentLevelDesc').textContent = `${wordLength}-letter words`;
         }
 
         function showDefinition(wordData) {
@@ -881,6 +980,34 @@
             if (attemptedWords.length > 50) {
                 attemptedWords = attemptedWords.slice(0, 50);
             }
+
+            updateAttemptsList();
+        }
+
+        function updateAttemptsList() {
+            const list = document.getElementById('attemptedWordsList');
+            const levelAttempts = attemptedWords.filter(a => a.level === currentLevel);
+
+            list.innerHTML = '';
+            levelAttempts.forEach(attempt => {
+                const div = document.createElement('div');
+                div.className = `attempt-item ${attempt.type}`;
+                div.textContent = attempt.word.toUpperCase();
+
+                // Add click handler for definitions
+                if (attempt.type === 'valid') {
+                    const wordLength = currentLevel + 1;
+                    const validWords = gameWords[wordLength] || [];
+                    const wordData = validWords.find(w => w.word.toLowerCase() === attempt.word);
+                    if (wordData) {
+                        div.style.cursor = 'pointer';
+                        div.title = 'Click to see definition';
+                        div.onclick = () => showDefinition(wordData);
+                    }
+                }
+
+                list.appendChild(div);
+            });
         }
 
         function shouldLimitWords() {
@@ -1128,5 +1255,50 @@
         .attempt-item.duplicate {
             background: rgba(255, 193, 7, 0.3);
             color: #ffd700;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .header-section div {
+                position: static !important;
+                justify-content: center;
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .words-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .level-buttons {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+
+            .input-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .input-progress-info {
+                text-align: center;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
         }
     </style>
