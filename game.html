@@ -612,10 +612,8 @@
                     }
                 }
 
-                // Clear progress for fresh start
-                localStorage.clear();
-                foundWords = {};
-                attemptedWords = [];
+                // Load existing progress instead of clearing
+                loadProgress();
 
                 // Initialize UI
                 createLevelButtons();
@@ -744,6 +742,40 @@
             }
 
             input.value = '';
+            
+            // Save progress after each word attempt
+            saveProgress();
+        }
+
+        function loadProgress() {
+            try {
+                const savedFoundWords = localStorage.getItem('foundWords');
+                const savedAttemptedWords = localStorage.getItem('attemptedWords');
+                
+                if (savedFoundWords) {
+                    foundWords = JSON.parse(savedFoundWords);
+                }
+                
+                if (savedAttemptedWords) {
+                    attemptedWords = JSON.parse(savedAttemptedWords);
+                }
+                
+                console.log('📚 Loaded existing vocabulary progress:', Object.keys(foundWords).length, 'levels with words');
+            } catch (error) {
+                console.error('Error loading progress:', error);
+                foundWords = {};
+                attemptedWords = [];
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('foundWords', JSON.stringify(foundWords));
+                localStorage.setItem('attemptedWords', JSON.stringify(attemptedWords));
+                console.log('💾 Vocabulary progress saved');
+            } catch (error) {
+                console.error('Error saving progress:', error);
+            }
         }
 
         function showWordieFeedback(word, type) {
