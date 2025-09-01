@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Word Grind - Educational Word Game</title>
+    <meta name="description" content="Educational word discovery game with progressive difficulty. Learn vocabulary, spelling, and grammar while playing!">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a1a">
+    
+    <!-- Cache Busting -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="-1">
+    <script>window.cacheBust = Date.now();</script>
+    <meta name="version" content="v3.0-GAME-PAGE">
+    
+    <!-- Google AdSense Auto Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6023334720926468"
+        crossorigin="anonymous"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-6023334720926468",
+            enable_page_level_ads: true
+        });
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 10px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #6aaa64, #c9b458);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .game-description {
+            color: #e0e0e0;
+            font-size: 1.1em;
+            line-height: 1.5;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            text-align: center;
+        }
+
+        .back-home {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .back-home:hover {
+            background: #555;
+        }
+
+        .permanent-download-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #6aaa64;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .permanent-download-btn:hover {
+            background: #5a9954;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        .educational-note {
+            background: rgba(106, 170, 100, 0.1);
+            border: 1px solid #6aaa64;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .educational-note h3 {
+            color: #6aaa64;
+            margin-bottom: 8px;
+        }
+
+        .level-selector {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .level-selector h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #c9b458;
+        }
+
+        .level-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .level-btn {
+            background: #444;
+            color: #ccc;
+            border: 2px solid #555;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            min-width: 120px;
+        }
+
+        .level-btn:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .level-btn.active {
+            background: #6aaa64;
+            color: white;
+            border-color: #6aaa64;
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+        }
+
+        .level-btn.locked {
+            background: #333;
+            color: #666;
+            border-color: #333;
+            cursor: not-allowed;
+        }
+
+        .level-btn.locked:hover {
+            transform: none;
+            background: #333;
+        }
+
+        .game-info {
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #6aaa64, #c9b458);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 6px;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        #wordInput {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        #wordInput:focus {
+            outline: none;
+            border-color: #6aaa64;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(106, 170, 100, 0.3);
+        }
+
+        #wordInput::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #6aaa64, #5a9954);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #5a9954, #4a8944);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(106, 170, 100, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .input-progress-info {
+            color: #c9b458;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-left: 15px;
+        }
+
+        .feedback {
+            text-align: center;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .letter-box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #444;
+            background: rgba(255, 255, 255, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .letter-box.correct {
+            background: #6aaa64;
+            border-color: #6aaa64;
+            animation: bounce 0.6s ease;
+        }
+
+        .letter-box.present {
+            background: #c9b458;
+            border-color: #c9b458;
+            animation: bounce 0.6s ease 0.1s;
+        }
+
+        .letter-box.absent {
+            background: #787c7e;
+            border-color: #787c7e;
+            animation: bounce 0.6s ease 0.2s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(106, 170, 100, 0.2);
+            border: 1px solid #6aaa64;
+            color: #90ee90;
+        }
+
+        .message.error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #ff6b7a;
+        }
+
+        .message.warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            color: #ffd700;
+        }
+
+        .hint-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .hint-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #c9b458;
+        }
+
+        .hint-btn {
+            display: block;
+            width: 100%;
+            background: #444;
+            color: white;
+            border: none;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .hint-btn:hover:not(:disabled) {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .hint-btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .words-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .words-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #c9b458;
+        }
+
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .word-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+
+        .word-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            border-color: #6aaa64;
+        }
+
+        .unlock-info {
+            background: rgba(201, 180, 88, 0.1);
+            border: 1px solid #c9b458;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            color: #c9b458;
+        }
+
+        .completion-celebration {
+            background: rgba(106, 170, 100, 0.2);
+            border: 2px solid #6aaa64;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .input-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            #wordInput {
+                min-width: auto;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .submit-btn {
+                margin-left: 0;
+                margin-bottom: 10px;
+            }
+
+            .input-progress-info {
+                margin-left: 0;
+                text-align: center;
+            }
+
+            .level-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .level-btn {
+                width: 150px;
+            }
+
+            .back-home, .permanent-download-btn {
+                position: static;
+                margin: 10px;
+            }
+
+            .header-section {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <a href="index.html" class="back-home">← Home</a>
+            <h1>Progressive Word Grind</h1>
+            <p class="game-description">🎓 Educational word discovery game - Learn vocabulary, spelling, and grammar while discovering all possible words!</p>
+            <button class="permanent-download-btn" id="permanentDownloadBtn" title="Add to Home Screen for offline learning">⬇️</button>
+        </div>
+        
+        <div class="educational-note">
+            <h3>🎯 Learning While Playing</h3>
+            <p>Click on discovered words to see definitions and parts of speech. Each level builds your vocabulary progressively!</p>
+        </div>
+
+        <div class="level-selector" id="levelSelector">
+            <h3>Select Learning Level</h3>
+            <div class="level-buttons" id="levelButtons"></div>
+        </div>
+
+        <div class="game-info">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <input type="text" id="wordInput" placeholder="Enter your guess" maxlength="2">
+            <button class="submit-btn" id="submitBtn">Submit</button>
+            <div class="input-progress-info">
+                Found: <span id="foundCount">0</span> / <span id="totalCount">0</span>
+            </div>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        <div class="message" id="message"></div>
+
+        <div class="hint-section">
+            <h3>Learning Assistance</h3>
+            <button class="hint-btn" id="hintDefinitionBtn">Watch Ad for Definition</button>
+            <button class="hint-btn" id="hintScrambledBtn" disabled>Watch Ad for Scrambled Letters</button>
+            <button class="hint-btn" id="hintRevealBtn">Watch Ad to Reveal Word</button>
+        </div>
+
+        <div class="words-section">
+            <h3>Discovered Words</h3>
+            <div class="words-grid" id="wordsGrid"></div>
+        </div>
+
+        <div id="unlockInfo" class="unlock-info" style="display: none;"></div>
+
+        <div id="hintDisplay" class="hint-display" style="display: none;"></div>
+
+        <div class="attempts-section">
+            <h3>Recent Attempts</h3>
+            <div id="attemptedWordsList" class="attempts-list"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🎯 EDUCATIONAL GAME PAGE LOADED - Learning through play!');
+        
+        // Game configuration
+        const MAX_LEVELS = 6;
+        const WORDS_PER_LEVEL_LIMIT = 10;
+        let currentLevel = 2; // Start on 4-letter words
+        let foundWords = {};
+        let attemptedWords = [];
+        let gameWords = {};
+        let isAddedToHomeScreen = false;
+        let unlockedLevels = [true, true, true, true, true, true];
+        let hintCooldown = false;
+        let currentHintWord = null;
+
+        // Educational grammar info
+        const grammarInfo = {
+            'noun': 'A word that names a person, place, thing, or idea (e.g., cat, house, love)',
+            'verb': 'A word that describes an action, state, or occurrence (e.g., run, is, think)',
+            'adjective': 'A word that describes or modifies a noun (e.g., big, beautiful, smart)',
+            'adverb': 'A word that modifies a verb, adjective, or other adverb (e.g., quickly, very, often)',
+            'preposition': 'A word that shows the relationship between a noun and other words (e.g., in, on, under)',
+            'conjunction': 'A word that connects words, phrases, or clauses (e.g., and, but, or)',
+            'pronoun': 'A word that replaces a noun (e.g., he, she, it, they)',
+            'interjection': 'A word or phrase that expresses emotion or surprise (e.g., wow, oh, hey)',
+            'article': 'A word that defines a noun as specific or unspecific (a, an, the)',
+            'possessive adjective': 'A word that shows ownership (my, your, his, her, our, their)',
+            'determiner': 'A word that introduces a noun and provides context (this, that, some, many)'
+        };
+
+        // Initialize game
+        async function initGame() {
+            console.log('🎓 Starting educational word game...');
+            
+            try {
+                const response = await fetch('./words_data.json');
+                const data = await response.json();
+
+                console.log('📚 Word dictionary loaded for vocabulary learning...');
+
+                // Convert to game format
+                for (let level = 2; level <= 7; level++) {
+                    if (data[level.toString()]) {
+                        gameWords[level] = data[level.toString()];
+                        console.log(`Level ${level}: ${data[level.toString()].length} words available for learning`);
+                    }
+                }
+
+                // Clear progress for fresh start
+                localStorage.clear();
+                foundWords = {};
+                attemptedWords = [];
+
+                // Initialize UI
+                createLevelButtons();
+                switchToLevel(currentLevel);
+                updateProgress();
+                setupEventListeners();
+
+                console.log('🎮 Educational game ready! Start discovering words to build your vocabulary!');
+
+            } catch (error) {
+                console.error('Error loading educational content:', error);
+                showMessage('Failed to load word dictionary. Please refresh the page.', 'error');
+            }
+        }
+
+        function createLevelButtons() {
+            const buttonsContainer = document.getElementById('levelButtons');
+            buttonsContainer.innerHTML = '';
+
+            for (let level = 1; level <= MAX_LEVELS; level++) {
+                const btn = document.createElement('button');
+                const wordLength = level + 1;
+                btn.textContent = `${wordLength} Letters`;
+                btn.className = 'level-btn';
+                btn.onclick = () => switchToLevel(level);
+                btn.id = `level-${level}`;
+
+                if (level === currentLevel) {
+                    btn.classList.add('active');
+                }
+
+                buttonsContainer.appendChild(btn);
+            }
+        }
+
+        function switchToLevel(level) {
+            if (level < 1 || level > MAX_LEVELS) return;
+
+            currentLevel = level;
+            const wordLength = level + 1;
+
+            // Update UI
+            document.getElementById('wordInput').maxLength = wordLength;
+            document.getElementById('wordInput').placeholder = `Enter ${wordLength}-letter word`;
+
+            // Update button states
+            const buttons = document.querySelectorAll('.level-btn');
+            buttons.forEach((btn, index) => {
+                btn.classList.remove('active');
+                if (index + 1 === level) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Clear input and feedback
+            document.getElementById('wordInput').value = '';
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('message').style.display = 'none';
+
+            // Update displays
+            updateFoundWordsDisplay();
+            updateProgress();
+        }
+
+        function submitWord() {
+            const input = document.getElementById('wordInput');
+            const word = input.value.toLowerCase().trim();
+
+            if (!word) {
+                showMessage('Please enter a word to check!', 'error');
+                return;
+            }
+
+            const wordLength = currentLevel + 1;
+            if (word.length !== wordLength) {
+                showMessage(`Word must be exactly ${wordLength} letters long for this level!`, 'error');
+                return;
+            }
+
+            // Check if already attempted
+            if (attemptedWords.some(attempt => attempt.word === word && attempt.level === currentLevel)) {
+                showMessage('You already tried this word!', 'warning');
+                return;
+            }
+
+            // Validate word
+            const allValidWords = gameWords[wordLength] || [];
+            const wordData = allValidWords.find(w => w.word.toLowerCase() === word);
+
+            if (!wordData) {
+                showMessage(`"${word.toUpperCase()}" is not in our vocabulary dictionary`, 'error');
+                showWordieFeedback(word, 'invalid');
+                addAttempt(word, 'invalid');
+            } else {
+                const found = foundWords[wordLength] || [];
+                const alreadyFound = found.some(w => w.word.toLowerCase() === word);
+
+                if (alreadyFound) {
+                    showMessage('You already discovered this word!', 'warning');
+                    showWordieFeedback(word, 'duplicate');
+                    addAttempt(word, 'duplicate');
+                } else {
+                    // Check limits for browser users
+                    const currentFound = foundWords[wordLength] || [];
+                    if (shouldLimitWords() && currentFound.length >= WORDS_PER_LEVEL_LIMIT) {
+                        showMessage(`🎓 "${word.toUpperCase()}" is valid! Add to home screen for unlimited vocabulary learning!`, 'warning');
+                        showWordieFeedback(word, 'valid');
+                        addAttempt(word, 'valid');
+                        showEleventhWordPopup();
+                        return;
+                    }
+
+                    // Add to found words
+                    if (!foundWords[wordLength]) {
+                        foundWords[wordLength] = [];
+                    }
+                    foundWords[wordLength].push(wordData);
+                    
+                    showMessage(`Excellent! "${word.toUpperCase()}" added to your vocabulary!`, 'success');
+                    showWordieFeedback(word, 'valid');
+                    addAttempt(word, 'valid');
+
+                    updateFoundWordsDisplay();
+                    updateProgress();
+                }
+            }
+
+            input.value = '';
+        }
+
+        function showWordieFeedback(word, type) {
+            const feedback = document.getElementById('feedback');
+            feedback.innerHTML = '';
+
+            for (let i = 0; i < word.length; i++) {
+                const letterDiv = document.createElement('div');
+                letterDiv.className = 'letter-box';
+                letterDiv.textContent = word[i].toUpperCase();
+
+                if (type === 'valid') {
+                    const greenCount = Math.ceil(word.length / 2);
+                    if (i < greenCount) {
+                        letterDiv.classList.add('correct');
+                    } else {
+                        letterDiv.classList.add('present');
+                    }
+                } else if (type === 'duplicate') {
+                    letterDiv.classList.add('present');
+                } else {
+                    letterDiv.classList.add('absent');
+                }
+
+                feedback.appendChild(letterDiv);
+            }
+        }
+
+        function updateFoundWordsDisplay() {
+            const wordLength = currentLevel + 1;
+            const found = foundWords[wordLength] || [];
+            const grid = document.getElementById('wordsGrid');
+
+            grid.innerHTML = '';
+            found.forEach(wordData => {
+                const wordElement = document.createElement('div');
+                wordElement.className = 'word-item';
+                wordElement.textContent = wordData.word.toLowerCase();
+                wordElement.title = `Click to learn about "${wordData.word}"`;
+                wordElement.onclick = () => showDefinition(wordData);
+                grid.appendChild(wordElement);
+            });
+        }
+
+        function updateProgress() {
+            const wordLength = currentLevel + 1;
+            const allWords = gameWords[wordLength] || [];
+            const found = foundWords[wordLength] || [];
+
+            const foundCount = found.length;
+            const displayTotal = shouldLimitWords() ? 
+                Math.min(WORDS_PER_LEVEL_LIMIT, allWords.length) : 
+                allWords.length;
+
+            document.getElementById('foundCount').textContent = foundCount;
+            document.getElementById('totalCount').textContent = displayTotal;
+
+            const percentage = displayTotal > 0 ? (foundCount / displayTotal) * 100 : 0;
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+        }
+
+        function showDefinition(wordData) {
+            const modal = document.createElement('div');
+            modal.className = 'definition-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h3>📚 Learning: "${wordData.word.toUpperCase()}"</h3>
+                    <p><strong>Definition:</strong> ${wordData.definition}</p>
+                    <p><strong>Part of Speech:</strong> ${wordData.pos}</p>
+                    <p><strong>Educational Note:</strong> ${grammarInfo[wordData.pos] || 'A valuable addition to your vocabulary!'}</p>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            modal.onclick = (e) => {
+                if (e.target === modal || e.target.className === 'close-modal') {
+                    document.body.removeChild(modal);
+                }
+            };
+        }
+
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.className = 'message ' + type;
+            msgDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function addAttempt(word, type) {
+            attemptedWords.unshift({
+                word: word,
+                level: currentLevel,
+                type: type,
+                timestamp: Date.now()
+            });
+
+            if (attemptedWords.length > 50) {
+                attemptedWords = attemptedWords.slice(0, 50);
+            }
+        }
+
+        function shouldLimitWords() {
+            return !isAddedToHomeScreen;
+        }
+
+        function showEleventhWordPopup() {
+            const modal = document.createElement('div');
+            modal.className = 'definition-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>🎓 Expand Your Learning!</h3>
+                    <p>You've discovered 10 words! Add this educational game to your home screen to:</p>
+                    <ul style="text-align: left; margin: 20px 0;">
+                        <li>📚 Discover unlimited vocabulary</li>
+                        <li>🎯 Learn from complete dictionary</li>
+                        <li>📱 Study offline anytime</li>
+                        <li>🏆 Track full learning progress</li>
+                    </ul>
+                    <button onclick="showAddToHomeScreen(); document.body.removeChild(this.parentElement.parentElement)" style="background: #6aaa64; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 16px;">Add to Home Screen</button>
+                    <button onclick="document.body.removeChild(this.parentElement.parentElement)" style="background: #666; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-left: 10px;">Keep Playing in Browser</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function showAddToHomeScreen() {
+            alert('To add to home screen:\\n\\n1. Tap the share button in your browser\\n2. Select "Add to Home Screen"\\n3. Enjoy unlimited educational word discovery!');
+        }
+
+        function setupEventListeners() {
+            document.getElementById('wordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    submitWord();
+                }
+            });
+
+            document.getElementById('submitBtn').onclick = submitWord;
+            
+            // Hint buttons
+            document.getElementById('hintDefinitionBtn').onclick = () => {
+                if (!hintCooldown) {
+                    applyCooldown();
+                    showDefinitionHint();
+                }
+            };
+            
+            document.getElementById('hintScrambledBtn').onclick = () => {
+                if (!hintCooldown && currentLevel + 1 >= 4) {
+                    applyCooldown();
+                    showScrambledHint();
+                }
+            };
+            
+            document.getElementById('hintRevealBtn').onclick = () => {
+                if (!hintCooldown) {
+                    applyCooldown();
+                    showRevealHint();
+                }
+            };
+
+            // PWA button
+            document.getElementById('permanentDownloadBtn').onclick = showAddToHomeScreen;
+        }
+
+        function applyCooldown() {
+            hintCooldown = true;
+            setTimeout(() => {
+                hintCooldown = false;
+            }, 15000); // 15 second cooldown as requested
+        }
+
+        function showDefinitionHint() {
+            const wordLength = currentLevel + 1;
+            const availableWords = gameWords[wordLength] || [];
+            const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
+            const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
+
+            if (unfoundWords.length === 0) {
+                showMessage('No more words to discover at this level!', 'warning');
+                return;
+            }
+
+            const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
+            currentHintWord = randomWord;
+
+            const hintDisplay = document.getElementById('hintDisplay');
+            hintDisplay.innerHTML = `
+                <h4>📚 Educational Hint</h4>
+                <p><strong>Definition:</strong> ${randomWord.definition}</p>
+                <p><strong>Part of Speech:</strong> ${randomWord.pos}</p>
+                <p><strong>Learning Tip:</strong> ${grammarInfo[randomWord.pos] || 'This word will expand your vocabulary!'}</p>
+            `;
+            hintDisplay.style.display = 'block';
+        }
+
+        function showScrambledHint() {
+            const wordLength = currentLevel + 1;
+            const availableWords = gameWords[wordLength] || [];
+            const foundWordsSet = new Set((foundWords[wordLength] || []).map(w => w.word.toLowerCase()));
+            const unfoundWords = availableWords.filter(w => !foundWordsSet.has(w.word.toLowerCase()));
+
+            if (unfoundWords.length === 0) {
+                showMessage('No more words to discover!', 'warning');
+                return;
+            }
+
+            const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
+            currentHintWord = randomWord;
+
+            const letters = randomWord.word.toLowerCase().split('');
+            for (let i = letters.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [letters[i], letters[j]] = [letters[j], letters[i]];
+            }
+            const scrambled = letters.join('').toUpperCase();
+
+            const hintDisplay = document.getElementById('hintDisplay');
+            hintDisplay.innerHTML = `
+                <h4>🎯 Spelling Challenge</h4>
+                <p><strong>Scrambled Letters:</strong> <span style="font-size: 1.2em; letter-spacing: 2px; color: #c9b458;">${scrambled}</span></p>
+                <p>Unscramble these letters to form a ${wordLength}-letter word!</p>
+            `;
+            hintDisplay.style.display = 'block';
+        }
+
+        function showRevealHint() {
+            const wordLength = currentLevel + 1;
+            const availableWords = gameWords[wordLength] || [];
+            const foundWordsSet = new Set((foundWords[wordLength] || []).map(w => w.word.toLowerCase()));
+            const unfoundWords = availableWords.filter(w => !foundWordsSet.has(w.word.toLowerCase()));
+
+            if (unfoundWords.length === 0) {
+                showMessage('No more words to discover!', 'warning');
+                return;
+            }
+
+            const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
+            currentHintWord = randomWord;
+
+            const hintDisplay = document.getElementById('hintDisplay');
+            hintDisplay.innerHTML = `
+                <h4>🎁 Word Revealed</h4>
+                <p><strong>Word:</strong> <span style="font-size: 1.2em; color: #6aaa64;">${randomWord.word.toUpperCase()}</span></p>
+                <p><strong>Definition:</strong> ${randomWord.definition}</p>
+                <p>Type this word to add it to your vocabulary!</p>
+            `;
+            hintDisplay.style.display = 'block';
+        }
+
+        // Initialize game when page loads
+        initGame();
+    </script>
+
+    <style>
+        .definition-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            color: white;
+            position: relative;
+            border: 1px solid #6aaa64;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .close-modal:hover {
+            color: white;
+        }
+
+        .hint-display {
+            background: rgba(106, 170, 100, 0.1);
+            border: 1px solid #6aaa64;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .hint-display h4 {
+            color: #6aaa64;
+            margin-bottom: 15px;
+        }
+
+        .attempts-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+
+        .attempts-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #c9b458;
+        }
+
+        .attempts-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .attempt-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .attempt-item.valid {
+            background: rgba(106, 170, 100, 0.3);
+            color: #90ee90;
+        }
+
+        .attempt-item.invalid {
+            background: rgba(220, 53, 69, 0.3);
+            color: #ff6b7a;
+        }
+
+        .attempt-item.duplicate {
+            background: rgba(255, 193, 7, 0.3);
+            color: #ffd700;
+        }
+    </style>
