@@ -749,7 +749,7 @@
 
                 <div class="found-words">
                     <h3 id="foundWordsHeader">Found Words
-                        <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>
+                        <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">?</span>
                     </h3>
                     <span id="foundWordsCount" style="display:none;">0</span>
                     <div class="unlock-info" id="unlockInfo"></div>
@@ -1231,12 +1231,12 @@
             // Always hide count for browser users - completely invisible
             if (shouldLimitWords()) {
                 document.getElementById('foundWordsHeader').innerHTML = `Found Words
-                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>`;
+                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">?</span>`;
                 document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             } else {
                 // Always show count for home screen users
                 document.getElementById('foundWordsHeader').innerHTML = `Found Words (${found.length})
-                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">ⓘ</span>`;
+                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">?</span>`;
                 document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             }
 
