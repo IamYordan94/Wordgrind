@@ -12,12 +12,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <script>window.cacheBust = Date.now();</script>
-    <meta name="version" content="v2.6-GRAMMAR-BUTTON-FIXED-12345">
+    <meta name="version" content="v2.7-BOOK-ICON-FIXED-67890">
     <!-- Force reload timestamp -->
     <script>
         // Force cache invalidation
-        if (localStorage.getItem('lastVersion') !== 'v2.6-12345') {
-            localStorage.setItem('lastVersion', 'v2.6-12345');
+        if (localStorage.getItem('lastVersion') !== 'v2.7-67890') {
+            localStorage.setItem('lastVersion', 'v2.7-67890');
             window.location.reload(true);
         }
     </script>
@@ -753,7 +753,7 @@
 
                 <div class="found-words">
                     <h3 id="foundWordsHeader">Found Words
-                        <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">i</span>
+                        <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">📚</span>
                     </h3>
                     <span id="foundWordsCount" style="display:none;">0</span>
                     <div class="unlock-info" id="unlockInfo"></div>
@@ -1235,12 +1235,12 @@
             // Always hide count for browser users - completely invisible
             if (shouldLimitWords()) {
                 document.getElementById('foundWordsHeader').innerHTML = `Found Words
-                    <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">i</span>`;
+                    <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">📚</span>`;
                 document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             } else {
                 // Always show count for home screen users
                 document.getElementById('foundWordsHeader').innerHTML = `Found Words (${found.length})
-                    <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">i</span>`;
+                    <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">📚</span>`;
                 document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             }
 
