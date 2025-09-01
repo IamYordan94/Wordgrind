@@ -12,12 +12,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <script>window.cacheBust = Date.now();</script>
-    <meta name="version" content="v2.5-FINAL-CACHE-DESTROYED-99999">
+    <meta name="version" content="v2.6-GRAMMAR-BUTTON-FIXED-12345">
     <!-- Force reload timestamp -->
     <script>
         // Force cache invalidation
-        if (localStorage.getItem('lastVersion') !== 'v2.5-99999') {
-            localStorage.setItem('lastVersion', 'v2.5-99999');
+        if (localStorage.getItem('lastVersion') !== 'v2.6-12345') {
+            localStorage.setItem('lastVersion', 'v2.6-12345');
             window.location.reload(true);
         }
     </script>
@@ -309,20 +309,24 @@
 
         .info-circle {
             cursor: pointer;
-            background-color: #6aaa64;
+            background-color: #d4a953;
             color: white;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
+            margin-left: 8px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .info-circle:hover {
-            background-color: #5a9954;
+            background-color: #c9a043;
+            transform: scale(1.1);
         }
 
         .hint-section {
@@ -749,7 +753,7 @@
 
                 <div class="found-words">
                     <h3 id="foundWordsHeader">Found Words
-                        <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">?</span>
+                        <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">i</span>
                     </h3>
                     <span id="foundWordsCount" style="display:none;">0</span>
                     <div class="unlock-info" id="unlockInfo"></div>
@@ -1231,12 +1235,12 @@
             // Always hide count for browser users - completely invisible
             if (shouldLimitWords()) {
                 document.getElementById('foundWordsHeader').innerHTML = `Found Words
-                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">?</span>`;
+                    <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">i</span>`;
                 document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             } else {
                 // Always show count for home screen users
                 document.getElementById('foundWordsHeader').innerHTML = `Found Words (${found.length})
-                    <span class="info-circle" id="grammarInfoBtn" title="Grammar Types Explained">?</span>`;
+                    <span class="info-circle" id="grammarInfoBtn" title="Click for Grammar Types Explained">i</span>`;
                 document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
             }
 
