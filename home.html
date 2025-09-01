@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Word Grind - Educational Word Discovery Game</title>
+    <meta name="description" content="Learn about Progressive Word Grind - an educational word discovery game that helps you build vocabulary through systematic word exploration and progressive learning.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6aaa64">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 3.2em;
+            background: linear-gradient(45deg, #6aaa64, #c9b458);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #c9b458;
+            margin-bottom: 30px;
+        }
+
+        .main-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .main-btn {
+            background: linear-gradient(45deg, #6aaa64, #5a9654);
+            color: white;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .main-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #5a9654, #4a8644);
+        }
+
+        .vocab-btn {
+            background: linear-gradient(45deg, #c9b458, #b8a248);
+        }
+
+        .vocab-btn:hover {
+            background: linear-gradient(45deg, #b8a248, #a89238);
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .content-section h2 {
+            color: #6aaa64;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .content-section h3 {
+            color: #c9b458;
+            font-size: 1.6em;
+            margin: 25px 0 15px 0;
+        }
+
+        .content-section p {
+            margin-bottom: 18px;
+            font-size: 1.15em;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: rgba(106, 170, 100, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #6aaa64;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            background: rgba(106, 170, 100, 0.2);
+        }
+
+        .feature-card h4 {
+            color: #6aaa64;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: rgba(201, 180, 88, 0.3);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: #c9b458;
+            font-weight: bold;
+        }
+
+        .progression-steps {
+            list-style: none;
+            padding: 0;
+            margin: 25px 0;
+        }
+
+        .progression-steps li {
+            background: rgba(201, 180, 88, 0.1);
+            padding: 18px;
+            margin: 15px 0;
+            border-radius: 12px;
+            border-left: 4px solid #c9b458;
+            font-size: 1.1em;
+        }
+
+        .progression-steps li strong {
+            color: #c9b458;
+        }
+
+        .benefits-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .benefit-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(106, 170, 100, 0.3);
+        }
+
+        .benefit-item h5 {
+            color: #6aaa64;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .cta-section {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(106, 170, 100, 0.1), rgba(201, 180, 88, 0.1));
+            padding: 50px 30px;
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+
+        .cta-section h2 {
+            color: #6aaa64;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .main-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .main-btn {
+                padding: 18px 35px;
+                font-size: 1.2em;
+            }
+
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .content-section {
+                padding: 25px;
+            }
+
+            .content-section h2 {
+                font-size: 1.8em;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h1>🎮 Progressive Word Grind</h1>
+            <p class="subtitle">The Educational Word Discovery Game That Builds Your Vocabulary Through Systematic Learning</p>
+            
+            <div class="main-buttons">
+                <a href="index.html" class="main-btn">🎯 Start Playing</a>
+                <a href="vocabulary.html" class="main-btn vocab-btn">📚 View Vocabulary</a>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>🎓 What Makes This Game Educational?</h2>
+            <p>Progressive Word Grind isn't just a game - it's a <span class="highlight">comprehensive vocabulary building system</span> that combines the excitement of word discovery with proven educational techniques.</p>
+            
+            <div class="benefits-list">
+                <div class="benefit-item">
+                    <h5>🧠 Systematic Learning</h5>
+                    <p>Progress through word lengths systematically, building from simple 2-letter words to complex 7+ letter vocabulary.</p>
+                </div>
+                <div class="benefit-item">
+                    <h5>📖 Grammar Understanding</h5>
+                    <p>Learn word types (nouns, verbs, adjectives) with detailed definitions for every discovered word.</p>
+                </div>
+                <div class="benefit-item">
+                    <h5>🏆 Achievement-Based</h5>
+                    <p>Unlock new levels only after mastering the current one, ensuring thorough vocabulary development.</p>
+                </div>
+                <div class="benefit-item">
+                    <h5>💾 Progress Tracking</h5>
+                    <p>Build a permanent vocabulary database that tracks all your discoveries and learning progress.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>🎯 How Progressive Learning Works</h2>
+            <p>Unlike traditional word games that focus on single daily challenges, Progressive Word Grind requires you to discover <span class="highlight">every possible word</span> of each length before advancing. This creates a comprehensive learning experience.</p>
+
+            <h3>📈 Level Progression System</h3>
+            <ul class="progression-steps">
+                <li><strong>Level 1 (2-letter words):</strong> Master fundamentals with words like "at", "is", "up" - builds foundation</li>
+                <li><strong>Level 2 (3-letter words):</strong> Expand vocabulary with "cat", "run", "joy" - develops pattern recognition</li>
+                <li><strong>Level 3 (4-letter words):</strong> Challenge yourself with "game", "word", "play" - strengthens skills</li>
+                <li><strong>Level 4+ (5-7+ letters):</strong> Master complex vocabulary - achieves fluency</li>
+            </ul>
+
+            <h3>🎮 Educational Game Mechanics</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🟢 Green Letters</h4>
+                    <p>Correct letter in the right position - reinforces successful pattern recognition and spelling accuracy.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🟡 Yellow Letters</h4>
+                    <p>Right letter, wrong position - develops understanding of word structure and letter placement.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⚫ Gray Letters</h4>
+                    <p>Letter not in word - teaches process of elimination and improves strategic thinking.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>🌟 Educational Benefits</h2>
+            <p>Research shows that systematic vocabulary building combined with interactive feedback creates lasting learning outcomes:</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📚 Vocabulary Expansion</h4>
+                    <p>Discover thousands of words systematically, from basic to advanced levels, building a comprehensive vocabulary foundation.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔍 Pattern Recognition</h4>
+                    <p>Develop skills in recognizing common letter combinations, prefixes, suffixes, and word formation patterns.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🧩 Strategic Thinking</h4>
+                    <p>Learn to use feedback effectively, make educated guesses, and develop systematic approaches to problem-solving.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📖 Grammar Awareness</h4>
+                    <p>Understand parts of speech, word functions, and grammatical relationships through interactive exploration.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎯 Goal Achievement</h4>
+                    <p>Experience the satisfaction of completing levels and unlocking new challenges, building persistence and motivation.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💡 Memory Enhancement</h4>
+                    <p>Reinforce learning through repetition, association, and the active recall of word patterns and meanings.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>🚀 Ready to Build Your Vocabulary?</h2>
+            <p>Join thousands of learners who are systematically expanding their word knowledge through engaging gameplay. Start with simple 2-letter words and progress to become a vocabulary master!</p>
+            
+            <div class="main-buttons">
+                <a href="index.html" class="main-btn">🎯 Start Your Journey</a>
+                <a href="vocabulary.html" class="main-btn vocab-btn">📊 Track Progress</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🏠 Progressive Word Grind - Home Page Loaded');
+        console.log('🎓 Educational word game - systematic vocabulary building');
+    </script>
+</body>
+</html>
