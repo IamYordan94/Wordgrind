@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vocabulary Database - Progressive Word Grind</title>
+    <meta name="description" content="View your complete vocabulary collection from Progressive Word Grind. Track your learning progress and review all discovered words with definitions.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6aaa64">
+    
+    <!-- Google AdSense Auto Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6023334720926468"
+        crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 10px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        .nav-links {
+            position: absolute;
+            left: 0;
+            top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-link {
+            background: #444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: #555;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            background: linear-gradient(45deg, #6aaa64, #c9b458);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .description {
+            color: #e0e0e0;
+            font-size: 1.1em;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+        }
+
+        .stats-section {
+            background: rgba(106, 170, 100, 0.1);
+            border: 2px solid #6aaa64;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #6aaa64;
+            display: block;
+        }
+
+        .stat-label {
+            color: #ccc;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .level-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #6aaa64;
+        }
+
+        .level-title {
+            color: #6aaa64;
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        .level-count {
+            background: #6aaa64;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .word-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .word-card:hover {
+            background: rgba(106, 170, 100, 0.2);
+            border-color: #6aaa64;
+            transform: translateY(-3px);
+        }
+
+        .word-text {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .word-pos {
+            color: #c9b458;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .word-definition {
+            color: #ccc;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+
+        .empty-state h3 {
+            color: #6aaa64;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .start-playing-btn {
+            background: linear-gradient(45deg, #6aaa64, #5a9954);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .start-playing-btn:hover {
+            background: linear-gradient(45deg, #5a9954, #4a8944);
+            transform: translateY(-2px);
+        }
+
+        .search-section {
+            background: rgba(201, 180, 88, 0.1);
+            border: 1px solid #c9b458;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #c9b458;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover {
+            background: #555;
+        }
+
+        .filter-btn.active {
+            background: #c9b458;
+            color: #1a1a1a;
+        }
+
+        .definition-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #2a2a2a;
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            color: white;
+            position: relative;
+            border: 2px solid #6aaa64;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .close-modal:hover {
+            color: white;
+        }
+
+        .modal-word {
+            font-size: 2.5em;
+            color: #6aaa64;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .modal-pos {
+            background: rgba(201, 180, 88, 0.3);
+            color: #c9b458;
+            padding: 5px 15px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .modal-definition {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .grammar-explanation {
+            background: rgba(106, 170, 100, 0.1);
+            border-left: 4px solid #6aaa64;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .grammar-explanation h4 {
+            color: #6aaa64;
+            margin-bottom: 8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .nav-links {
+                position: static;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .words-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 10px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 15px;
+            }
+
+            .level-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .filter-buttons {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">🏠 Home</a>
+                <a href="game.html" class="nav-link">🎮 Play Game</a>
+            </div>
+            <h1>📚 My Vocabulary Database</h1>
+            <p class="description">Track your learning progress and review all discovered words with definitions and grammar explanations!</p>
+        </div>
+
+        <div class="stats-section">
+            <h2 style="color: #6aaa64; margin-bottom: 20px;">🎯 Learning Progress</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalWords">0</span>
+                    <div class="stat-label">Total Words</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalLevels">0</span>
+                    <div class="stat-label">Levels Played</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="longestWord">-</span>
+                    <div class="stat-label">Longest Word</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="vocabularyScore">0</span>
+                    <div class="stat-label">Vocab Score</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search your vocabulary collection...">
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterByLength('all')">All Words</button>
+                <button class="filter-btn" onclick="filterByLength('2')">2 Letters</button>
+                <button class="filter-btn" onclick="filterByLength('3')">3 Letters</button>
+                <button class="filter-btn" onclick="filterByLength('4')">4 Letters</button>
+                <button class="filter-btn" onclick="filterByLength('5')">5 Letters</button>
+                <button class="filter-btn" onclick="filterByLength('6')">6 Letters</button>
+                <button class="filter-btn" onclick="filterByLength('7')">7 Letters</button>
+            </div>
+        </div>
+
+        <div id="vocabularyContent">
+            <div class="empty-state">
+                <h3>🌱 Start Building Your Vocabulary!</h3>
+                <p>Your vocabulary database is empty. Start playing to discover and collect words!</p>
+                <a href="game.html" class="start-playing-btn">🎮 Start Playing & Learning</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('📚 Vocabulary Database Page - Track your learning progress!');
+        
+        // Educational grammar info
+        const grammarInfo = {
+            'noun': 'A word that names a person, place, thing, or idea (e.g., cat, house, love)',
+            'verb': 'A word that describes an action, state, or occurrence (e.g., run, is, think)',
+            'adjective': 'A word that describes or modifies a noun (e.g., big, beautiful, smart)',
+            'adverb': 'A word that modifies a verb, adjective, or other adverb (e.g., quickly, very, often)',
+            'preposition': 'A word that shows the relationship between a noun and other words (e.g., in, on, under)',
+            'conjunction': 'A word that connects words, phrases, or clauses (e.g., and, but, or)',
+            'pronoun': 'A word that replaces a noun (e.g., he, she, it, they)',
+            'interjection': 'A word or phrase that expresses emotion or surprise (e.g., wow, oh, hey)',
+            'article': 'A word that defines a noun as specific or unspecific (a, an, the)',
+            'possessive adjective': 'A word that shows ownership (my, your, his, her, our, their)',
+            'determiner': 'A word that introduces a noun and provides context (this, that, some, many)'
+        };
+
+        let allFoundWords = [];
+        let filteredWords = [];
+        let currentFilter = 'all';
+
+        function loadVocabularyData() {
+            // Load found words from localStorage (same format as game)
+            const foundWordsData = localStorage.getItem('foundWords');
+            
+            if (!foundWordsData) {
+                showEmptyState();
+                return;
+            }
+
+            try {
+                const foundWords = JSON.parse(foundWordsData);
+                allFoundWords = [];
+
+                // Convert found words object to flat array
+                for (const [length, words] of Object.entries(foundWords)) {
+                    if (Array.isArray(words)) {
+                        words.forEach(wordData => {
+                            allFoundWords.push({
+                                ...wordData,
+                                length: parseInt(length)
+                            });
+                        });
+                    }
+                }
+
+                if (allFoundWords.length === 0) {
+                    showEmptyState();
+                    return;
+                }
+
+                // Sort by length, then alphabetically
+                allFoundWords.sort((a, b) => {
+                    if (a.length !== b.length) {
+                        return a.length - b.length;
+                    }
+                    return a.word.localeCompare(b.word);
+                });
+
+                updateStats();
+                filterByLength(currentFilter);
+
+            } catch (error) {
+                console.error('Error loading vocabulary data:', error);
+                showEmptyState();
+            }
+        }
+
+        function showEmptyState() {
+            document.getElementById('vocabularyContent').innerHTML = `
+                <div class="empty-state">
+                    <h3>🌱 Start Building Your Vocabulary!</h3>
+                    <p>Your vocabulary database is empty. Start playing to discover and collect words!</p>
+                    <a href="game.html" class="start-playing-btn">🎮 Start Playing & Learning</a>
+                </div>
+            `;
+        }
+
+        function updateStats() {
+            const totalWords = allFoundWords.length;
+            const levels = [...new Set(allFoundWords.map(w => w.length))];
+            const longestWord = allFoundWords.reduce((longest, word) => 
+                word.word.length > longest.length ? word.word : longest, 
+                { length: 0 }).word || '-';
+            const vocabularyScore = totalWords * 10; // Simple scoring system
+
+            document.getElementById('totalWords').textContent = totalWords;
+            document.getElementById('totalLevels').textContent = levels.length;
+            document.getElementById('longestWord').textContent = longestWord.toUpperCase();
+            document.getElementById('vocabularyScore').textContent = vocabularyScore;
+        }
+
+        function filterByLength(length) {
+            currentFilter = length;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event?.target?.classList.add('active');
+
+            if (length === 'all') {
+                filteredWords = [...allFoundWords];
+            } else {
+                filteredWords = allFoundWords.filter(word => word.length === parseInt(length));
+            }
+
+            displayVocabulary();
+        }
+
+        function displayVocabulary() {
+            const content = document.getElementById('vocabularyContent');
+            
+            if (filteredWords.length === 0) {
+                if (currentFilter === 'all') {
+                    showEmptyState();
+                } else {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <h3>📖 No ${currentFilter}-Letter Words Yet</h3>
+                            <p>Play the ${currentFilter}-letter level to start collecting words!</p>
+                            <a href="game.html" class="start-playing-btn">🎮 Play ${currentFilter}-Letter Level</a>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
+            // Group words by length
+            const wordsByLength = {};
+            filteredWords.forEach(word => {
+                if (!wordsByLength[word.length]) {
+                    wordsByLength[word.length] = [];
+                }
+                wordsByLength[word.length].push(word);
+            });
+
+            let html = '';
+            for (const [length, words] of Object.entries(wordsByLength)) {
+                html += `
+                    <div class="level-section">
+                        <div class="level-header">
+                            <h3 class="level-title">${length}-Letter Words</h3>
+                            <span class="level-count">${words.length} words</span>
+                        </div>
+                        <div class="words-grid">
+                `;
+
+                words.forEach(wordData => {
+                    html += `
+                        <div class="word-card" onclick="showWordDetails('${wordData.word}', '${wordData.definition}', '${wordData.pos}')">
+                            <div class="word-text">${wordData.word}</div>
+                            <div class="word-pos">${wordData.pos}</div>
+                            <div class="word-definition">${wordData.definition.substring(0, 80)}${wordData.definition.length > 80 ? '...' : ''}</div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+        }
+
+        function showWordDetails(word, definition, pos) {
+            const modal = document.createElement('div');
+            modal.className = 'definition-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <div class="modal-word">${word}</div>
+                    <div class="modal-pos">${pos}</div>
+                    <div class="modal-definition">${definition}</div>
+                    <div class="grammar-explanation">
+                        <h4>📝 Grammar Explanation</h4>
+                        <p>${grammarInfo[pos] || 'This word is a valuable addition to your vocabulary!'}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            modal.onclick = (e) => {
+                if (e.target === modal || e.target.className === 'close-modal') {
+                    document.body.removeChild(modal);
+                }
+            };
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            if (searchTerm === '') {
+                filteredWords = currentFilter === 'all' ? [...allFoundWords] : 
+                    allFoundWords.filter(word => word.length === parseInt(currentFilter));
+            } else {
+                const baseWords = currentFilter === 'all' ? allFoundWords : 
+                    allFoundWords.filter(word => word.length === parseInt(currentFilter));
+                
+                filteredWords = baseWords.filter(word => 
+                    word.word.toLowerCase().includes(searchTerm) ||
+                    word.definition.toLowerCase().includes(searchTerm) ||
+                    word.pos.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            displayVocabulary();
+        });
+
+        // Auto-refresh data every 5 seconds to sync with game progress
+        setInterval(loadVocabularyData, 5000);
+
+        // Initial load
+        loadVocabularyData();
+    </script>
+</body>
+</html>
