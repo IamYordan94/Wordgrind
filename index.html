@@ -1027,13 +1027,13 @@
             const wordLength = currentLevel + 1;
             const scrambledBtn = document.getElementById('hintScrambledBtn');
 
-            // Enable scrambled letters hint only for 4+ letter words
-            if (wordLength >= 4) {
+            // Enable scrambled letters hint only for 3+ letter words
+            if (wordLength >= 3) {
                 scrambledBtn.disabled = false;
                 scrambledBtn.textContent = 'Scrambled Letters';
             } else {
                 scrambledBtn.disabled = true;
-                scrambledBtn.textContent = 'Available for 4+ Letter Words';
+                scrambledBtn.textContent = 'Available for 3+ Letter Words';
             }
         }
 
@@ -1189,7 +1189,7 @@
         }
 
         function showScrambledHint() {
-            if (hintCooldown || currentLevel + 1 < 4) return;
+            if (hintCooldown || currentLevel + 1 < 3) return;
 
             const wordLength = currentLevel + 1;
             const availableWords = gameWords[wordLength] || [];
@@ -1206,6 +1206,13 @@
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
 
+                // Count anagrams (words with same letters)
+                const sortedLetters = randomWord.word.toLowerCase().split('').sort().join('');
+                const anagramCount = availableWords.filter(word => {
+                    const wordSorted = word.word.toLowerCase().split('').sort().join('');
+                    return wordSorted === sortedLetters;
+                }).length;
+
                 // Scramble the letters
                 const letters = randomWord.word.toLowerCase().split('');
                 for (let i = letters.length - 1; i > 0; i--) {
@@ -1218,7 +1225,8 @@
                 hintDisplay.innerHTML = `
                     <strong>Scrambled Letters:</strong><br>
                     <div class="scrambled-letters">${scrambled}</div>
-                    <small>Unscramble these letters to form a ${wordLength}-letter word!</small>
+                    <small>Unscramble these letters to form a ${wordLength}-letter word!</small><br>
+                    <small style="color: #d4a953;">💡 These letters can make ${anagramCount} possible word${anagramCount === 1 ? '' : 's'}</small>
                 `;
                 hintDisplay.style.display = 'block';
             });
