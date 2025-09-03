@@ -1,0 +1,799 @@
+<!-- Hangman Modal -->
+<div class="hangman-modal" id="hangman-modal">
+    <div class="hangman-content">
+        <button class="close-btn" onclick="closeHangmanModal()">&times;</button>
+        
+        <div class="hangman-header">
+            <h2>🎯 Hangman Challenge</h2>
+            <div class="level-info">
+                Level <span id="modal-level">1</span> • <span id="modal-word-length">2</span> Letters
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen">
+            <div class="hangman-canvas-container">
+                <canvas id="hangman-canvas" width="200" height="200"></canvas>
+            </div>
+
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="correct-guesses">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value wrong-guesses" id="wrong-guesses">0</div>
+                    <div class="stat-label">Wrong (6 max)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="remaining-letters">0</div>
+                    <div class="stat-label">Remaining</div>
+                </div>
+            </div>
+
+            <div class="word-display">
+                <div class="word-letters" id="word-display">_ _ _</div>
+                <div class="word-definition" id="word-definition-display" style="display: none;">
+                    <strong>Definition:</strong> <span id="word-definition-text"></span>
+                </div>
+            </div>
+
+            <div class="alphabet-container">
+                <h4>🔤 Choose a Letter</h4>
+                <div class="alphabet-grid" id="alphabet-grid"></div>
+            </div>
+        </div>
+
+        <!-- Win Screen -->
+        <div class="result-screen win-screen" id="win-screen">
+            <div class="result-icon">🎉</div>
+            <div class="result-title">Word Solved!</div>
+            <div class="result-message">
+                Congratulations! You guessed "<strong id="win-word"></strong>"
+                <div class="word-definition" style="margin-top: 15px;">
+                    <strong>Definition:</strong> <span id="win-definition"></span>
+                </div>
+            </div>
+            <div class="result-actions">
+                <button class="action-btn primary-btn" onclick="onHangmanWin()">Continue Playing</button>
+            </div>
+        </div>
+
+        <!-- Lose Screen - NO WORD REVEALED -->
+        <div class="result-screen lose-screen" id="lose-screen">
+            <div class="result-icon">💀</div>
+            <div class="result-title">Game Over!</div>
+            <div class="result-message">
+                Better luck next time!<br>
+                Try again to discover the word.
+            </div>
+            <div class="result-actions">
+                <button class="action-btn secondary-btn" onclick="closeHangmanModal()">Try Again Later</button>
+                <button class="action-btn primary-btn" onclick="watchAdToRetry()">📺 Watch Ad to Retry</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modal Styles */
+.hangman-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.hangman-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.hangman-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.hangman-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.hangman-header h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.level-info {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.hangman-canvas-container {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#hangman-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+}
+
+.word-display {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.word-letters {
+    font-family: 'Courier New', monospace;
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 8px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.word-definition {
+    background: #e3f2fd;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    border-left: 4px solid #2196f3;
+}
+
+.word-definition strong {
+    color: #1976d2;
+}
+
+.alphabet-container {
+    margin-bottom: 25px;
+}
+
+.alphabet-container h4 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.alphabet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+    gap: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.letter-btn {
+    width: 35px;
+    height: 35px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.letter-btn:hover:not(:disabled) {
+    background: #667eea;
+    color: white;
+    transform: scale(1.1);
+}
+
+.letter-btn:disabled {
+    background: #f5f5f5;
+    color: #999;
+    border-color: #ddd;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.letter-btn.wrong {
+    background: #ff6b6b;
+    border-color: #ff6b6b;
+    color: white;
+}
+
+.letter-btn.correct {
+    background: #51cf66;
+    border-color: #51cf66;
+    color: white;
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-between;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.wrong-guesses {
+    color: #ff6b6b;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+/* Result Screens */
+.result-screen {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.result-screen.active {
+    display: block;
+    animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.win-screen {
+    color: #51cf66;
+}
+
+.lose-screen {
+    color: #ff6b6b;
+}
+
+.result-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+.result-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.result-message {
+    font-size: 16px;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.result-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, #51cf66, #40c057);
+    color: white;
+}
+
+.secondary-btn {
+    background: #f8f9fa;
+    color: #333;
+    border: 2px solid #dee2e6;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .hangman-content {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .word-letters {
+        font-size: 24px;
+        letter-spacing: 4px;
+    }
+
+    .alphabet-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .letter-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .game-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
+
+<script>
+// ===== INTEGRATION POINTS - Replace with your existing system =====
+
+// === INTEGRATION POINT: Replace with your existing currentLevel ===
+let currentLevel = 1;
+
+// === INTEGRATION POINT: Replace with your existing foundWords ===
+let foundWords = {};
+
+// === INTEGRATION POINT: Replace with your existing attemptedWords ===
+let attemptedWords = [];
+
+// === INTEGRATION POINT: Replace with your actual words_data.json ===
+const words_data = {
+    "2": [
+        {word: "cat", pos: "noun", definition: "a small domesticated carnivorous mammal"},
+        {word: "dog", pos: "noun", definition: "a domesticated carnivorous mammal"},
+        {word: "sun", pos: "noun", definition: "the star around which the earth orbits"},
+        {word: "run", pos: "verb", definition: "move at a speed faster than a walk"},
+        {word: "big", pos: "adjective", definition: "of considerable size or extent"}
+    ],
+    "3": [
+        {word: "book", pos: "noun", definition: "a written or printed work consisting of pages"},
+        {word: "tree", pos: "noun", definition: "a woody perennial plant with a main trunk"},
+        {word: "blue", pos: "adjective", definition: "of a color intermediate between green and violet"},
+        {word: "fast", pos: "adjective", definition: "moving or capable of moving at high speed"},
+        {word: "jump", pos: "verb", definition: "push oneself off a surface using leg muscles"}
+    ],
+    "4": [
+        {word: "house", pos: "noun", definition: "a building for human habitation"},
+        {word: "water", pos: "noun", definition: "a colorless, transparent, odorless liquid"},
+        {word: "music", pos: "noun", definition: "vocal or instrumental sounds combined in harmony"},
+        {word: "happy", pos: "adjective", definition: "feeling or showing pleasure or contentment"},
+        {word: "write", pos: "verb", definition: "mark letters, words, or symbols on a surface"}
+    ],
+    "5": [
+        {word: "school", pos: "noun", definition: "an institution for educating children"},
+        {word: "friend", pos: "noun", definition: "a person whom one knows and likes"},
+        {word: "green", pos: "adjective", definition: "of the color between blue and yellow"},
+        {word: "teach", pos: "verb", definition: "impart knowledge to or instruct someone"},
+        {word: "world", pos: "noun", definition: "the earth, together with all its countries"}
+    ],
+    "6": [
+        {word: "computer", pos: "noun", definition: "an electronic device for storing and processing data"},
+        {word: "rainbow", pos: "noun", definition: "an arch of colors formed in the sky"},
+        {word: "beautiful", pos: "adjective", definition: "pleasing the senses or mind aesthetically"},
+        {word: "kitchen", pos: "noun", definition: "a room where food is prepared and cooked"},
+        {word: "library", pos: "noun", definition: "a building containing collections of books"}
+    ],
+    "7": [
+        {word: "elephant", pos: "noun", definition: "a very large mammal with a trunk"},
+        {word: "diamond", pos: "noun", definition: "a precious stone consisting of pure carbon"},
+        {word: "wonderful", pos: "adjective", definition: "inspiring delight, pleasure, or admiration"},
+        {word: "morning", pos: "noun", definition: "the period of time from sunrise to noon"},
+        {word: "painting", pos: "noun", definition: "the action of applying paint to a surface"}
+    ]
+};
+
+// === INTEGRATION POINT: Replace with your existing saveProgress function ===
+function saveProgress() {
+    const progress = {
+        currentLevel,
+        foundWords,
+        attemptedWords,
+        timestamp: Date.now()
+    };
+    localStorage.setItem('wordleGrindProgress', JSON.stringify(progress));
+}
+
+// === INTEGRATION POINT: Replace with your existing loadProgress function ===
+function loadProgress() {
+    const saved = localStorage.getItem('wordleGrindProgress');
+    if (saved) {
+        const progress = JSON.parse(saved);
+        currentLevel = progress.currentLevel || 1;
+        foundWords = progress.foundWords || {};
+        attemptedWords = progress.attemptedWords || [];
+    }
+}
+
+// ===== END INTEGRATION POINTS =====
+
+// Game state
+let currentWord = null;
+let guessedLetters = [];
+let wrongGuesses = 0;
+let gameWon = false;
+let cooldownEndTime = 0;
+let cooldownInterval = null;
+let canvas = null;
+let ctx = null;
+
+// CORE FUNCTION: Get word from current level
+function getHangmanWord() {
+    const wordLength = currentLevel + 1; // Level 1 = 2 letters, Level 2 = 3 letters, etc.
+    const wordsForLevel = words_data[wordLength.toString()] || [];
+    
+    // Filter out already found words
+    const foundWordsForLevel = foundWords[wordLength.toString()] || [];
+    const foundWordStrings = foundWordsForLevel.map(w => w.word.toLowerCase());
+    
+    const unguessedWords = wordsForLevel.filter(wordObj => 
+        !foundWordStrings.includes(wordObj.word.toLowerCase())
+    );
+    
+    if (unguessedWords.length === 0) {
+        return null; // No more words for this level
+    }
+    
+    const randomIndex = Math.floor(Math.random() * unguessedWords.length);
+    return unguessedWords[randomIndex];
+}
+
+function initializeAlphabet() {
+    const alphabetGrid = document.getElementById('alphabet-grid');
+    alphabetGrid.innerHTML = '';
+    
+    for (let i = 65; i <= 90; i++) {
+        const letter = String.fromCharCode(i);
+        const button = document.createElement('button');
+        button.className = 'letter-btn';
+        button.textContent = letter;
+        button.onclick = () => guessLetter(letter);
+        button.id = `letter-${letter}`;
+        alphabetGrid.appendChild(button);
+    }
+}
+
+function openHangmanModal() {
+    // Check cooldown
+    if (cooldownEndTime > Date.now()) {
+        alert('Please wait for the cooldown to finish!');
+        return;
+    }
+
+    // Get a word for the current level
+    currentWord = getHangmanWord();
+    
+    if (!currentWord) {
+        alert(`No more words available for Level ${currentLevel}!`);
+        return;
+    }
+
+    // Reset game state
+    guessedLetters = [];
+    wrongGuesses = 0;
+    gameWon = false;
+
+    // Update modal displays
+    document.getElementById('modal-level').textContent = currentLevel;
+    document.getElementById('modal-word-length').textContent = currentWord.word.length;
+    
+    // Show game screen, hide result screens
+    document.getElementById('game-screen').style.display = 'block';
+    document.getElementById('win-screen').style.display = 'none';
+    document.getElementById('lose-screen').style.display = 'none';
+
+    // Initialize display
+    updateWordDisplay();
+    updateGameStats();
+    resetAlphabetButtons();
+    initializeAlphabet();
+    
+    // Initialize canvas
+    canvas = document.getElementById('hangman-canvas');
+    ctx = canvas.getContext('2d');
+    drawHangman();
+
+    // Show modal
+    document.getElementById('hangman-modal').classList.add('active');
+}
+
+function closeHangmanModal() {
+    document.getElementById('hangman-modal').classList.remove('active');
+}
+
+function updateWordDisplay() {
+    const displayWord = currentWord.word
+        .split('')
+        .map(letter => guessedLetters.includes(letter.toLowerCase()) ? letter.toUpperCase() : '_')
+        .join(' ');
+    
+    document.getElementById('word-display').textContent = displayWord;
+
+    // Check if word is complete
+    const isComplete = currentWord.word
+        .split('')
+        .every(letter => guessedLetters.includes(letter.toLowerCase()));
+    
+    if (isComplete && !gameWon) {
+        gameWon = true;
+        setTimeout(() => showWinScreen(), 1000);
+    }
+}
+
+function updateGameStats() {
+    const correctGuesses = guessedLetters.filter(letter => 
+        currentWord.word.toLowerCase().includes(letter)
+    ).length;
+    
+    const remainingLetters = new Set(currentWord.word.toLowerCase().split(''))
+        .size - correctGuesses;
+
+    document.getElementById('correct-guesses').textContent = correctGuesses;
+    document.getElementById('wrong-guesses').textContent = wrongGuesses;
+    document.getElementById('remaining-letters').textContent = remainingLetters;
+}
+
+function resetAlphabetButtons() {
+    const buttons = document.querySelectorAll('.letter-btn');
+    buttons.forEach(btn => {
+        btn.disabled = false;
+        btn.className = 'letter-btn';
+    });
+}
+
+function guessLetter(letter) {
+    const lowerLetter = letter.toLowerCase();
+    
+    if (guessedLetters.includes(lowerLetter)) {
+        return;
+    }
+
+    guessedLetters.push(lowerLetter);
+    
+    const button = document.getElementById(`letter-${letter}`);
+    button.disabled = true;
+
+    if (currentWord.word.toLowerCase().includes(lowerLetter)) {
+        button.classList.add('correct');
+        updateWordDisplay();
+    } else {
+        button.classList.add('wrong');
+        wrongGuesses++;
+        drawHangman();
+        
+        if (wrongGuesses >= 6) {
+            setTimeout(() => showLoseScreen(), 1000);
+        }
+    }
+
+    updateGameStats();
+}
+
+function drawHangman() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Set drawing style for pencil effect
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Base (always shown)
+    ctx.beginPath();
+    ctx.moveTo(20, 180);
+    ctx.lineTo(100, 180);
+    ctx.stroke();
+
+    // Pole (always shown)
+    ctx.beginPath();
+    ctx.moveTo(50, 180);
+    ctx.lineTo(50, 20);
+    ctx.stroke();
+
+    // Top beam (always shown)
+    ctx.beginPath();
+    ctx.moveTo(50, 20);
+    ctx.lineTo(130, 20);
+    ctx.stroke();
+
+    // Noose (always shown)
+    ctx.beginPath();
+    ctx.moveTo(130, 20);
+    ctx.lineTo(130, 50);
+    ctx.stroke();
+
+    // Draw body parts based on wrong guesses
+    if (wrongGuesses >= 1) {
+        // Head
+        ctx.beginPath();
+        ctx.arc(130, 65, 15, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+
+    if (wrongGuesses >= 2) {
+        // Body
+        ctx.beginPath();
+        ctx.moveTo(130, 80);
+        ctx.lineTo(130, 140);
+        ctx.stroke();
+    }
+
+    if (wrongGuesses >= 3) {
+        // Left arm
+        ctx.beginPath();
+        ctx.moveTo(130, 100);
+        ctx.lineTo(110, 120);
+        ctx.stroke();
+    }
+
+    if (wrongGuesses >= 4) {
+        // Right arm
+        ctx.beginPath();
+        ctx.moveTo(130, 100);
+        ctx.lineTo(150, 120);
+        ctx.stroke();
+    }
+
+    if (wrongGuesses >= 5) {
+        // Left leg
+        ctx.beginPath();
+        ctx.moveTo(130, 140);
+        ctx.lineTo(110, 160);
+        ctx.stroke();
+    }
+
+    if (wrongGuesses >= 6) {
+        // Right leg
+        ctx.beginPath();
+        ctx.moveTo(130, 140);
+        ctx.lineTo(150, 160);
+        ctx.stroke();
+        
+        // Game over - draw X eyes
+        ctx.beginPath();
+        ctx.moveTo(125, 60);
+        ctx.lineTo(135, 70);
+        ctx.moveTo(135, 60);
+        ctx.lineTo(125, 70);
+        ctx.stroke();
+    }
+}
+
+function showWinScreen() {
+    document.getElementById('game-screen').style.display = 'none';
+    document.getElementById('win-screen').style.display = 'block';
+    
+    document.getElementById('win-word').textContent = currentWord.word.toUpperCase();
+    document.getElementById('win-definition').textContent = currentWord.definition;
+    
+    // Show definition in game screen too
+    document.getElementById('word-definition-display').style.display = 'block';
+    document.getElementById('word-definition-text').textContent = currentWord.definition;
+}
+
+function showLoseScreen() {
+    document.getElementById('game-screen').style.display = 'none';
+    document.getElementById('lose-screen').style.display = 'block';
+    
+    // === IMPORTANT: Word is NOT revealed on loss ===
+    // The lose screen now only shows encouragement message
+}
+
+function onHangmanWin() {
+    // === INTEGRATION POINT: Add word to foundWords ===
+    const wordLength = currentWord.word.length.toString();
+    if (!foundWords[wordLength]) {
+        foundWords[wordLength] = [];
+    }
+    foundWords[wordLength].push(currentWord);
+    
+    // === INTEGRATION POINT: Add to attemptedWords log ===
+    attemptedWords.push({
+        word: currentWord.word,
+        level: currentLevel,
+        type: "hangman_win",
+        timestamp: Date.now()
+    });
+    
+    // === INTEGRATION POINT: Save progress ===
+    saveProgress();
+    
+    alert(`"${currentWord.word.toUpperCase()}" added to your found words! 🎉`);
+    closeHangmanModal();
+}
+
+function watchAdToRetry() {
+    // === INTEGRATION POINT: Replace with actual ad system ===
+    alert('🎬 Ad played! You can now retry.');
+    closeHangmanModal();
+    setTimeout(() => openHangmanModal(), 500);
+}
+
+// Cooldown system
+function checkCooldown() {
+    if (cooldownEndTime > Date.now()) {
+        // Still in cooldown
+        return true;
+    }
+    return false;
+}
+
+function triggerCooldown() {
+    cooldownEndTime = Date.now() + 60000; // 1 minute cooldown
+}
+
+// Initialize on loss to trigger cooldown
+function onHangmanLoss() {
+    triggerCooldown(); // Start 1 minute cooldown on loss
+}
+</script>
