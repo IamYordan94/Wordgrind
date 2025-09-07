@@ -2443,7 +2443,7 @@
         }
 
         function shouldLimitWords() {
-            return !isAddedToHomeScreen;
+            return false; // Game is now fully unlocked for everyone!
         }
 
         function getLimitedWords(words) {
@@ -2484,35 +2484,14 @@
         }
         
         function showThirtyWordMessage() {
-            const message = `🎉 Amazing! You've found 10 words on this level! 
-            
-            💡 **Want to find ALL words?** Try another level or add this game to your home screen for unlimited access!
-            
-            📱 **How to add to home screen:**
-            • **iPhone/iPad**: Tap the Share button (□) → "Add to Home Screen"
-            • **Android**: Tap the menu (⋮) → "Add to Home Screen" 
-            • **Desktop**: Look for the add icon (⬇️) in your address bar
-            
-            Once added to your home screen, you'll have unlimited words on every level! 🚀`;
-            
-            alert(message);
+            // Function kept for compatibility but no longer shows limitation message
+            console.log('Legacy function called - game is now fully unlocked!');
         }
 
         function showEleventhWordPopup() {
-            const message = `🎯 Add to Home Screen for Unlimited Words!
-            
-            You've found a valid word, but you need to add this game to your home screen to collect unlimited words!
-            
-            📱 How to add to home screen:
-            • iPhone/iPad: Tap Share (□) → "Add to Home Screen"
-            • Android: Tap Menu (⋮) → "Add to Home Screen"
-            • Desktop: Look for install icon in address bar
-            
-            ✅ Unlimited words on all levels
-            ✅ Offline play
-            ✅ Faster loading`;
-            
-            alert(message);
+            // Function kept for compatibility but no longer shows limitation popup
+            console.log('Legacy popup function called - game is now fully unlocked!');
+            return;
         }
 
         function hasHitWordLimit() {
