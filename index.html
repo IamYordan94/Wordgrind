@@ -1481,63 +1481,185 @@
             isActive: false
         };
 
-        // Live Definition Fetching System
-        let definitionCache = new Map();
-        
-        async function fetchLiveDefinition(word) {
-            // Check cache first
-            const cacheKey = word.toLowerCase();
-            if (definitionCache.has(cacheKey)) {
-                return definitionCache.get(cacheKey);
+        // Centralized Definition Service with caching, deduplication, and error handling
+        class DefinitionService {
+            constructor() {
+                this.cache = new Map();
+                this.persistentCache = this.loadFromStorage();
+                this.inFlightRequests = new Map();
+                this.retryDelays = [1000, 2000, 4000]; // Exponential backoff
+                this.cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours
+                this.maxCacheSize = 1000;
             }
-            
-            try {
-                const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
-                
-                if (!response.ok) {
-                    console.log(`❌ No definition found for: ${word}`);
-                    const fallback = `A valid English word: ${word}`;
-                    definitionCache.set(cacheKey, fallback);
-                    return fallback;
+
+            loadFromStorage() {
+                try {
+                    const stored = localStorage.getItem('definitionCache');
+                    return stored ? JSON.parse(stored) : {};
+                } catch (error) {
+                    console.warn('Failed to load definition cache:', error);
+                    return {};
                 }
-                
-                const data = await response.json();
-                if (data && data.length > 0 && data[0].meanings && data[0].meanings.length > 0) {
-                    const meaning = data[0].meanings[0];
-                    const definition = meaning.definitions[0].definition;
-                    const partOfSpeech = meaning.partOfSpeech;
-                    
-                    const formattedDef = `(${partOfSpeech}) ${definition}`;
-                    console.log(`✅ Fetched definition for: ${word} - ${formattedDef}`);
-                    
-                    // Cache the result
-                    definitionCache.set(cacheKey, formattedDef);
-                    return formattedDef;
-                } else {
-                    const fallback = `A valid English word: ${word}`;
-                    definitionCache.set(cacheKey, fallback);
-                    return fallback;
+            }
+
+            saveToStorage() {
+                try {
+                    localStorage.setItem('definitionCache', JSON.stringify(this.persistentCache));
+                } catch (error) {
+                    console.warn('Failed to save definition cache:', error);
                 }
-            } catch (error) {
-                console.error(`Error fetching definition for ${word}:`, error);
-                const fallback = `A valid English word: ${word}`;
-                definitionCache.set(cacheKey, fallback);
-                return fallback;
+            }
+
+            isExpired(timestamp) {
+                return Date.now() - timestamp > this.cacheExpiry;
+            }
+
+            getCachedDefinition(word) {
+                const cacheKey = word.toLowerCase();
+                
+                // Check memory cache first
+                if (this.cache.has(cacheKey)) {
+                    return this.cache.get(cacheKey);
+                }
+
+                // Check persistent cache
+                const persistentEntry = this.persistentCache[cacheKey];
+                if (persistentEntry && !this.isExpired(persistentEntry.timestamp)) {
+                    // Promote to memory cache
+                    this.cache.set(cacheKey, persistentEntry.definition);
+                    return persistentEntry.definition;
+                }
+
+                return null;
+            }
+
+            cacheDefinition(word, definition) {
+                const cacheKey = word.toLowerCase();
+                
+                // Memory cache
+                this.cache.set(cacheKey, definition);
+                
+                // Persistent cache with timestamp
+                this.persistentCache[cacheKey] = {
+                    definition,
+                    timestamp: Date.now()
+                };
+
+                // Evict old entries if cache is too large
+                const entries = Object.entries(this.persistentCache);
+                if (entries.length > this.maxCacheSize) {
+                    // Sort by timestamp and keep newest 80%
+                    entries.sort((a, b) => b[1].timestamp - a[1].timestamp);
+                    this.persistentCache = Object.fromEntries(entries.slice(0, Math.floor(this.maxCacheSize * 0.8)));
+                }
+
+                this.saveToStorage();
+            }
+
+            async fetchFromAPI(word, retryCount = 0) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+                    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`, {
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+
+                    if (response.status === 429) {
+                        // Rate limited, try exponential backoff
+                        if (retryCount < this.retryDelays.length) {
+                            const delay = this.retryDelays[retryCount] + Math.random() * 1000; // Add jitter
+                            console.log(`Rate limited, retrying in ${delay}ms for: ${word}`);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            return this.fetchFromAPI(word, retryCount + 1);
+                        } else {
+                            throw new Error('Rate limit exceeded');
+                        }
+                    }
+
+                    if (!response.ok) {
+                        return this.getFallbackDefinition(word);
+                    }
+
+                    const data = await response.json();
+                    if (data && data.length > 0 && data[0].meanings && data[0].meanings.length > 0) {
+                        const meaning = data[0].meanings[0];
+                        const definition = meaning.definitions[0].definition;
+                        const partOfSpeech = meaning.partOfSpeech;
+                        
+                        const formattedDef = `(${partOfSpeech}) ${definition}`;
+                        console.log(`✅ Fetched definition for: ${word}`);
+                        return formattedDef;
+                    } else {
+                        return this.getFallbackDefinition(word);
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        console.warn(`Request timeout for: ${word}`);
+                    } else {
+                        console.error(`API error for ${word}:`, error.message);
+                    }
+                    return this.getFallbackDefinition(word);
+                }
+            }
+
+            getFallbackDefinition(word) {
+                // Try to use existing definition from word database first
+                return `A valid English word: ${word}`;
+            }
+
+            async getDefinition(word, showLoading = null) {
+                if (!word) return this.getFallbackDefinition(word);
+
+                const cacheKey = word.toLowerCase();
+
+                // Check cache
+                const cached = this.getCachedDefinition(word);
+                if (cached) {
+                    return cached;
+                }
+
+                // Check for in-flight request (deduplication)
+                if (this.inFlightRequests.has(cacheKey)) {
+                    return this.inFlightRequests.get(cacheKey);
+                }
+
+                // Create new request with loading feedback
+                const requestPromise = (async () => {
+                    if (showLoading) {
+                        showLoading(`🔄 Loading definition for "${word}"...`);
+                    }
+
+                    try {
+                        const definition = await this.fetchFromAPI(word);
+                        this.cacheDefinition(word, definition);
+                        return definition;
+                    } finally {
+                        this.inFlightRequests.delete(cacheKey);
+                    }
+                })();
+
+                this.inFlightRequests.set(cacheKey, requestPromise);
+                return requestPromise;
+            }
+
+            async ensureWordHasDefinition(wordObj, showLoading = null) {
+                if (wordObj.definition && 
+                    !wordObj.definition.includes("definition not available") &&
+                    !wordObj.definition.includes("A valid English word") &&
+                    wordObj.definition.trim().length > 10) {
+                    return wordObj;
+                }
+
+                const definition = await this.getDefinition(wordObj.word, showLoading);
+                return { ...wordObj, definition };
             }
         }
-        
-        async function ensureWordHasDefinition(wordObj) {
-            if (!wordObj.definition || 
-                wordObj.definition.includes("definition not available") ||
-                wordObj.definition.includes("A valid English word") ||
-                wordObj.definition.trim().length <= 10) {
-                
-                // Fetch live definition
-                const liveDef = await fetchLiveDefinition(wordObj.word);
-                wordObj.definition = liveDef;
-            }
-            return wordObj;
-        }
+
+        // Initialize the service
+        const definitionService = new DefinitionService();
 
         // Initialize game
         async function initGame() {
@@ -1855,8 +1977,8 @@
                 // Show loading message
                 showMessage('🔄 Fetching definition hint...', 'info');
                 
-                // Ensure the word has a definition
-                const wordWithDef = await ensureWordHasDefinition({...randomWord});
+                // Ensure the word has a definition using the centralized service
+                const wordWithDef = await definitionService.ensureWordHasDefinition({...randomWord}, showMessage);
                 currentHintWord = wordWithDef;
 
                 const hintDisplay = document.getElementById('hintDisplay');
@@ -2162,8 +2284,8 @@
             document.getElementById('modalGrammarType').textContent = `Part of speech: ${wordData.pos}`;
             document.getElementById('definitionModal').style.display = 'block';
             
-            // Ensure word has definition and update modal
-            const wordWithDef = await ensureWordHasDefinition({...wordData});
+            // Ensure word has definition and update modal using the centralized service
+            const wordWithDef = await definitionService.ensureWordHasDefinition({...wordData});
             document.getElementById('modalDefinition').textContent = wordWithDef.definition;
         }
 
@@ -2427,8 +2549,8 @@
             // Show win screen
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('win-word').textContent = hangmanGame.word.word.toUpperCase();
-            // Fetch definition if needed and update
-            ensureWordHasDefinition({...hangmanGame.word}).then(wordWithDef => {
+            // Fetch definition if needed and update using the centralized service
+            definitionService.ensureWordHasDefinition({...hangmanGame.word}).then(wordWithDef => {
                 document.getElementById('win-definition').textContent = wordWithDef.definition;
             });
             document.getElementById('win-screen').classList.add('active');
@@ -2508,20 +2630,11 @@
             // Show loading message
             showMessage('🔄 Loading definitions for Mix and Match...', 'info');
             
-            // Ensure all selected words have definitions
+            // Ensure all selected words have definitions using the centralized service
             const wordsWithDefinitions = [];
             for (const wordObj of selectedWords) {
-                try {
-                    const wordWithDef = await ensureWordHasDefinition({...wordObj});
-                    wordsWithDefinitions.push(wordWithDef);
-                } catch (error) {
-                    console.error('Error fetching definition:', error);
-                    // Use fallback if API fails
-                    wordsWithDefinitions.push({
-                        ...wordObj,
-                        definition: wordObj.definition || `A valid English word: ${wordObj.word}`
-                    });
-                }
+                const wordWithDef = await definitionService.ensureWordHasDefinition({...wordObj}, showMessage);
+                wordsWithDefinitions.push(wordWithDef);
             }
 
             // Initialize game state with words that have definitions
