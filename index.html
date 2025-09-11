@@ -1273,7 +1273,7 @@
                     </div>
                     <div class="result-actions">
                         <button class="action-btn secondary-btn" onclick="closeHangmanModal()">Try Again Later</button>
-                        <button class="action-btn primary-btn" onclick="watchAdToRetry()">📺 Watch Ad to Retry</button>
+                        <button class="action-btn primary-btn" onclick="watchAdToRetry()">🔄 Try Again</button>
                     </div>
                 </div>
             </div>
@@ -1353,7 +1353,7 @@
                     </div>
                     <div class="result-actions">
                         <button class="action-btn secondary-btn" onclick="closeMixMatchModal()">Try Again Later</button>
-                        <button class="action-btn primary-btn" onclick="watchAdToRetryMixMatch()">📺 Watch Ad to Retry</button>
+                        <button class="action-btn primary-btn" onclick="watchAdToRetryMixMatch()">🔄 Try Again</button>
                     </div>
                 </div>
             </div>
@@ -1869,110 +1869,7 @@
             }
         }
 
-        function showRealAdSense(callback) {
-            const adContainer = document.getElementById('adContainer');
-            const hintDisplay = document.getElementById('hintDisplay');
-            
-            // Safety check for elements
-            if (!adContainer || !hintDisplay) {
-                console.error('Ad container or hint display not found, using fallback');
-                showMessage('📺 Ad loading... Please wait.', 'warning');
-                setTimeout(() => {
-                    callback();
-                    hintCooldown = true;
-                    setTimeout(() => {
-                        hintCooldown = false;
-                        updateHintButtonStates();
-                    }, 3000); // 3 second cooldown for max revenue
-                }, 3000);
-                return;
-            }
-            
-            // Hide hint display and show ad container
-            hintDisplay.style.display = 'none';
-            adContainer.style.display = 'block';
-            
-            // Load fresh AdSense ad
-            try {
-                // Clear previous ad content
-                const existingAd = adContainer.querySelector('.adsbygoogle');
-                if (existingAd && existingAd.innerHTML) {
-                    existingAd.innerHTML = '';
-                }
-                
-                // Initialize new ad
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                
-                // Check if ads are actually loading after a short delay
-                setTimeout(() => {
-                    const adContent = existingAd ? existingAd.innerHTML : '';
-                    
-                    if (!adContent || adContent.trim() === '') {
-                        // AdSense not ready yet - show getting ready message
-                        adContainer.innerHTML = `
-                            <p style="color: #d4a953; font-weight: bold; margin-bottom: 15px;">
-                                ⏳ AdSense Status: "Getting Ready"<br>
-                                <small>Your account is approved! Real ads will show in 24-48 hours.</small>
-                            </p>
-                            <div style="width: 320px; height: 250px; margin: 0 auto; background: linear-gradient(45deg, #333, #444); border: 2px dashed #666; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                                <div style="text-align: center; color: #999;">
-                                    <div style="font-size: 48px;">📺</div>
-                                    <div>AdSense Getting Ready...</div>
-                                    <div style="font-size: 12px; margin-top: 5px;">Simulating ad experience</div>
-                                </div>
-                            </div>
-                            <button id="adWatchedBtn" style="margin-top: 15px; padding: 10px 20px; background: #d4a953; color: black; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ Continue after ad simulation</button>
-                        `;
-                        showMessage('⏳ AdSense approved but still getting ready. Simulating ad experience...', 'info');
-                    } else {
-                        showMessage('📺 Real AdSense ad loaded! Please watch and then click the button below.', 'info');
-                    }
-                    
-                    // Set up the "watched ad" button  
-                    const watchedBtn = document.getElementById('adWatchedBtn');
-                    watchedBtn.onclick = () => {
-                        adContainer.style.display = 'none';
-                        callback();
-                        // Set cooldown to prevent spam
-                        hintCooldown = true;
-                        setTimeout(() => {
-                            hintCooldown = false;
-                            updateHintButtonStates();
-                        }, 15000); // 15 second cooldown
-                        updateHintButtonStates();
-                    };
-                }, 1000); // Give AdSense 1 second to load
-                
-            } catch (error) {
-                console.log('AdSense not ready, using simulation...');
-                adContainer.innerHTML = `
-                    <p style="color: #d4a953; font-weight: bold; margin-bottom: 15px;">
-                        ⏳ AdSense Status: "Getting Ready"<br>
-                        <small>Your account is approved! Real ads will show in 24-48 hours.</small>
-                    </p>
-                    <div style="width: 320px; height: 250px; margin: 0 auto; background: linear-gradient(45deg, #333, #444); border: 2px dashed #666; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                        <div style="text-align: center; color: #999;">
-                            <div style="font-size: 48px;">📺</div>
-                            <div>AdSense Getting Ready...</div>
-                            <div style="font-size: 12px; margin-top: 5px;">Simulating ad experience</div>
-                        </div>
-                    </div>
-                    <button id="adWatchedBtn" style="margin-top: 15px; padding: 10px 20px; background: #d4a953; color: black; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ Continue after ad simulation</button>
-                `;
-                showMessage('⏳ AdSense approved but still getting ready. Simulating ad experience...', 'warning');
-                const watchedBtn = document.getElementById('adWatchedBtn');
-                watchedBtn.onclick = () => {
-                    adContainer.style.display = 'none';
-                    callback();
-                    hintCooldown = true;
-                    setTimeout(() => {
-                        hintCooldown = false;
-                        updateHintButtonStates();
-                    }, 3000); // 3 second cooldown for max revenue
-                    updateHintButtonStates();
-                };
-            }
-        }
+        // Function removed for AdSense policy compliance - ads no longer shown in modals
 
         function updateHintButtonStates() {
             const defBtn = document.getElementById('hintDefinitionBtn');
@@ -2005,7 +1902,7 @@
                 return;
             }
 
-            showRealAdSense(async () => {
+            (async () => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 
@@ -2039,7 +1936,7 @@
                 return;
             }
 
-            showRealAdSense(() => {
+            (() => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 currentHintWord = randomWord;
@@ -2627,10 +2524,8 @@
         }
 
         function watchAdToRetry() {
-            showRealAdSense(() => {
-                // Allow immediate retry after watching ad
-                startNewHangmanGame();
-            });
+            // Direct retry without ads (AdSense policy compliance)
+            startNewHangmanGame();
         }
 
         // ====== MIX AND MATCH GAME FUNCTIONS ======
@@ -2646,7 +2541,7 @@
                 return;
             }
 
-            showRealAdSense(() => {
+            (() => {
                 openMixMatchModal();
             });
         }
@@ -2997,10 +2892,8 @@
         }
 
         function watchAdToRetryMixMatch() {
-            showRealAdSense(() => {
-                // Allow immediate retry after watching ad
-                startNewMixMatchGame();
-            });
+            // Direct retry without ads (AdSense policy compliance)
+            startNewMixMatchGame();
         }
 
         function revealRandomWord() {
