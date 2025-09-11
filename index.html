@@ -4,6 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-adsense-account" content="ca-pub-9007185070437670">
+    
+    <!-- SERVICE WORKER KILL-SWITCH: Force unregister and clear caches for v3.0 update -->
+    <script>
+        (async() => {
+            try {
+                if ('serviceWorker' in navigator) {
+                    console.log('🧹 Clearing Service Worker and caches for v3.0 update...');
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (const registration of registrations) {
+                        await registration.unregister();
+                        console.log('Unregistered Service Worker:', registration.scope);
+                    }
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                    console.log('✅ Cleared all Service Worker caches');
+                }
+            } catch (error) {
+                console.warn('SW cleanup failed:', error);
+            }
+        })();
+    </script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -13,12 +34,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <script>window.cacheBust = Date.now();</script>
-    <meta name="version" content="v2.9-CLEAN-CONSOLE-22222">
+    <meta name="version" content="v3.0-MASSIVE-WORD-UPDATE-99999">
     <!-- Force reload timestamp -->
     <script>
         // Force cache invalidation
-        if (localStorage.getItem('lastVersion') !== 'v2.9-22222') {
-            localStorage.setItem('lastVersion', 'v2.9-22222');
+        if (localStorage.getItem('lastVersion') !== 'v3.0-99999') {
+            localStorage.setItem('lastVersion', 'v3.0-99999');
             window.location.reload(true);
         }
     </script>
@@ -1240,7 +1261,7 @@
 
     <script>
         // Game configuration
-        const MAX_LEVELS = 6; // 2-letter to 7-letter words
+        const MAX_LEVELS = 8; // 2-letter to 9-letter words
         const WORDS_PER_LEVEL_LIMIT = 10; // Limit for browser users (unlocked when added to home screen)
         let currentLevel = 1;
         let foundWords = {};
@@ -1289,11 +1310,13 @@
                 let response;
                 let data;
                 
+                const cacheVersion = 'v3.0-99999';
+                const cacheBust = Date.now();
                 const possiblePaths = [
-                    './words_data.json',
-                    '/words_data.json',
-                    'words_data.json',
-                    window.location.origin + '/words_data.json'
+                    `./words_data_v3.json?ver=${cacheVersion}&cb=${cacheBust}`,
+                    `/words_data_v3.json?ver=${cacheVersion}&cb=${cacheBust}`,
+                    `words_data_v3.json?ver=${cacheVersion}&cb=${cacheBust}`,
+                    window.location.origin + `/words_data_v3.json?ver=${cacheVersion}&cb=${cacheBust}`
                 ];
                 
                 console.log('Trying to load word data from multiple paths...');
@@ -1301,7 +1324,7 @@
                 for (const path of possiblePaths) {
                     try {
                         console.log('Attempting to load from:', path);
-                        response = await fetch(path);
+                        response = await fetch(path, { cache: 'no-store' });
                         
                         if (response.ok) {
                             console.log('Successfully loaded from:', path);
@@ -1322,8 +1345,8 @@
 
                 console.log('Word data loaded successfully, converting to game format...');
 
-                // Convert to gameWords format
-                for (let level = 2; level <= 7; level++) {
+                // Convert to gameWords format - support all levels from 2 to MAX_LEVELS+1
+                for (let level = 2; level <= MAX_LEVELS + 1; level++) {
                     if (data[level.toString()]) {
                         gameWords[level] = data[level.toString()];
                         console.log(`Level ${level}: ${data[level.toString()].length} words loaded`);
@@ -2517,9 +2540,27 @@
             updateUnlockInfo();
         });
 
+        // Clear old word cache on version change
+        function clearOldCache() {
+            const currentVersion = 'v3.0-99999';
+            const storedVersion = localStorage.getItem('wordsDataVersion');
+            
+            if (storedVersion !== currentVersion) {
+                console.log('Version changed - clearing old cached data');
+                // Clear any old word-related localStorage keys
+                Object.keys(localStorage).forEach(key => {
+                    if (key.includes('words') || key.includes('Words')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                localStorage.setItem('wordsDataVersion', currentVersion);
+            }
+        }
+
         // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🎮 Progressive Word Grind - Home Page Loaded');
+            clearOldCache();
             detectInstallation();
             initGame();
         });
