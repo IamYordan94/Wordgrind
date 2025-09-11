@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progressive Word Grind - Educational Word Discovery Game</title>
-    <meta name="description" content="Master vocabulary through systematic word discovery across 2-9 letter words. Educational word game with live definitions, hangman, and mix & match modes.">
+    <title>Word Grind - Progressive Word Discovery Game</title>
+    <meta name="description" content="Discover words progressively from 2-9 letters. Build vocabulary through systematic exploration.">
     
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,410 +23,348 @@
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: #ffffff;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
-            line-height: 1.6;
+            text-align: center;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            text-align: center;
-            margin-bottom: 60px;
-            padding: 60px 20px;
-            background: linear-gradient(135deg, rgba(106, 170, 100, 0.1) 0%, rgba(201, 180, 88, 0.1) 100%);
-            border-radius: 20px;
-            border: 1px solid rgba(106, 170, 100, 0.2);
-        }
-
-        h1 {
-            font-size: 3.5em;
-            background: linear-gradient(45deg, #6aaa64, #c9b458);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .subtitle {
-            font-size: 1.4em;
-            color: #c9b458;
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-
-        .primary-btn {
-            background: linear-gradient(45deg, #6aaa64, #5a9654);
-            color: white;
-            padding: 18px 35px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.4em;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(106, 170, 100, 0.3);
-        }
-
-        .primary-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(106, 170, 100, 0.4);
-        }
-
-        .secondary-btn {
-            background: transparent;
-            color: #c9b458;
-            padding: 18px 35px;
-            border: 2px solid #c9b458;
-            border-radius: 12px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .secondary-btn:hover {
-            background: #c9b458;
-            color: #1a1a1a;
-            transform: translateY(-2px);
-        }
-
-        /* 3D Game Mode Cards */
-        .game-modes {
-            margin: 60px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5em;
-            color: #6aaa64;
-            margin-bottom: 40px;
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            perspective: 1000px;
-        }
-
-        .game-card {
-            background: linear-gradient(135deg, #2d2d2d 0%, #3a3a3a 100%);
-            border: 1px solid rgba(106, 170, 100, 0.3);
-            border-radius: 15px;
-            padding: 30px 25px;
-            text-align: center;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.4s ease;
-            transform-style: preserve-3d;
-            min-height: 200px;
+            max-width: 400px;
+            width: 100%;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            border: 3px dashed #6aaa64;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-        }
-
-        .game-card:hover {
-            transform: rotateY(10deg) rotateX(5deg) translateY(-10px);
-            box-shadow: 0 15px 30px rgba(106, 170, 100, 0.2);
-            border-color: #6aaa64;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .game-card:hover {
-                transform: translateY(-5px);
-            }
-        }
-
-        .card-icon {
-            font-size: 3.5em;
-            margin-bottom: 15px;
-        }
-
-        .card-title {
-            font-size: 1.4em;
+            font-size: 2.5em;
             font-weight: bold;
             color: #6aaa64;
+            background: rgba(106, 170, 100, 0.1);
+        }
+
+        .title {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffffff;
             margin-bottom: 10px;
         }
 
-        .card-description {
+        .description {
+            font-size: 1.1em;
             color: #cccccc;
-            font-size: 0.95em;
             line-height: 1.4;
+            max-width: 300px;
         }
 
-        /* Expandable Sections */
-        .info-sections {
-            margin: 60px 0;
+        /* Navigation Section */
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
         }
 
-        details {
-            background: linear-gradient(135deg, #2d2d2d 0%, #3a3a3a 100%);
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 30px;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            border-color: #6aaa64;
+            background: rgba(106, 170, 100, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item .icon {
+            font-size: 1.3em;
+        }
+
+        /* About Section (collapsible) */
+        .about-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(106, 170, 100, 0.2);
             border-radius: 12px;
-            margin-bottom: 20px;
-            overflow: hidden;
+            padding: 25px;
+            margin-top: 10px;
+            text-align: left;
+            width: 100%;
         }
 
-        summary {
-            padding: 20px 25px;
-            font-size: 1.3em;
-            font-weight: bold;
+        .about-content.active {
+            display: block;
+        }
+
+        .about-content h3 {
             color: #6aaa64;
-            cursor: pointer;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s ease;
-        }
-
-        summary:hover {
-            background-color: rgba(106, 170, 100, 0.1);
-        }
-
-        summary::after {
-            content: '+';
-            font-size: 1.5em;
-            transition: transform 0.3s ease;
-        }
-
-        details[open] summary::after {
-            transform: rotate(45deg);
-        }
-
-        .detail-content {
-            padding: 0 25px 25px 25px;
-            color: #cccccc;
-            line-height: 1.6;
-        }
-
-        .detail-content h3 {
-            color: #c9b458;
-            margin: 20px 0 10px 0;
+            margin-bottom: 15px;
             font-size: 1.3em;
         }
 
-        .detail-content ul {
-            padding-left: 20px;
-            margin: 10px 0;
+        .about-content p {
+            color: #cccccc;
+            line-height: 1.5;
+            margin-bottom: 15px;
         }
 
-        .detail-content li {
+        .about-content ul {
+            color: #cccccc;
+            padding-left: 20px;
+            line-height: 1.5;
+        }
+
+        .about-content li {
             margin-bottom: 8px;
         }
 
-        .detail-content strong {
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .footer-link {
+            color: #888888;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
             color: #6aaa64;
         }
 
-        .highlight {
-            background: rgba(201, 180, 88, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #c9b458;
-            font-weight: bold;
+        .made-by {
+            color: #666666;
+            font-size: 0.8em;
+        }
+
+        /* Privacy Policy Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #2d2d2d;
+            border: 1px solid #6aaa64;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #6aaa64;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            color: #6aaa64;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            color: #cccccc;
+            line-height: 1.5;
+            margin-bottom: 15px;
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5em;
-            }
-            
-            .subtitle {
-                font-size: 1.2em;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .primary-btn, .secondary-btn {
-                width: 100%;
-                max-width: 300px;
-                text-align: center;
-            }
-            
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .section-title {
-                font-size: 2em;
-            }
-        }
-
         @media (max-width: 480px) {
             .container {
+                gap: 30px;
                 padding: 0 10px;
             }
             
-            body {
-                padding: 10px;
+            .title {
+                font-size: 2em;
             }
             
-            .hero-section {
-                padding: 40px 15px;
+            .logo {
+                width: 70px;
+                height: 70px;
+                font-size: 2em;
             }
             
-            h1 {
-                font-size: 2.2em;
+            .nav-item {
+                padding: 15px 25px;
+                font-size: 1.1em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <h1>Progressive Word Grind</h1>
-            <p class="subtitle">Master vocabulary through systematic word discovery across 2-9 letter words</p>
-            <div class="hero-buttons">
-                <a href="index.html" class="primary-btn">🎮 Start Playing</a>
-                <a href="vocabulary.html" class="secondary-btn">📚 Study Mode</a>
-            </div>
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo">WG</div>
+            <h1 class="title">Word Grind</h1>
+            <p class="description">Discover words progressively from 2-9 letters. Build vocabulary through systematic exploration.</p>
         </div>
 
-        <!-- 3D Game Mode Cards -->
-        <div class="game-modes">
-            <h2 class="section-title">Hint Game Modes</h2>
-            <div class="cards-grid">
-                <a href="index.html" class="game-card">
-                    <div class="card-icon">📖</div>
-                    <div class="card-title">Definition Hints</div>
-                    <div class="card-description">Get dictionary definitions to discover new words</div>
-                </a>
-                <a href="index.html" class="game-card">
-                    <div class="card-icon">🎯</div>
-                    <div class="card-title">Hangman Game</div>
-                    <div class="card-description">Classic word guessing with letter-by-letter reveals</div>
-                </a>
-                <a href="index.html" class="game-card">
-                    <div class="card-icon">🧩</div>
-                    <div class="card-title">Mix & Match</div>
-                    <div class="card-description">Match scrambled words with their definitions</div>
-                </a>
+        <!-- Navigation Section -->
+        <div class="nav-section">
+            <a href="index.html" class="nav-item">
+                <span class="icon">🎮</span>
+                <span>Play Game</span>
+            </a>
+            
+            <a href="vocabulary.html" class="nav-item">
+                <span class="icon">📚</span>
+                <span>Vocabulary</span>
+            </a>
+            
+            <div class="nav-item" onclick="toggleAbout()">
+                <span class="icon">ℹ️</span>
+                <span>About</span>
+            </div>
+            
+            <!-- About Content (collapsible) -->
+            <div class="about-content" id="aboutContent">
+                <h3>About Word Grind</h3>
+                <p>Word Grind is an educational word discovery game that challenges you to find all possible words at each level before advancing to the next.</p>
+                
+                <h3>How It Works</h3>
+                <ul>
+                    <li>Start with 2-letter words and progress to 9-letter words</li>
+                    <li>Discover every word to unlock the next level</li>
+                    <li>Use hints: definitions, hangman, and mix & match games</li>
+                    <li>Build comprehensive vocabulary knowledge</li>
+                </ul>
+                
+                <h3>Educational Benefits</h3>
+                <ul>
+                    <li>Systematic vocabulary building</li>
+                    <li>Pattern recognition and word formation</li>
+                    <li>Memory reinforcement through repetition</li>
+                    <li>Perfect for students and word game enthusiasts</li>
+                </ul>
+                
+                <h3>Game Features</h3>
+                <ul>
+                    <li>Over 115,000 words across 8 levels</li>
+                    <li>Live dictionary definitions</li>
+                    <li>Offline gameplay capability</li>
+                    <li>Progress tracking and persistence</li>
+                </ul>
             </div>
         </div>
+    </div>
 
-        <!-- Expandable Information Sections -->
-        <div class="info-sections">
-            <details>
-                <summary>How It Works</summary>
-                <div class="detail-content">
-                    <p>Progressive Word Grind challenges you to discover <strong>all possible words</strong> at each level before advancing to the next. Unlike traditional Wordle, this isn't about guessing one daily word - it's about systematic vocabulary building.</p>
-                    <h3>Game Flow:</h3>
-                    <ul>
-                        <li>Start with 2-letter words (160 total)</li>
-                        <li>Find every possible word to unlock the next level</li>
-                        <li>Progress through increasingly challenging levels up to 9-letter words</li>
-                        <li>Use hints when you're stuck</li>
-                        <li>Build comprehensive vocabulary knowledge</li>
-                    </ul>
-                </div>
-            </details>
+    <!-- Footer -->
+    <div class="footer">
+        <a href="#" class="footer-link" onclick="showPrivacyPolicy()">Privacy Policy</a>
+        <div class="made-by">Made by Replit Agent</div>
+    </div>
 
-            <details>
-                <summary>Word Levels & Lengths</summary>
-                <div class="detail-content">
-                    <p>The game spans <strong>8 comprehensive levels</strong> covering 2-letter through 9-letter words:</p>
-                    <h3>Complete Level Breakdown:</h3>
-                    <ul>
-                        <li><strong>Level 1:</strong> 2-letter words (160 words)</li>
-                        <li><strong>Level 2:</strong> 3-letter words (1,421 words)</li>
-                        <li><strong>Level 3:</strong> 4-letter words (5,273 words)</li>
-                        <li><strong>Level 4:</strong> 5-letter words (10,230 words)</li>
-                        <li><strong>Level 5:</strong> 6-letter words (17,708 words)</li>
-                        <li><strong>Level 6:</strong> 7-letter words (23,870 words)</li>
-                        <li><strong>Level 7:</strong> 8-letter words (28,419 words)</li>
-                        <li><strong>Level 8:</strong> 9-letter words (28,419 words)</li>
-                    </ul>
-                    <p><strong>Total: Over 115,000 words!</strong> This represents the complete ENABLE1 dictionary spanning 2-9 letter English words, including challenging <span class="highlight">8 and 9-letter word levels</span>.</p>
-                </div>
-            </details>
-
-            <details>
-                <summary>Learning Benefits</summary>
-                <div class="detail-content">
-                    <h3>Educational Advantages:</h3>
-                    <ul>
-                        <li><strong>Systematic Learning:</strong> Build vocabulary incrementally from simple to complex</li>
-                        <li><strong>Complete Coverage:</strong> Discover words you never knew existed</li>
-                        <li><strong>Memory Reinforcement:</strong> Repeated exposure strengthens retention</li>
-                        <li><strong>Pattern Recognition:</strong> Learn word formation and linguistic patterns</li>
-                        <li><strong>Real Definitions:</strong> Live dictionary integration provides accurate meanings</li>
-                    </ul>
-                    <h3>Perfect for:</h3>
-                    <ul>
-                        <li>Students preparing for vocabulary tests</li>
-                        <li>Word game enthusiasts</li>
-                        <li>Language learners</li>
-                        <li>Anyone wanting to expand their vocabulary</li>
-                    </ul>
-                </div>
-            </details>
-
-            <details>
-                <summary>PWA & Offline Features</summary>
-                <div class="detail-content">
-                    <h3>Progressive Web App Benefits:</h3>
-                    <ul>
-                        <li><strong>Install on Any Device:</strong> Add to home screen on mobile, tablet, or desktop</li>
-                        <li><strong>Offline Gameplay:</strong> Continue playing without internet connection</li>
-                        <li><strong>Persistent Progress:</strong> Your game progress is automatically saved</li>
-                        <li><strong>Fast Loading:</strong> Optimized for quick startup and smooth performance</li>
-                    </ul>
-                    <p>To install: Look for the "Add to Home Screen" option in your browser menu, or use the install button when prompted.</p>
-                </div>
-            </details>
-
-            <details>
-                <summary>FAQ</summary>
-                <div class="detail-content">
-                    <h3>Frequently Asked Questions:</h3>
-                    <p><strong>Q: Do I need to find ALL words to advance?</strong><br>
-                    A: Yes! This creates a comprehensive learning experience and ensures you don't miss valuable vocabulary.</p>
-                    
-                    <p><strong>Q: What word dictionary is used?</strong><br>
-                    A: We use the ENABLE1 dictionary, the same standard used by competitive word games like Scrabble.</p>
-                    
-                    <p><strong>Q: How do hints work?</strong><br>
-                    A: Choose from definition hints, hangman-style letter reveals, or mix & match games. All hints have a 30-second cooldown for fair gameplay.</p>
-                    
-                    <p><strong>Q: Is my progress saved?</strong><br>
-                    A: Yes, all progress is automatically saved in your browser's local storage.</p>
-                    
-                    <p><strong>Q: Are 8 and 9-letter words really included?</strong><br>
-                    A: Absolutely! The game includes challenging levels up to 9-letter words with over 28,000 words each.</p>
-                </div>
-            </details>
+    <!-- Privacy Policy Modal -->
+    <div class="modal" id="privacyModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closePrivacyPolicy()">&times;</button>
+            <h2>Privacy Policy</h2>
+            
+            <p><strong>Last updated:</strong> September 2025</p>
+            
+            <h3>Information We Collect</h3>
+            <p>Word Grind stores your game progress locally in your browser's storage. We do not collect or transmit personal information.</p>
+            
+            <h3>Local Storage</h3>
+            <p>The game saves your progress, discovered words, and current level in your browser's local storage. This data remains on your device and is not shared.</p>
+            
+            <h3>Third-Party Services</h3>
+            <p>This game may use Google AdSense for advertisements. AdSense may collect anonymous usage data according to Google's privacy policies.</p>
+            
+            <h3>Dictionary API</h3>
+            <p>Word definitions are fetched from the Free Dictionary API. No personal information is sent with these requests.</p>
+            
+            <h3>Data Security</h3>
+            <p>All game data is stored locally on your device. We implement appropriate technical measures to protect the integrity of the game experience.</p>
+            
+            <h3>Contact</h3>
+            <p>For questions about this privacy policy, please contact us through the Replit platform.</p>
         </div>
     </div>
 
     <script>
-        console.log('🏠 Progressive Word Grind - Home Page Loaded');
-        console.log('🎓 Educational word game - systematic vocabulary building with 8-9 letter word levels');
+        function toggleAbout() {
+            const aboutContent = document.getElementById('aboutContent');
+            aboutContent.classList.toggle('active');
+        }
+
+        function showPrivacyPolicy() {
+            document.getElementById('privacyModal').classList.add('active');
+        }
+
+        function closePrivacyPolicy() {
+            document.getElementById('privacyModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('privacyModal');
+            if (event.target === modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        console.log('🏠 Word Grind - Clean Home Page Loaded');
     </script>
 </body>
 </html>
