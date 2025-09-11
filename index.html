@@ -1481,6 +1481,64 @@
             isActive: false
         };
 
+        // Live Definition Fetching System
+        let definitionCache = new Map();
+        
+        async function fetchLiveDefinition(word) {
+            // Check cache first
+            const cacheKey = word.toLowerCase();
+            if (definitionCache.has(cacheKey)) {
+                return definitionCache.get(cacheKey);
+            }
+            
+            try {
+                const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+                
+                if (!response.ok) {
+                    console.log(`❌ No definition found for: ${word}`);
+                    const fallback = `A valid English word: ${word}`;
+                    definitionCache.set(cacheKey, fallback);
+                    return fallback;
+                }
+                
+                const data = await response.json();
+                if (data && data.length > 0 && data[0].meanings && data[0].meanings.length > 0) {
+                    const meaning = data[0].meanings[0];
+                    const definition = meaning.definitions[0].definition;
+                    const partOfSpeech = meaning.partOfSpeech;
+                    
+                    const formattedDef = `(${partOfSpeech}) ${definition}`;
+                    console.log(`✅ Fetched definition for: ${word} - ${formattedDef}`);
+                    
+                    // Cache the result
+                    definitionCache.set(cacheKey, formattedDef);
+                    return formattedDef;
+                } else {
+                    const fallback = `A valid English word: ${word}`;
+                    definitionCache.set(cacheKey, fallback);
+                    return fallback;
+                }
+            } catch (error) {
+                console.error(`Error fetching definition for ${word}:`, error);
+                const fallback = `A valid English word: ${word}`;
+                definitionCache.set(cacheKey, fallback);
+                return fallback;
+            }
+        }
+        
+        async function ensureWordHasDefinition(wordObj) {
+            if (!wordObj.definition || 
+                wordObj.definition.includes("definition not available") ||
+                wordObj.definition.includes("A valid English word") ||
+                wordObj.definition.trim().length <= 10) {
+                
+                // Fetch live definition
+                const liveDef = await fetchLiveDefinition(wordObj.word);
+                wordObj.definition = liveDef;
+            }
+            return wordObj;
+        }
+
         // Initialize game
         async function initGame() {
             console.log('🎯 Starting word discovery game...');
