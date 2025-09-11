@@ -1953,7 +1953,10 @@
         }
 
         async function showDefinitionHint() {
-            if (hintCooldown) return;
+            if (hintCooldown) {
+                showMessage('Hints are on cooldown. Try again in 30 seconds!', 'warning');
+                return;
+            }
 
             const wordLength = currentLevel + 1;
             const availableWords = gameWords[wordLength] || [];
@@ -1965,7 +1968,10 @@
                 return;
             }
 
-            (async () => {
+            // Start cooldown timer
+            startHintCooldown();
+
+            try {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
                 
@@ -1983,7 +1989,9 @@
                     <small>Part of speech: ${wordWithDef.pos}</small>
                 `;
                 hintDisplay.style.display = 'block';
-            });
+            } catch (error) {
+                showMessage('❌ Could not fetch definition. Try again later!', 'error');
+            }
         }
 
         function showScrambledHint() {
@@ -2594,19 +2602,16 @@
         // ====== MIX AND MATCH GAME FUNCTIONS ======
 
         function showMixMatchHint() {
-            if (mixMatchCooldown) {
-                showMessage('⏳ Mix and Match is on cooldown. Try again in a few minutes!', 'warning');
-                return;
-            }
-
             if (hintCooldown) {
-                showMessage('⏳ Hint system is on cooldown. Please wait.', 'warning');
+                showMessage('Hints are on cooldown. Try again in 30 seconds!', 'warning');
                 return;
             }
 
-            (() => {
-                openMixMatchModal();
-            });
+            // Start cooldown timer
+            startHintCooldown();
+            
+            // Open the Mix & Match modal
+            openMixMatchModal();
         }
 
         async function openMixMatchModal() {
