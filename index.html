@@ -2762,6 +2762,14 @@
             if (type === 'word') {
                 const wordElement = document.querySelector(`[data-word-index="${index}"]`);
                 
+                // Clear highlight from previous active word if there was one
+                if (mixMatchGame.activeWordIndex !== null && mixMatchGame.activeWordIndex !== index) {
+                    const prevWordElement = document.querySelector(`[data-word-index="${mixMatchGame.activeWordIndex}"]`);
+                    if (prevWordElement && !mixMatchGame.wordColors.has(mixMatchGame.activeWordIndex)) {
+                        removeAllColorClasses(prevWordElement);
+                    }
+                }
+                
                 if (mixMatchGame.wordColors.has(index)) {
                     // Word already has color - reuse it, clear previous definition
                     const existingColor = mixMatchGame.wordColors.get(index);
@@ -2789,6 +2797,11 @@
                     // Create the match
                     mixMatchGame.matches.set(mixMatchGame.activeWordIndex, index);
                     mixMatchGame.activeWordIndex = null; // Clear selection
+                    
+                    // Check if all matches are made and enable submit button
+                    if (mixMatchGame.matches.size === 5) {
+                        document.getElementById('mixmatch-submit-btn').disabled = false;
+                    }
                 }
             }
 
