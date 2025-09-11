@@ -45,11 +45,13 @@ The game implements a comprehensive word validation approach using the ENABLE1 w
 ## External Dependencies
 
 ### Word Dictionary Service
-The application requires access to a word dictionary or vocabulary database to:
+The application integrates with the Free Dictionary API (api.dictionaryapi.dev) to provide real-time definitions:
 
-- Validate player guesses against legitimate English words
-- Generate the complete set of valid words for each length category
-- Ensure consistent word standards across all levels
+- **Live Definition Fetching**: Uses Free Dictionary API for real-time word definitions across all game features
+- **Comprehensive API Coverage**: Connected in all 4 mini-games (Hangman, Mix & Match, Definition Hints, Reveal Word) and vocabulary page
+- **Smart Caching System**: Implements persistent caching to reduce API calls and improve performance
+- **Fallback Handling**: Graceful error handling when definitions are unavailable
+- **Part of Speech Detection**: Extracts grammar information from API responses when available
 
 ### Browser Storage APIs
 Utilizes browser-native storage capabilities:
