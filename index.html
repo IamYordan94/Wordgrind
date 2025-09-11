@@ -2466,8 +2466,8 @@
             });
         }
 
-        function openMixMatchModal() {
-            startNewMixMatchGame();
+        async function openMixMatchModal() {
+            await startNewMixMatchGame();
             document.getElementById('mixmatch-modal').classList.add('active');
         }
 
@@ -2476,33 +2476,44 @@
             mixMatchGame.isActive = false;
         }
 
-        function startNewMixMatchGame() {
+        async function startNewMixMatchGame() {
             // Get words from current level
             const wordLength = currentLevel + 1;
             const availableWords = gameWords[wordLength] || [];
             const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
             const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
 
-            // Filter to only words with real definitions (not placeholder)
-            const wordsWithDefinitions = unfoundWords.filter(word => {
-                return word.definition && 
-                       !word.definition.includes("definition not available") &&
-                       !word.definition.includes("A valid English word") &&
-                       word.definition.trim().length > 10; // Ensure meaningful definition
-            });
-
-            if (wordsWithDefinitions.length < 5) {
-                showMessage('Not enough words with definitions available for Mix and Match at this level!', 'warning');
+            if (unfoundWords.length < 5) {
+                showMessage('Not enough words available for Mix and Match at this level!', 'warning');
                 return;
             }
 
-            // Pick 5 random words with real definitions
-            const shuffledWords = [...wordsWithDefinitions].sort(() => Math.random() - 0.5);
+            // Pick 5 random words and fetch their definitions live
+            const shuffledWords = [...unfoundWords].sort(() => Math.random() - 0.5);
             const selectedWords = shuffledWords.slice(0, 5);
+            
+            // Show loading message
+            showMessage('🔄 Loading definitions for Mix and Match...', 'info');
+            
+            // Ensure all selected words have definitions
+            const wordsWithDefinitions = [];
+            for (const wordObj of selectedWords) {
+                try {
+                    const wordWithDef = await ensureWordHasDefinition({...wordObj});
+                    wordsWithDefinitions.push(wordWithDef);
+                } catch (error) {
+                    console.error('Error fetching definition:', error);
+                    // Use fallback if API fails
+                    wordsWithDefinitions.push({
+                        ...wordObj,
+                        definition: wordObj.definition || `A valid English word: ${wordObj.word}`
+                    });
+                }
+            }
 
-            // Initialize game state
+            // Initialize game state with words that have definitions
             mixMatchGame = {
-                words: selectedWords,
+                words: wordsWithDefinitions,
                 selectedWord: null,
                 selectedDefinition: null,
                 matches: new Map(),
