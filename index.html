@@ -1078,6 +1078,38 @@
             animation: shake 0.5s ease-in-out;
         }
 
+        /* 5-Color System for Mix and Match Pairs */
+        .mixmatch-item.color-1 { 
+            background: #ff6b6b !important; 
+            border-color: #ff6b6b !important; 
+            color: white !important;
+            font-weight: bold;
+        }
+        .mixmatch-item.color-2 { 
+            background: #4ecdc4 !important; 
+            border-color: #4ecdc4 !important; 
+            color: white !important;
+            font-weight: bold;
+        }
+        .mixmatch-item.color-3 { 
+            background: #45b7d1 !important; 
+            border-color: #45b7d1 !important; 
+            color: white !important;
+            font-weight: bold;
+        }
+        .mixmatch-item.color-4 { 
+            background: #f39c12 !important; 
+            border-color: #f39c12 !important; 
+            color: white !important;
+            font-weight: bold;
+        }
+        .mixmatch-item.color-5 { 
+            background: #9b59b6 !important; 
+            border-color: #9b59b6 !important; 
+            color: white !important;
+            font-weight: bold;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -1475,9 +1507,11 @@
         let mixMatchCooldownTime = 120000; // 2 minutes in milliseconds
         let mixMatchGame = {
             words: [],
-            selectedWord: null,
-            selectedDefinition: null,
-            matches: new Map(),
+            wordColors: new Map(),        // wordIndex → colorNumber (1-5)
+            definitionColors: new Map(),  // defIndex → colorNumber (1-5)
+            colorCounter: 1,              // Next color to assign (1-5, cycles)
+            activeWordIndex: null,        // Currently selected word
+            matches: new Map(),           // Final word→definition matches
             isActive: false
         };
 
@@ -2640,8 +2674,10 @@
             // Initialize game state with words that have definitions
             mixMatchGame = {
                 words: wordsWithDefinitions,
-                selectedWord: null,
-                selectedDefinition: null,
+                wordColors: new Map(),
+                definitionColors: new Map(),
+                colorCounter: 1,
+                activeWordIndex: null,
                 matches: new Map(),
                 isActive: true
             };
@@ -2692,47 +2728,68 @@
             });
         }
 
+        // Helper functions for color management
+        function clearDefinitionWithColor(colorNumber) {
+            for (let [defIndex, color] of mixMatchGame.definitionColors) {
+                if (color === colorNumber) {
+                    mixMatchGame.definitionColors.delete(defIndex);
+                    const defElement = document.querySelector(`[data-def-index="${defIndex}"]`);
+                    removeAllColorClasses(defElement);
+                    // Also remove from matches
+                    for (let [wordIndex, matchedDefIndex] of mixMatchGame.matches) {
+                        if (matchedDefIndex === defIndex) {
+                            mixMatchGame.matches.delete(wordIndex);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        function removeAllColorClasses(element) {
+            element.classList.remove('color-1', 'color-2', 'color-3', 'color-4', 'color-5', 'selected', 'matched');
+        }
+
+        function applyColorToElement(element, colorNumber) {
+            removeAllColorClasses(element);
+            element.classList.add(`color-${colorNumber}`);
+        }
+
         function selectMixMatchItem(type, index) {
             if (!mixMatchGame.isActive) return;
 
-            const allWords = document.querySelectorAll('.mixmatch-word');
-            const allDefinitions = document.querySelectorAll('.mixmatch-definition');
-
             if (type === 'word') {
-                // If selecting a word
-                if (mixMatchGame.selectedWord === index) {
-                    // Deselect if clicking same word
-                    mixMatchGame.selectedWord = null;
-                    allWords[index].classList.remove('selected');
-                } else {
-                    // Clear previous selection
-                    allWords.forEach(el => el.classList.remove('selected'));
-                    // Select new word
-                    mixMatchGame.selectedWord = index;
-                    allWords[index].classList.add('selected');
-                }
+                const wordElement = document.querySelector(`[data-word-index="${index}"]`);
                 
-                // Clear definition selection when selecting word
-                mixMatchGame.selectedDefinition = null;
-                allDefinitions.forEach(el => el.classList.remove('selected'));
-            } else {
-                // If selecting a definition
-                if (mixMatchGame.selectedDefinition === index) {
-                    // Deselect if clicking same definition
-                    mixMatchGame.selectedDefinition = null;
-                    document.querySelector(`[data-def-index="${index}"]`).classList.remove('selected');
+                if (mixMatchGame.wordColors.has(index)) {
+                    // Word already has color - reuse it, clear previous definition
+                    const existingColor = mixMatchGame.wordColors.get(index);
+                    clearDefinitionWithColor(existingColor);
+                    mixMatchGame.activeWordIndex = index;
                 } else {
-                    // Clear previous selection
-                    allDefinitions.forEach(el => el.classList.remove('selected'));
-                    // Select new definition
-                    mixMatchGame.selectedDefinition = index;
-                    document.querySelector(`[data-def-index="${index}"]`).classList.add('selected');
+                    // New word - assign next color
+                    mixMatchGame.wordColors.set(index, mixMatchGame.colorCounter);
+                    applyColorToElement(wordElement, mixMatchGame.colorCounter);
+                    mixMatchGame.activeWordIndex = index;
+                    
+                    // Cycle through colors 1-5
+                    mixMatchGame.colorCounter = (mixMatchGame.colorCounter % 5) + 1;
                 }
-            }
-
-            // If both word and definition are selected, make a match
-            if (mixMatchGame.selectedWord !== null && mixMatchGame.selectedDefinition !== null) {
-                makeMatch(mixMatchGame.selectedWord, mixMatchGame.selectedDefinition);
+            } else if (type === 'definition') {
+                if (mixMatchGame.activeWordIndex !== null) {
+                    // Get the color of the active word
+                    const wordColor = mixMatchGame.wordColors.get(mixMatchGame.activeWordIndex);
+                    
+                    // Apply same color to definition
+                    const defElement = document.querySelector(`[data-def-index="${index}"]`);
+                    mixMatchGame.definitionColors.set(index, wordColor);
+                    applyColorToElement(defElement, wordColor);
+                    
+                    // Create the match
+                    mixMatchGame.matches.set(mixMatchGame.activeWordIndex, index);
+                    mixMatchGame.activeWordIndex = null; // Clear selection
+                }
             }
 
             updateMixMatchStatus();
@@ -2767,14 +2824,12 @@
             const statusText = document.getElementById('mixmatch-status-text');
             const matchesCount = document.getElementById('mixmatch-matches-count');
             
-            if (mixMatchGame.selectedWord !== null && mixMatchGame.selectedDefinition === null) {
+            if (mixMatchGame.activeWordIndex !== null) {
                 statusText.textContent = 'Word selected - now choose its definition';
-            } else if (mixMatchGame.selectedWord === null && mixMatchGame.selectedDefinition !== null) {
-                statusText.textContent = 'Definition selected - now choose its word';
             } else if (mixMatchGame.matches.size === 5) {
                 statusText.textContent = 'All matches made! Submit your answers';
             } else {
-                statusText.textContent = 'Select a word, then its definition';
+                statusText.textContent = 'Click words to assign colors, then match definitions';
             }
             
             matchesCount.textContent = `Matches: ${mixMatchGame.matches.size}/5`;
@@ -2811,12 +2866,14 @@
 
         function resetMixMatchGame() {
             mixMatchGame.matches.clear();
-            mixMatchGame.selectedWord = null;
-            mixMatchGame.selectedDefinition = null;
+            mixMatchGame.wordColors.clear();
+            mixMatchGame.definitionColors.clear();
+            mixMatchGame.colorCounter = 1;
+            mixMatchGame.activeWordIndex = null;
             
-            // Reset UI
+            // Reset UI - remove all color classes
             document.querySelectorAll('.mixmatch-item').forEach(item => {
-                item.classList.remove('selected', 'matched', 'incorrect');
+                removeAllColorClasses(item);
             });
             
             document.getElementById('mixmatch-submit-btn').disabled = true;
