@@ -1997,10 +1997,15 @@
                 currentHintWord = wordWithDef;
 
                 const hintDisplay = document.getElementById('hintDisplay');
+                let posDisplay = '';
+                if (wordWithDef.pos && wordWithDef.pos !== 'unknown') {
+                    posDisplay = `<small>Part of speech: ${wordWithDef.pos}</small>`;
+                }
+                
                 hintDisplay.innerHTML = `
                     <strong>Definition:</strong><br>
                     "${wordWithDef.definition}"<br>
-                    <small>Part of speech: ${wordWithDef.pos}</small>
+                    ${posDisplay}
                 `;
                 hintDisplay.style.display = 'block';
             } catch (error) {
@@ -2318,7 +2323,15 @@
             }
             
             document.getElementById('modalDefinition').textContent = cleanDefinition;
-            document.getElementById('modalGrammarType').textContent = `Part of speech: ${partOfSpeech}`;
+            
+            // Only show part of speech if we have valid information
+            const grammarElement = document.getElementById('modalGrammarType');
+            if (partOfSpeech === 'unknown' || !partOfSpeech) {
+                grammarElement.style.display = 'none';
+            } else {
+                grammarElement.style.display = 'block';
+                grammarElement.textContent = `Part of speech: ${partOfSpeech}`;
+            }
         }
 
         function showGrammarInfo() {
@@ -3013,13 +3026,18 @@
 
             // Show word in hint display AND success message
             const hintDisplay = document.getElementById('hintDisplay');
+            let posDisplay = '';
+            if (randomWord.pos && randomWord.pos !== 'unknown') {
+                posDisplay = `<small>Part of speech: ${randomWord.pos}</small><br>`;
+            }
+            
             hintDisplay.innerHTML = `
                 <strong>🎁 Revealed Word:</strong><br>
                 <div style="font-size: 1.5em; color: #6aaa64; font-weight: bold; margin: 10px 0;">
                     ${randomWord.word.toUpperCase()}
                 </div>
                 <small>Definition: "${randomWord.definition}"</small><br>
-                <small>Part of speech: ${randomWord.pos}</small><br>
+                ${posDisplay}
                 <small style="color: #d4a953;">💡 Type this word to add it to your collection!</small>
             `;
             hintDisplay.style.display = 'block';
