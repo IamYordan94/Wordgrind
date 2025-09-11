@@ -1640,8 +1640,8 @@
             }
 
             getFallbackDefinition(word) {
-                // Try to use existing definition from word database first
-                return `A valid English word: ${word}`;
+                // Return a properly formatted fallback that won't confuse the parser
+                return `(unknown) Definition not available for this word.`;
             }
 
             async getDefinition(word, showLoading = null) {
@@ -1682,6 +1682,7 @@
             async ensureWordHasDefinition(wordObj, showLoading = null) {
                 if (wordObj.definition && 
                     !wordObj.definition.includes("definition not available") &&
+                    !wordObj.definition.includes("Definition not available") &&
                     !wordObj.definition.includes("A valid English word") &&
                     wordObj.definition.trim().length > 10) {
                     return wordObj;
@@ -2315,12 +2316,27 @@
         async function showDefinition(wordData) {
             document.getElementById('modalWord').textContent = wordData.word.toUpperCase();
             document.getElementById('modalDefinition').textContent = 'Loading definition...';
-            document.getElementById('modalGrammarType').textContent = `Part of speech: ${wordData.pos}`;
+            document.getElementById('modalGrammarType').textContent = 'Part of speech: loading...';
             document.getElementById('definitionModal').style.display = 'block';
             
             // Ensure word has definition and update modal using the centralized service
             const wordWithDef = await definitionService.ensureWordHasDefinition({...wordData});
-            document.getElementById('modalDefinition').textContent = wordWithDef.definition;
+            
+            // Extract part of speech and definition from formatted text like "(noun) definition here"
+            let partOfSpeech = 'unknown';
+            let cleanDefinition = wordWithDef.definition;
+            
+            const posMatch = wordWithDef.definition.match(/^\(([^)]+)\)\s*(.+)$/);
+            if (posMatch) {
+                partOfSpeech = posMatch[1];
+                cleanDefinition = posMatch[2];
+            } else if (wordWithDef.definition.includes('A valid English word')) {
+                partOfSpeech = 'unknown';
+                cleanDefinition = `Definition not available for "${wordData.word.toUpperCase()}"`;
+            }
+            
+            document.getElementById('modalDefinition').textContent = cleanDefinition;
+            document.getElementById('modalGrammarType').textContent = `Part of speech: ${partOfSpeech}`;
         }
 
         function showGrammarInfo() {
