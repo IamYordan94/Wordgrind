@@ -193,18 +193,24 @@
         }
 
         .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #555;
-            border-radius: 4px;
+            width: 20px;
+            height: 60px;
+            background-color: #333;
+            border-radius: 10px;
             overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+            border: 2px solid #555;
         }
 
         .progress-fill {
-            height: 100%;
-            background-color: #6aaa64;
-            transition: width 0.3s ease;
-            width: 0%;
+            width: 100%;
+            background: linear-gradient(to top, #4CAF50, #6aaa64);
+            transition: height 0.5s ease-out;
+            height: 0%;
+            position: absolute;
+            bottom: 0;
+            border-radius: 0 0 8px 8px;
         }
 
         .input-section {
@@ -2089,7 +2095,7 @@
             document.getElementById('totalCount').textContent = displayTotal;
 
             const percentage = displayTotal > 0 ? (foundCount / displayTotal) * 100 : 0;
-            document.getElementById('progressFill').style.width = `${percentage}%`;
+            document.getElementById('progressFill').style.height = `${percentage}%`;
         }
 
         function updateUnlockInfo() {
