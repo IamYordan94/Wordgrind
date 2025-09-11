@@ -1835,7 +1835,7 @@
             }
         }
 
-        function showDefinitionHint() {
+        async function showDefinitionHint() {
             if (hintCooldown) return;
 
             const wordLength = currentLevel + 1;
@@ -1848,16 +1848,22 @@
                 return;
             }
 
-            showRealAdSense(() => {
+            showRealAdSense(async () => {
                 // Get random unfound word
                 const randomWord = unfoundWords[Math.floor(Math.random() * unfoundWords.length)];
-                currentHintWord = randomWord;
+                
+                // Show loading message
+                showMessage('🔄 Fetching definition hint...', 'info');
+                
+                // Ensure the word has a definition
+                const wordWithDef = await ensureWordHasDefinition({...randomWord});
+                currentHintWord = wordWithDef;
 
                 const hintDisplay = document.getElementById('hintDisplay');
                 hintDisplay.innerHTML = `
                     <strong>Definition:</strong><br>
-                    "${randomWord.definition}"<br>
-                    <small>Part of speech: ${randomWord.pos}</small>
+                    "${wordWithDef.definition}"<br>
+                    <small>Part of speech: ${wordWithDef.pos}</small>
                 `;
                 hintDisplay.style.display = 'block';
             });
@@ -2150,11 +2156,15 @@
             });
         }
 
-        function showDefinition(wordData) {
+        async function showDefinition(wordData) {
             document.getElementById('modalWord').textContent = wordData.word.toUpperCase();
-            document.getElementById('modalDefinition').textContent = wordData.definition;
+            document.getElementById('modalDefinition').textContent = 'Loading definition...';
             document.getElementById('modalGrammarType').textContent = `Part of speech: ${wordData.pos}`;
             document.getElementById('definitionModal').style.display = 'block';
+            
+            // Ensure word has definition and update modal
+            const wordWithDef = await ensureWordHasDefinition({...wordData});
+            document.getElementById('modalDefinition').textContent = wordWithDef.definition;
         }
 
         function showGrammarInfo() {
@@ -2417,7 +2427,10 @@
             // Show win screen
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('win-word').textContent = hangmanGame.word.word.toUpperCase();
-            document.getElementById('win-definition').textContent = hangmanGame.word.definition;
+            // Fetch definition if needed and update
+            ensureWordHasDefinition({...hangmanGame.word}).then(wordWithDef => {
+                document.getElementById('win-definition').textContent = wordWithDef.definition;
+            });
             document.getElementById('win-screen').classList.add('active');
             
             showMessage(`🎉 Hangman won! Found: "${hangmanGame.word.word.toUpperCase()}"`, 'success');
