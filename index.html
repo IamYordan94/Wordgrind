@@ -1501,8 +1501,37 @@
 
     </div>
 
-    <!-- Creator credit with donation link -->
+    <!-- Privacy Policy Modal -->
+    <div class="modal" id="privacyModal">
+        <div class="modal-content">
+            <span class="close" onclick="closePrivacyPolicy()">&times;</span>
+            <h2>Privacy Policy</h2>
+            
+            <p><strong>Last updated:</strong> September 2025</p>
+            
+            <h3>Information We Collect</h3>
+            <p>We do not collect, store, or transmit any personal information. This is a client-side word game that operates entirely in your browser.</p>
+            
+            <h3>Local Data Storage</h3>
+            <p>The game saves your progress, discovered words, and current level in your browser's local storage. This data remains on your device and is not shared.</p>
+            
+            <h3>Third-Party Services</h3>
+            <p>This game may use Google AdSense for advertisements. AdSense may collect anonymous usage data according to Google's privacy policies.</p>
+            
+            <h3>Dictionary API</h3>
+            <p>Word definitions are fetched from the Free Dictionary API. No personal information is sent with these requests.</p>
+            
+            <h3>Data Security</h3>
+            <p>All game data is stored locally on your device. We implement appropriate technical measures to protect the integrity of the game experience.</p>
+            
+            <h3>Contact</h3>
+            <p>For questions about this privacy policy, please contact us through the Replit platform.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
     <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9rem;">
+        <a href="#" style="text-decoration: none; color: #888; margin-right: 20px;" onclick="showPrivacyPolicy()">Privacy Policy</a>
         <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" style="text-decoration: none; color: #888;">Made by Yo ✌ 🥚</a>
     </div>
 
@@ -2331,6 +2360,14 @@
 
         function showRulesModal() {
             document.getElementById('rulesModal').style.display = 'block';
+        }
+
+        function showPrivacyPolicy() {
+            document.getElementById('privacyModal').style.display = 'block';
+        }
+
+        function closePrivacyPolicy() {
+            document.getElementById('privacyModal').style.display = 'none';
         }
 
         function showRevealWordHint() {
@@ -3173,6 +3210,7 @@
                 const grammarModal = document.getElementById('grammarModal');
                 const rulesModal = document.getElementById('rulesModal');
                 const levelCompleteModal = document.getElementById('levelCompleteModal');
+                const privacyModal = document.getElementById('privacyModal');
 
                 if (event.target === defModal) {
                     defModal.style.display = 'none';
@@ -3185,6 +3223,9 @@
                 }
                 if (event.target === levelCompleteModal) {
                     levelCompleteModal.style.display = 'none';
+                }
+                if (event.target === privacyModal) {
+                    privacyModal.style.display = 'none';
                 }
             };
 
