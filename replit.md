@@ -2,7 +2,7 @@
 
 ## Overview
 
-Progressive Wordle Grind is a web-based word puzzle game inspired by Wordle that challenges players to discover all possible words starting from 2-letter combinations and progressively advancing to longer words. Unlike traditional Wordle where players guess a single daily word, this game requires players to find every valid word of a given length before unlocking the next level. The game features a progression system where completing all 2-letter words unlocks 3-letter words, and so on, creating an engaging "grind" experience with clear advancement milestones.
+Progressive Wordle Grind is a web-based word puzzle game inspired by Wordle that challenges players to discover all possible words starting from 2-letter combinations and progressively advancing through 9-letter words. Unlike traditional Wordle where players guess a single daily word, this game requires players to find every valid word of a given length before unlocking the next level. The game features a comprehensive progression system spanning 8 levels (2-letter through 9-letter words) with over 100,000+ words total, creating an engaging "grind" experience with clear advancement milestones.
 
 ## User Preferences
 
@@ -34,12 +34,13 @@ The interface follows a dark theme aesthetic with:
 - **Progress Visualization**: Shows discovered words and completion percentage for each level
 
 ### Word Validation System
-The game implements a comprehensive word validation approach:
+The game implements a comprehensive word validation approach using the ENABLE1 word database:
 
-- **Dictionary Integration**: Uses a predefined word list or dictionary API to validate guesses
-- **Length-based Filtering**: Filters valid words by current level requirements (2-letter, 3-letter, etc.)
+- **ENABLE1 Dictionary Integration**: Uses the comprehensive ENABLE1 word database containing over 100,000+ valid English words from 2-9 letters
+- **Length-based Filtering**: Supports 8 progression levels covering 2-letter through 9-letter words (28,419 nine-letter words included)
 - **Duplicate Prevention**: Prevents re-guessing of already discovered words
 - **Completion Detection**: Automatically advances to next level when all words of current length are found
+- **Performance Optimized**: Enhanced caching system and Service Worker management for smooth gameplay
 
 ## External Dependencies
 
