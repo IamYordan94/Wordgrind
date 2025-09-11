@@ -2206,18 +2206,23 @@
             document.getElementById('totalCount').textContent = displayTotal;
 
             const percentage = displayTotal > 0 ? (foundCount / displayTotal) * 100 : 0;
-            document.getElementById('progressFill').style.height = `${percentage}%`;
+            
+            // Update old progress bar if it exists (for compatibility)
+            const progressFill = document.getElementById('progressFill');
+            if (progressFill) {
+                progressFill.style.height = `${percentage}%`;
+            }
             
             // Update circular progress bar
             updateCircularProgress(percentage);
         }
 
         function updateCircularProgress(percentage) {
+            // Update large circular progress bar if it exists (for compatibility)
             const progressCircle = document.getElementById('progressCircle');
             const progressText = document.getElementById('progressText');
             
             if (progressCircle && progressText) {
-                // Calculate the circumference (2 * π * r, where r = 15.9155)
                 const circumference = 2 * Math.PI * 15.9155;
                 const dashArray = (percentage / 100) * circumference;
                 
@@ -2225,7 +2230,7 @@
                 progressText.textContent = `${Math.round(percentage)}%`;
             }
 
-            // Update small circular progress bar too
+            // Update small circular progress bar
             const smallProgressCircle = document.getElementById('smallProgressCircle');
             const smallProgressText = document.getElementById('smallProgressText');
             
