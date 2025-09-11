@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-adsense-account" content="ca-pub-9007185070437670">
     
-    <!-- SERVICE WORKER KILL-SWITCH: Force unregister and clear caches for v3.0 update -->
+    <!-- SERVICE WORKER KILL-SWITCH: Force unregister, clear caches, and reload once -->
     <script>
         (async() => {
             try {
-                if ('serviceWorker' in navigator) {
-                    console.log('🧹 Clearing Service Worker and caches for v3.0 update...');
+                if ('serviceWorker' in navigator && !sessionStorage.getItem('swClearedOnce')) {
+                    console.log('🧹 Clearing Service Worker and forcing reload...');
                     const registrations = await navigator.serviceWorker.getRegistrations();
                     for (const registration of registrations) {
                         await registration.unregister();
@@ -18,7 +18,10 @@
                     }
                     const cacheNames = await caches.keys();
                     await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
-                    console.log('✅ Cleared all Service Worker caches');
+                    console.log('✅ Cleared all caches, forcing reload...');
+                    sessionStorage.setItem('swClearedOnce', 'true');
+                    window.location.reload();
+                    return; // Prevent any further execution on this load
                 }
             } catch (error) {
                 console.warn('SW cleanup failed:', error);
@@ -1261,7 +1264,7 @@
 
     <script>
         // Game configuration
-        const MAX_LEVELS = 8; // 2-letter to 9-letter words
+        const MAX_LEVELS = 8; // 2-letter to 9-letter words (level 8 = 9-letter words)
         const WORDS_PER_LEVEL_LIMIT = 10; // Limit for browser users (unlocked when added to home screen)
         let currentLevel = 1;
         let foundWords = {};
@@ -1313,10 +1316,10 @@
                 const cacheVersion = 'v3.0-99999';
                 const cacheBust = Date.now();
                 const possiblePaths = [
-                    `./words_data_v3.json?ver=${cacheVersion}&cb=${cacheBust}`,
-                    `/words_data_v3.json?ver=${cacheVersion}&cb=${cacheBust}`,
-                    `words_data_v3.json?ver=${cacheVersion}&cb=${cacheBust}`,
-                    window.location.origin + `/words_data_v3.json?ver=${cacheVersion}&cb=${cacheBust}`
+                    `./words_data_final.json`,
+                    `/words_data_final.json`,
+                    `words_data_final.json`,
+                    window.location.origin + `/words_data_final.json`
                 ];
                 
                 console.log('Trying to load word data from multiple paths...');
@@ -1324,7 +1327,10 @@
                 for (const path of possiblePaths) {
                     try {
                         console.log('Attempting to load from:', path);
-                        response = await fetch(path, { cache: 'no-store' });
+                        response = await fetch(path, { 
+                            cache: 'no-store',
+                            headers: { 'Cache-Control': 'no-cache' }
+                        });
                         
                         if (response.ok) {
                             console.log('Successfully loaded from:', path);
@@ -1345,7 +1351,7 @@
 
                 console.log('Word data loaded successfully, converting to game format...');
 
-                // Convert to gameWords format - support all levels from 2 to MAX_LEVELS+1
+                // Convert to gameWords format - support all levels from 2 to MAX_LEVELS+1 
                 for (let level = 2; level <= MAX_LEVELS + 1; level++) {
                     if (data[level.toString()]) {
                         gameWords[level] = data[level.toString()];
