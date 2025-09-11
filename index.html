@@ -94,23 +94,19 @@
             margin: 0;
         }
 
-        .permanent-download-btn {
-            background: linear-gradient(135deg, #6aaa64, #5a9654);
-            color: white;
-            border: none;
-            padding: 12px 20px;
+        .game-logo {
+            width: 60px;
+            height: 60px;
+            border: 2px dashed #6aaa64;
             border-radius: 8px;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .permanent-download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            background: linear-gradient(135deg, #5a9654, #4a8644);
+            color: #6aaa64;
+            background: rgba(106, 170, 100, 0.1);
+            margin: 0 auto 10px auto;
         }
 
         .level-selector {
@@ -1195,8 +1191,7 @@
                 <a href="vocabulary.html" class="nav-link" style="background: #c9b458; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px;">📚 Vocabulary</a>
                 <a href="#rules" class="nav-link" onclick="showRulesModal()" style="background: #444; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px; cursor: pointer;">📖 Rules</a>
             </div>
-            <h1 style="text-align: center;">Progressive Word Grind</h1>
-            <button class="permanent-download-btn" id="permanentDownloadBtn" title="Add to Home Screen">⬇️</button>
+            <div class="game-logo">WG</div>
         </div>
 
         <div class="level-selector" id="levelSelector">
@@ -3200,7 +3195,6 @@
                 }
             };
 
-            document.getElementById('permanentDownloadBtn').onclick = addToHomeScreenHandler;
 
             // Level Complete Modal handlers
             document.getElementById('closeLevelCompleteModal').onclick = closeLevelCompleteModal;
@@ -3302,10 +3296,9 @@
 
         function showAddToHomeScreenPrompt() {
             console.log('showAddToHomeScreenPrompt called, isAddedToHomeScreen:', isAddedToHomeScreen);
-            // Hide add button if already added
+            // Log installation status
             if (isAddedToHomeScreen) {
-                console.log('Hiding add button because app is on home screen');
-                document.getElementById('permanentDownloadBtn').style.display = 'none';
+                console.log('App is installed on home screen');
             }
         }
         
