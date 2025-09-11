@@ -2425,13 +2425,21 @@
             const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
             const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
 
-            if (unfoundWords.length < 5) {
-                showMessage('Not enough words available for Mix and Match at this level!', 'warning');
+            // Filter to only words with real definitions (not placeholder)
+            const wordsWithDefinitions = unfoundWords.filter(word => {
+                return word.definition && 
+                       !word.definition.includes("definition not available") &&
+                       !word.definition.includes("A valid English word") &&
+                       word.definition.trim().length > 10; // Ensure meaningful definition
+            });
+
+            if (wordsWithDefinitions.length < 5) {
+                showMessage('Not enough words with definitions available for Mix and Match at this level!', 'warning');
                 return;
             }
 
-            // Pick 5 random words
-            const shuffledWords = [...unfoundWords].sort(() => Math.random() - 0.5);
+            // Pick 5 random words with real definitions
+            const shuffledWords = [...wordsWithDefinitions].sort(() => Math.random() - 0.5);
             const selectedWords = shuffledWords.slice(0, 5);
 
             // Initialize game state
