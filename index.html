@@ -1187,17 +1187,7 @@
             <button class="hint-btn" id="hintScrambledBtn" disabled>Scrambled Letters</button>
             <button class="hint-btn" id="hintRevealBtn">Play Hangman</button>
             <button class="hint-btn" id="hintMixMatchBtn">Mix and Match</button>
-            <!-- Real AdSense Ad Container -->
-            <div class="ad-container" id="adContainer" style="display: none; text-align: center; margin: 20px 0; padding: 15px; background: #333; border-radius: 8px;">
-                <p style="color: #6aaa64; font-weight: bold; margin-bottom: 15px;">📺 Please watch this real ad to unlock your hint:</p>
-                <ins class="adsbygoogle"
-                     style="display:block; width: 320px; height: 250px; margin: 0 auto; background: #f0f0f0; border: 1px solid #ddd;"
-                     data-ad-client="ca-pub-9007185070437670"
-                     data-ad-slot="auto"
-                     data-ad-format="rectangle"
-                     data-full-width-responsive="true"></ins>
-                <button id="adWatchedBtn" style="margin-top: 15px; padding: 10px 20px; background: #6aaa64; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ I watched the ad - Get my hint!</button>
-            </div>
+            <!-- Ad container removed for AdSense policy compliance -->
             
             <div class="hint-display" id="hintDisplay"></div>
         </div>
@@ -1521,7 +1511,9 @@
 
         // Game state for hints
         let hintCooldown = false;
+        let hintTimer = null;
         let currentHintWord = null;
+        const HINT_COOLDOWN_TIME = 30000; // 30 seconds between hints
 
         // Hangman game state
         let hangmanCooldown = false;
@@ -1916,19 +1908,48 @@
         function updateHintButtonStates() {
             const defBtn = document.getElementById('hintDefinitionBtn');
             const scrambledBtn = document.getElementById('hintScrambledBtn');
+            const hangmanBtn = document.getElementById('hangmanBtn');
+            const mixMatchBtn = document.getElementById('mixMatchBtn');
 
             if (hintCooldown) {
-                defBtn.disabled = true;
-                defBtn.textContent = 'Please wait...';
-                if (!scrambledBtn.disabled) {
-                    scrambledBtn.disabled = true;
-                    scrambledBtn.textContent = 'Please wait...';
-                }
+                const buttons = [defBtn, scrambledBtn, hangmanBtn, mixMatchBtn].filter(btn => btn);
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    const originalText = btn.getAttribute('data-original-text') || btn.textContent;
+                    if (!btn.getAttribute('data-original-text')) {
+                        btn.setAttribute('data-original-text', originalText);
+                    }
+                    btn.textContent = 'Please wait...';
+                });
             } else {
-                defBtn.disabled = false;
-                defBtn.textContent = 'Definition';
-                updateHintButtons(); // Reset scrambled button text
+                const buttons = [
+                    {btn: defBtn, text: 'Definition'},
+                    {btn: hangmanBtn, text: '🎯 Hangman Hint'},
+                    {btn: mixMatchBtn, text: '🧩 Mix & Match'}
+                ].filter(item => item.btn);
+                
+                buttons.forEach(item => {
+                    item.btn.disabled = false;
+                    item.btn.textContent = item.text;
+                });
+                
+                if (scrambledBtn) {
+                    updateHintButtons(); // Reset scrambled button text based on word length
+                }
             }
+        }
+
+        function startHintCooldown() {
+            hintCooldown = true;
+            updateHintButtonStates();
+            
+            // Clear existing timer
+            if (hintTimer) clearTimeout(hintTimer);
+            
+            hintTimer = setTimeout(() => {
+                hintCooldown = false;
+                updateHintButtonStates();
+            }, HINT_COOLDOWN_TIME);
         }
 
         async function showDefinitionHint() {
