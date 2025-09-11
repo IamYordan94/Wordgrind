@@ -1027,6 +1027,91 @@
                 gap: 10px;
             }
         }
+
+        /* Mix and Match Styles */
+        .mixmatch-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mixmatch-item {
+            background: #333;
+            border: 2px solid #555;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            line-height: 1.4;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .mixmatch-item:hover {
+            border-color: #6aaa64;
+            background: #3a3a3a;
+        }
+
+        .mixmatch-item.selected {
+            background: #6aaa64;
+            border-color: #6aaa64;
+            color: white;
+            font-weight: bold;
+        }
+
+        .mixmatch-item.matched {
+            background: #5a9954;
+            border-color: #5a9954;
+            color: white;
+            cursor: default;
+            opacity: 0.8;
+        }
+
+        .mixmatch-item.incorrect {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+            color: white;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .mixmatch-word {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        .mixmatch-definition {
+            font-style: italic;
+            color: #ccc;
+        }
+
+        /* Mobile Responsiveness for Mix and Match */
+        @media (max-width: 600px) {
+            .mixmatch-container {
+                grid-template-columns: 1fr !important;
+                gap: 20px;
+            }
+
+            .mixmatch-item {
+                font-size: 13px;
+                padding: 10px;
+                min-height: 45px;
+            }
+
+            .mixmatch-word {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1069,6 +1154,7 @@
             <button class="hint-btn" id="hintDefinitionBtn">Definition</button>
             <button class="hint-btn" id="hintScrambledBtn" disabled>Scrambled Letters</button>
             <button class="hint-btn" id="hintRevealBtn">Play Hangman</button>
+            <button class="hint-btn" id="hintMixMatchBtn">Mix and Match</button>
             <!-- Real AdSense Ad Container -->
             <div class="ad-container" id="adContainer" style="display: none; text-align: center; margin: 20px 0; padding: 15px; background: #333; border-radius: 8px;">
                 <p style="color: #6aaa64; font-weight: bold; margin-bottom: 15px;">📺 Please watch this real ad to unlock your hint:</p>
@@ -1156,6 +1242,86 @@
                     <div class="result-actions">
                         <button class="action-btn secondary-btn" onclick="closeHangmanModal()">Try Again Later</button>
                         <button class="action-btn primary-btn" onclick="watchAdToRetry()">📺 Watch Ad to Retry</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mix and Match Modal -->
+        <div class="hangman-modal" id="mixmatch-modal">
+            <div class="hangman-content">
+                <button class="close-btn" onclick="closeMixMatchModal()">&times;</button>
+                
+                <div class="hangman-header">
+                    <h2>🎯 Mix and Match Challenge</h2>
+                    <div class="level-info">
+                        Level <span id="mixmatch-level">1</span> • Match Words to Definitions
+                    </div>
+                </div>
+
+                <!-- Game Screen -->
+                <div id="mixmatch-game-screen">
+                    <div class="mixmatch-instructions" style="background: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                        <p style="color: #6aaa64; font-weight: bold; margin-bottom: 10px;">🎮 How to Play</p>
+                        <p style="color: #ccc; font-size: 14px;">Click on a word, then click on its matching definition to connect them. Connect all 5 pairs correctly to win!</p>
+                    </div>
+
+                    <div class="mixmatch-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div class="mixmatch-words-column">
+                            <h4 style="color: #6aaa64; text-align: center; margin-bottom: 15px;">📝 Words</h4>
+                            <div id="mixmatch-words-list" class="mixmatch-items-list"></div>
+                        </div>
+                        
+                        <div class="mixmatch-definitions-column">
+                            <h4 style="color: #6aaa64; text-align: center; margin-bottom: 15px;">📖 Definitions</h4>
+                            <div id="mixmatch-definitions-list" class="mixmatch-items-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="mixmatch-status" style="background: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                        <p id="mixmatch-status-text" style="color: #6aaa64; font-weight: bold;">Select a word, then its definition</p>
+                        <p id="mixmatch-matches-count" style="color: #ccc; margin-top: 5px;">Matches: 0/5</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button id="mixmatch-submit-btn" class="action-btn primary-btn" onclick="submitMixMatchAnswers()" disabled>
+                            Submit Answers
+                        </button>
+                        <button class="action-btn secondary-btn" onclick="resetMixMatchGame()" style="margin-left: 10px;">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Win Screen -->
+                <div class="result-screen win-screen" id="mixmatch-win-screen">
+                    <div class="result-icon">🎉</div>
+                    <div class="result-title">Perfect Match!</div>
+                    <div class="result-message">
+                        Congratulations! You matched all words correctly!
+                        <div id="mixmatch-win-words" style="margin-top: 15px; background: #2a2a2a; padding: 15px; border-radius: 10px;">
+                            <!-- Matched words will be displayed here -->
+                        </div>
+                    </div>
+                    <div class="result-actions">
+                        <button class="action-btn primary-btn" onclick="onMixMatchWin()">Continue Playing</button>
+                    </div>
+                </div>
+
+                <!-- Lose Screen -->
+                <div class="result-screen lose-screen" id="mixmatch-lose-screen">
+                    <div class="result-icon">❌</div>
+                    <div class="result-title">Not Quite Right!</div>
+                    <div class="result-message">
+                        Some matches were incorrect.<br>
+                        Review the words and try again!
+                        <div id="mixmatch-lose-feedback" style="margin-top: 15px; background: #2a2a2a; padding: 15px; border-radius: 10px;">
+                            <!-- Feedback will be displayed here -->
+                        </div>
+                    </div>
+                    <div class="result-actions">
+                        <button class="action-btn secondary-btn" onclick="closeMixMatchModal()">Try Again Later</button>
+                        <button class="action-btn primary-btn" onclick="watchAdToRetryMixMatch()">📺 Watch Ad to Retry</button>
                     </div>
                 </div>
             </div>
@@ -1301,6 +1467,17 @@
             wrongGuesses: 0,
             maxWrongGuesses: 6,
             guessedLetters: new Set(),
+            isActive: false
+        };
+
+        // Mix and Match game state
+        let mixMatchCooldown = false;
+        let mixMatchCooldownTime = 120000; // 2 minutes in milliseconds
+        let mixMatchGame = {
+            words: [],
+            selectedWord: null,
+            selectedDefinition: null,
+            matches: new Map(),
             isActive: false
         };
 
@@ -2213,6 +2390,330 @@
             });
         }
 
+        // ====== MIX AND MATCH GAME FUNCTIONS ======
+
+        function showMixMatchHint() {
+            if (mixMatchCooldown) {
+                showMessage('⏳ Mix and Match is on cooldown. Try again in a few minutes!', 'warning');
+                return;
+            }
+
+            if (hintCooldown) {
+                showMessage('⏳ Hint system is on cooldown. Please wait.', 'warning');
+                return;
+            }
+
+            showRealAdSense(() => {
+                openMixMatchModal();
+            });
+        }
+
+        function openMixMatchModal() {
+            startNewMixMatchGame();
+            document.getElementById('mixmatch-modal').classList.add('active');
+        }
+
+        function closeMixMatchModal() {
+            document.getElementById('mixmatch-modal').classList.remove('active');
+            mixMatchGame.isActive = false;
+        }
+
+        function startNewMixMatchGame() {
+            // Get words from current level
+            const wordLength = currentLevel + 1;
+            const availableWords = gameWords[wordLength] || [];
+            const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
+            const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
+
+            if (unfoundWords.length < 5) {
+                showMessage('Not enough words available for Mix and Match at this level!', 'warning');
+                return;
+            }
+
+            // Pick 5 random words
+            const shuffledWords = [...unfoundWords].sort(() => Math.random() - 0.5);
+            const selectedWords = shuffledWords.slice(0, 5);
+
+            // Initialize game state
+            mixMatchGame = {
+                words: selectedWords,
+                selectedWord: null,
+                selectedDefinition: null,
+                matches: new Map(),
+                isActive: true
+            };
+
+            // Update modal UI
+            document.getElementById('mixmatch-level').textContent = currentLevel + 1;
+            
+            // Show game screen, hide result screens
+            document.getElementById('mixmatch-game-screen').style.display = 'block';
+            document.getElementById('mixmatch-win-screen').classList.remove('active');
+            document.getElementById('mixmatch-lose-screen').classList.remove('active');
+            
+            // Populate words and definitions
+            populateMixMatchItems();
+            updateMixMatchStatus();
+        }
+
+        function populateMixMatchItems() {
+            const wordsContainer = document.getElementById('mixmatch-words-list');
+            const definitionsContainer = document.getElementById('mixmatch-definitions-list');
+            
+            // Clear containers
+            wordsContainer.innerHTML = '';
+            definitionsContainer.innerHTML = '';
+
+            // Add words
+            mixMatchGame.words.forEach((wordObj, index) => {
+                const wordElement = document.createElement('div');
+                wordElement.className = 'mixmatch-item mixmatch-word';
+                wordElement.textContent = wordObj.word.toUpperCase();
+                wordElement.dataset.wordIndex = index;
+                wordElement.onclick = () => selectMixMatchItem('word', index);
+                wordsContainer.appendChild(wordElement);
+            });
+
+            // Add definitions (shuffled)
+            const shuffledDefinitions = [...mixMatchGame.words]
+                .map((wordObj, index) => ({...wordObj, originalIndex: index}))
+                .sort(() => Math.random() - 0.5);
+
+            shuffledDefinitions.forEach((wordObj, shuffledIndex) => {
+                const defElement = document.createElement('div');
+                defElement.className = 'mixmatch-item mixmatch-definition';
+                defElement.textContent = wordObj.definition;
+                defElement.dataset.defIndex = wordObj.originalIndex;
+                defElement.onclick = () => selectMixMatchItem('definition', wordObj.originalIndex);
+                definitionsContainer.appendChild(defElement);
+            });
+        }
+
+        function selectMixMatchItem(type, index) {
+            if (!mixMatchGame.isActive) return;
+
+            const allWords = document.querySelectorAll('.mixmatch-word');
+            const allDefinitions = document.querySelectorAll('.mixmatch-definition');
+
+            if (type === 'word') {
+                // If selecting a word
+                if (mixMatchGame.selectedWord === index) {
+                    // Deselect if clicking same word
+                    mixMatchGame.selectedWord = null;
+                    allWords[index].classList.remove('selected');
+                } else {
+                    // Clear previous selection
+                    allWords.forEach(el => el.classList.remove('selected'));
+                    // Select new word
+                    mixMatchGame.selectedWord = index;
+                    allWords[index].classList.add('selected');
+                }
+                
+                // Clear definition selection when selecting word
+                mixMatchGame.selectedDefinition = null;
+                allDefinitions.forEach(el => el.classList.remove('selected'));
+            } else {
+                // If selecting a definition
+                if (mixMatchGame.selectedDefinition === index) {
+                    // Deselect if clicking same definition
+                    mixMatchGame.selectedDefinition = null;
+                    document.querySelector(`[data-def-index="${index}"]`).classList.remove('selected');
+                } else {
+                    // Clear previous selection
+                    allDefinitions.forEach(el => el.classList.remove('selected'));
+                    // Select new definition
+                    mixMatchGame.selectedDefinition = index;
+                    document.querySelector(`[data-def-index="${index}"]`).classList.add('selected');
+                }
+            }
+
+            // If both word and definition are selected, make a match
+            if (mixMatchGame.selectedWord !== null && mixMatchGame.selectedDefinition !== null) {
+                makeMatch(mixMatchGame.selectedWord, mixMatchGame.selectedDefinition);
+            }
+
+            updateMixMatchStatus();
+        }
+
+        function makeMatch(wordIndex, defIndex) {
+            // Store the match
+            mixMatchGame.matches.set(wordIndex, defIndex);
+
+            // Update UI to show the match
+            const wordElement = document.querySelector(`[data-word-index="${wordIndex}"]`);
+            const defElement = document.querySelector(`[data-def-index="${defIndex}"]`);
+            
+            wordElement.classList.remove('selected');
+            wordElement.classList.add('matched');
+            defElement.classList.remove('selected');
+            defElement.classList.add('matched');
+
+            // Clear selections
+            mixMatchGame.selectedWord = null;
+            mixMatchGame.selectedDefinition = null;
+
+            updateMixMatchStatus();
+
+            // Check if all matches are made
+            if (mixMatchGame.matches.size === 5) {
+                document.getElementById('mixmatch-submit-btn').disabled = false;
+            }
+        }
+
+        function updateMixMatchStatus() {
+            const statusText = document.getElementById('mixmatch-status-text');
+            const matchesCount = document.getElementById('mixmatch-matches-count');
+            
+            if (mixMatchGame.selectedWord !== null && mixMatchGame.selectedDefinition === null) {
+                statusText.textContent = 'Word selected - now choose its definition';
+            } else if (mixMatchGame.selectedWord === null && mixMatchGame.selectedDefinition !== null) {
+                statusText.textContent = 'Definition selected - now choose its word';
+            } else if (mixMatchGame.matches.size === 5) {
+                statusText.textContent = 'All matches made! Submit your answers';
+            } else {
+                statusText.textContent = 'Select a word, then its definition';
+            }
+            
+            matchesCount.textContent = `Matches: ${mixMatchGame.matches.size}/5`;
+        }
+
+        function submitMixMatchAnswers() {
+            if (mixMatchGame.matches.size !== 5) {
+                showMessage('Please make all 5 matches before submitting!', 'warning');
+                return;
+            }
+
+            // Check if all matches are correct
+            let correctMatches = 0;
+            let incorrectPairs = [];
+
+            for (let [wordIndex, defIndex] of mixMatchGame.matches) {
+                if (wordIndex === defIndex) {
+                    correctMatches++;
+                } else {
+                    incorrectPairs.push({
+                        word: mixMatchGame.words[wordIndex].word,
+                        guessedDef: mixMatchGame.words[defIndex].definition,
+                        correctDef: mixMatchGame.words[wordIndex].definition
+                    });
+                }
+            }
+
+            if (correctMatches === 5) {
+                winMixMatchGame();
+            } else {
+                loseMixMatchGame(incorrectPairs);
+            }
+        }
+
+        function resetMixMatchGame() {
+            mixMatchGame.matches.clear();
+            mixMatchGame.selectedWord = null;
+            mixMatchGame.selectedDefinition = null;
+            
+            // Reset UI
+            document.querySelectorAll('.mixmatch-item').forEach(item => {
+                item.classList.remove('selected', 'matched', 'incorrect');
+            });
+            
+            document.getElementById('mixmatch-submit-btn').disabled = true;
+            updateMixMatchStatus();
+        }
+
+        function winMixMatchGame() {
+            mixMatchGame.isActive = false;
+            
+            // Add all words to found words
+            const wordLength = currentLevel + 1;
+            if (!foundWords[wordLength]) foundWords[wordLength] = [];
+            
+            let newWordsAdded = 0;
+            mixMatchGame.words.forEach(wordObj => {
+                const alreadyFound = foundWords[wordLength].find(w => 
+                    w.word.toLowerCase() === wordObj.word.toLowerCase()
+                );
+                
+                if (!alreadyFound) {
+                    foundWords[wordLength].push({
+                        word: wordObj.word,
+                        definition: wordObj.definition,
+                        pos: wordObj.pos,
+                        discoveredAt: Date.now()
+                    });
+                    newWordsAdded++;
+                }
+            });
+            
+            if (newWordsAdded > 0) {
+                saveProgress();
+                updateFoundWordsDisplay();
+                updateProgress();
+                updateUnlockInfo();
+            }
+            
+            // Show win screen
+            document.getElementById('mixmatch-game-screen').style.display = 'none';
+            
+            // Display the matched words
+            const winWordsContainer = document.getElementById('mixmatch-win-words');
+            winWordsContainer.innerHTML = mixMatchGame.words.map(wordObj => 
+                `<div style="margin: 8px 0; padding: 10px; background: #333; border-radius: 5px;">
+                    <strong style="color: #6aaa64;">${wordObj.word.toUpperCase()}</strong><br>
+                    <small style="color: #ccc;">${wordObj.definition}</small>
+                </div>`
+            ).join('');
+            
+            document.getElementById('mixmatch-win-screen').classList.add('active');
+            
+            showMessage(`🎉 Mix and Match won! Found ${newWordsAdded} new words!`, 'success');
+        }
+
+        function loseMixMatchGame(incorrectPairs) {
+            mixMatchGame.isActive = false;
+            
+            // Show visual feedback for incorrect matches
+            document.querySelectorAll('.mixmatch-item.matched').forEach(item => {
+                item.classList.add('incorrect');
+            });
+            
+            setTimeout(() => {
+                // Show lose screen
+                document.getElementById('mixmatch-game-screen').style.display = 'none';
+                
+                // Display feedback
+                const loseFeedbackContainer = document.getElementById('mixmatch-lose-feedback');
+                loseFeedbackContainer.innerHTML = `
+                    <p style="color: #ff6b6b; margin-bottom: 10px;">Incorrect matches found:</p>
+                    ${incorrectPairs.map(pair => 
+                        `<div style="margin: 8px 0; padding: 10px; background: #333; border-radius: 5px; border-left: 3px solid #ff6b6b;">
+                            <strong style="color: #ff6b6b;">${pair.word.toUpperCase()}</strong><br>
+                            <small style="color: #ccc;">You matched: "${pair.guessedDef}"</small><br>
+                            <small style="color: #6aaa64;">Correct: "${pair.correctDef}"</small>
+                        </div>`
+                    ).join('')}
+                `;
+                
+                document.getElementById('mixmatch-lose-screen').classList.add('active');
+            }, 1000);
+        }
+
+        function onMixMatchWin() {
+            closeMixMatchModal();
+            
+            // Start mix and match cooldown
+            mixMatchCooldown = true;
+            setTimeout(() => {
+                mixMatchCooldown = false;
+            }, mixMatchCooldownTime);
+        }
+
+        function watchAdToRetryMixMatch() {
+            showRealAdSense(() => {
+                // Allow immediate retry after watching ad
+                startNewMixMatchGame();
+            });
+        }
+
         function revealRandomWord() {
             const wordLength = currentLevel + 1;
             // Use LIMITED words for free users to ensure hints show valid words
@@ -2388,6 +2889,7 @@
             document.getElementById('hintDefinitionBtn').onclick = showDefinitionHint;
             document.getElementById('hintScrambledBtn').onclick = showScrambledHint;
             document.getElementById('hintRevealBtn').onclick = showRevealWordHint;
+            document.getElementById('hintMixMatchBtn').onclick = showMixMatchHint;
 
             // Add to home screen handler
             const addToHomeScreenHandler = async () => {
