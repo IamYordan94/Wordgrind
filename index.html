@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-adsense-account" content="ca-pub-9007185070437670">
     
     <!-- SERVICE WORKER KILL-SWITCH: Force unregister, clear caches, and reload once -->
     <script>
@@ -37,12 +36,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <script>window.cacheBust = Date.now();</script>
-    <meta name="version" content="v3.0-MASSIVE-WORD-UPDATE-99999">
+    <meta name="version" content="v4.0-TIER-SYSTEM-12345">
     <!-- Force reload timestamp -->
     <script>
         // Force cache invalidation
-        if (localStorage.getItem('lastVersion') !== 'v3.0-99999') {
-            localStorage.setItem('lastVersion', 'v3.0-99999');
+        if (localStorage.getItem('lastVersion') !== 'v4.0-tier') {
+            localStorage.setItem('lastVersion', 'v4.0-tier');
             window.location.reload(true);
         }
     </script>
@@ -50,14 +49,6 @@
     <meta name="theme-color" content="#6aaa64">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9007185070437670"
-         crossorigin="anonymous"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-9007185070437670",
-            enable_page_level_ads: true
-        });
-    </script>
     <style>
         * {
             box-sizing: border-box;
@@ -478,6 +469,111 @@
             background-color: #555;
             color: #999;
             cursor: not-allowed;
+        }
+
+        .hint-btn.cooldown {
+            background-color: #666;
+            color: #aaa;
+            cursor: not-allowed;
+            position: relative;
+            padding-right: 10px;
+        }
+
+        .hint-btn .cooldown-timer {
+            display: inline-block;
+            font-size: 0.85rem;
+            color: #ff6b6b;
+            margin-left: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .upgrade-prompt-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .upgrade-prompt-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .upgrade-prompt-content {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            color: white;
+            text-align: center;
+            border: 2px solid #6aaa64;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        .upgrade-prompt-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .upgrade-prompt-title {
+            color: #6aaa64;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .upgrade-prompt-message {
+            color: #ccc;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .upgrade-prompt-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .upgrade-prompt-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upgrade-prompt-btn.primary {
+            background: linear-gradient(135deg, #6aaa64 0%, #5a9954 100%);
+            color: white;
+        }
+
+        .upgrade-prompt-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 170, 100, 0.4);
+        }
+
+        .upgrade-prompt-btn.secondary {
+            background: transparent;
+            color: #aaa;
+            border: 2px solid #555;
+        }
+
+        .upgrade-prompt-btn.secondary:hover {
+            border-color: #6aaa64;
+            color: #6aaa64;
         }
 
         .hint-display {
@@ -1244,6 +1340,159 @@
                 font-size: 14px;
             }
         }
+
+        /* Tier Status Display Styles */
+        .tier-status-section {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .tier-badge-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 2px solid;
+        }
+
+        .tier-badge.free {
+            background: linear-gradient(135deg, #555 0%, #444 100%);
+            border-color: #666;
+            color: #fff;
+        }
+
+        .tier-badge.paid {
+            background: linear-gradient(135deg, #6aaa64 0%, #5a9954 100%);
+            border-color: #7aba74;
+            color: #fff;
+        }
+
+        .tier-badge.lifetime {
+            background: linear-gradient(135deg, #d4a953 0%, #c49943 100%);
+            border-color: #e4b963;
+            color: #1a1a1a;
+        }
+
+        .upgrade-link {
+            background: #6aaa64;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .upgrade-link:hover {
+            background: #5a9954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.4);
+        }
+
+        .tier-progress-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .tier-progress-item {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #6aaa64;
+        }
+
+        .tier-progress-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .tier-progress-value {
+            color: #6aaa64;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .tier-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #444;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .tier-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6aaa64 0%, #7aba74 100%);
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .universal-input-container {
+            display: none;
+        }
+
+        .universal-input-container.active {
+            display: block;
+        }
+
+        .universal-word-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #6aaa64;
+            border-radius: 8px;
+            background: #2a2a2a;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            outline: none;
+            text-align: center;
+        }
+
+        .universal-word-input:focus {
+            border-color: #7aba74;
+            box-shadow: 0 0 0 3px rgba(106, 170, 100, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .tier-progress-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .tier-badge-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .tier-badge {
+                justify-content: center;
+            }
+
+            .upgrade-link {
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1252,22 +1501,51 @@
             <div class="nav-links" style="position: absolute; left: 0; top: 0; display: flex; gap: 10px;">
                 <a href="home.html" class="nav-link" style="background: #6aaa64; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px;">🏠 Home</a>
                 <a href="vocabulary.html" class="nav-link" style="background: #c9b458; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px;">📚 Vocabulary</a>
+                <a href="upgrade.html" class="nav-link" style="background: #d4a953; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px;">💎 Upgrade</a>
                 <a href="#rules" class="nav-link" onclick="showRulesModal()" style="background: #444; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px; cursor: pointer;">📖 Rules</a>
             </div>
             <div class="game-logo">WG</div>
         </div>
 
-        <div class="level-selector" id="levelSelector">
-            <label for="levelDropdown" class="level-label">Level:</label>
-            <select id="levelDropdown" class="level-dropdown">
-                <option value="1">2 Letters</option>
-                <option value="2">3 Letters</option>
-                <option value="3">4 Letters</option>
-                <option value="4">5 Letters</option>
-                <option value="5">6 Letters</option>
-                <option value="6">7 Letters</option>
-                <option value="7">8 Letters</option>
-                <option value="8">9 Letters</option>
+        <!-- Tier Status Section -->
+        <div class="tier-status-section" id="tierStatusSection">
+            <div class="tier-badge-container">
+                <div class="tier-badge free" id="tierBadge">
+                    <span id="tierBadgeIcon">📋</span>
+                    <span id="tierBadgeName">Free Tier</span>
+                </div>
+                <a href="upgrade.html" class="upgrade-link" id="upgradeButton">Upgrade to Premium</a>
+            </div>
+            <div class="tier-progress-container">
+                <div class="tier-progress-item">
+                    <div class="tier-progress-label">Daily Words</div>
+                    <div class="tier-progress-value" id="dailyProgress">0/20</div>
+                    <div class="tier-progress-bar">
+                        <div class="tier-progress-fill" id="dailyProgressBar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="tier-progress-item">
+                    <div class="tier-progress-label">Lifetime Words</div>
+                    <div class="tier-progress-value" id="lifetimeProgress">0/500</div>
+                    <div class="tier-progress-bar">
+                        <div class="tier-progress-fill" id="lifetimeProgressBar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tier-Based Word Length Selector (Free Tier Only) -->
+        <div class="level-selector" id="wordLengthSelector" style="display: none;">
+            <label for="wordLengthDropdown" class="level-label">Word Length:</label>
+            <select id="wordLengthDropdown" class="level-dropdown">
+                <option value="2">2 Letters</option>
+                <option value="3">3 Letters</option>
+                <option value="4">4 Letters</option>
+                <option value="5">5 Letters</option>
+                <option value="6">6 Letters</option>
+                <option value="7">7 Letters</option>
+                <option value="8">8 Letters</option>
+                <option value="9">9 Letters</option>
             </select>
         </div>
 
@@ -1275,8 +1553,9 @@
             <!-- Hidden large progress bar -->
         </div>
 
-        <div class="input-section">
-            <input type="text" id="wordInput" placeholder="Enter your guess" maxlength="2">
+        <!-- Tier-Based Input Section -->
+        <div class="input-section" id="wordInputSection">
+            <input type="text" id="wordInput" placeholder="Enter word" maxlength="9">
             <button class="submit-btn" id="submitBtn">Submit</button>
             <div class="input-progress-info">
                 Found: <span id="foundCount">0</span> / <span id="totalCount">0</span>
@@ -1292,8 +1571,6 @@
             <button class="hint-btn" id="hintScrambledBtn" disabled>Scrambled Letters</button>
             <button class="hint-btn" id="hintRevealBtn">Play Hangman</button>
             <button class="hint-btn" id="hintMixMatchBtn">Mix and Match</button>
-            <!-- Ad container removed for AdSense policy compliance -->
-            
             <div class="hint-display" id="hintDisplay"></div>
         </div>
 
@@ -1457,6 +1734,25 @@
         <!-- Hidden install section -->
         <div class="install-section" id="installSection" style="display: none;"></div>
 
+        <!-- Upgrade Prompt Modal -->
+        <div class="upgrade-prompt-modal" id="upgradePromptModal">
+            <div class="upgrade-prompt-content">
+                <div class="upgrade-prompt-icon" id="upgradePromptIcon">🎉</div>
+                <div class="upgrade-prompt-title" id="upgradePromptTitle">Upgrade to Premium!</div>
+                <div class="upgrade-prompt-message" id="upgradePromptMessage">
+                    You've reached a limit. Upgrade to Premium for more words and no cooldowns!
+                </div>
+                <div class="upgrade-prompt-actions">
+                    <button class="upgrade-prompt-btn primary" onclick="window.location.href='upgrade.html'">
+                        💎 Upgrade Now
+                    </button>
+                    <button class="upgrade-prompt-btn secondary" onclick="closeUpgradePrompt()">
+                        Maybe Later
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="game-content">
             <div class="left-section">
                 <div class="found-words">
@@ -1600,6 +1896,7 @@
     <!-- Footer -->
     <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9rem;">
         <a href="#" style="text-decoration: none; color: #888; margin-right: 20px;" onclick="showPrivacyPolicy()">Privacy Policy</a>
+        <a href="upgrade.html" style="text-decoration: none; color: #888; margin-right: 20px;">Upgrade to Premium</a>
         <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" style="text-decoration: none; color: #888;">Made by Yo ✌ 🥚</a>
     </div>
 
@@ -2164,6 +2461,13 @@
             console.log('🔧 Auto-initializing Tier System...');
             TierSystem.initializeTierSystem();
             
+            // Initialize Cooldown System
+            console.log('🕒 Auto-initializing Cooldown System...');
+            CooldownSystem.initializeCooldowns();
+            
+            // Update tier UI on page load (will be called again after initGame)
+            updateTierStatusUI();
+            
             // Log status for debugging
             const tierInfo = TierSystem.getTierInfo();
             console.log(`📊 Current Tier: ${tierInfo.displayName}`);
@@ -2175,6 +2479,512 @@
         // ============================================================================
         // END TIER SYSTEM MODULE
         // ============================================================================
+
+        // ============================================================================
+        // COOLDOWN TIMER SYSTEM
+        // ============================================================================
+
+        const CooldownSystem = {
+            STORAGE_KEY: 'wordGrindCooldowns',
+            COOLDOWN_DURATIONS: {
+                definitionMode: 2, // 2 minutes for Definition
+                hangman: 2,        // 2 minutes for Hangman
+                scramble: 2,       // 2 minutes for Scramble
+                mixMatch: 5        // 5 minutes for Mix & Match
+            },
+            updateInterval: null,
+
+            /**
+             * Initialize cooldown system - load from localStorage
+             */
+            initializeCooldowns() {
+                const cooldowns = this.getCooldownsFromStorage();
+                console.log('🕒 Cooldown System initialized:', cooldowns);
+                
+                // Start UI update interval
+                this.startCooldownUIUpdates();
+                
+                return cooldowns;
+            },
+
+            /**
+             * Get cooldowns object from localStorage
+             * @returns {Object} Cooldowns object with game names as keys
+             */
+            getCooldownsFromStorage() {
+                try {
+                    const stored = localStorage.getItem(this.STORAGE_KEY);
+                    return stored ? JSON.parse(stored) : {};
+                } catch (error) {
+                    console.error('Error loading cooldowns:', error);
+                    return {};
+                }
+            },
+
+            /**
+             * Save cooldowns to localStorage
+             * @param {Object} cooldowns - Cooldowns object to save
+             */
+            saveCooldownsToStorage(cooldowns) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cooldowns));
+                } catch (error) {
+                    console.error('Error saving cooldowns:', error);
+                }
+            },
+
+            /**
+             * Set cooldown for a specific game (only for free tier)
+             * @param {String} gameName - Name of the game (definitionMode, hangman, scramble, mixMatch)
+             * @param {Number} minutes - Duration in minutes (optional, uses default if not provided)
+             */
+            setCooldown(gameName, minutes = null) {
+                // Check if user is free tier
+                const tier = TierSystem.getUserTier();
+                if (tier !== 'free') {
+                    console.log(`⏭️ Skipping cooldown for ${gameName} - user is ${tier} tier`);
+                    return;
+                }
+
+                const duration = minutes || this.COOLDOWN_DURATIONS[gameName] || 2;
+                const cooldowns = this.getCooldownsFromStorage();
+                const availableAt = Date.now() + (duration * 60 * 1000);
+                
+                cooldowns[gameName] = availableAt;
+                this.saveCooldownsToStorage(cooldowns);
+                
+                console.log(`⏲️ Cooldown set for ${gameName}: ${duration} minutes`);
+                
+                // Update UI immediately
+                this.updateCooldownUI();
+            },
+
+            /**
+             * Get remaining cooldown time in seconds
+             * @param {String} gameName - Name of the game
+             * @returns {Number} Remaining seconds (0 if no cooldown)
+             */
+            getCooldownRemaining(gameName) {
+                const cooldowns = this.getCooldownsFromStorage();
+                const availableAt = cooldowns[gameName];
+                
+                if (!availableAt) return 0;
+                
+                const remaining = Math.max(0, Math.ceil((availableAt - Date.now()) / 1000));
+                
+                // If cooldown expired, remove it
+                if (remaining === 0) {
+                    this.clearCooldown(gameName);
+                }
+                
+                return remaining;
+            },
+
+            /**
+             * Check if a game is currently on cooldown
+             * @param {String} gameName - Name of the game
+             * @returns {Boolean} True if on cooldown
+             */
+            isCooldownActive(gameName) {
+                // Paid/Lifetime users never have cooldowns
+                const tier = TierSystem.getUserTier();
+                if (tier !== 'free') {
+                    return false;
+                }
+                
+                return this.getCooldownRemaining(gameName) > 0;
+            },
+
+            /**
+             * Clear cooldown for a specific game
+             * @param {String} gameName - Name of the game
+             */
+            clearCooldown(gameName) {
+                const cooldowns = this.getCooldownsFromStorage();
+                delete cooldowns[gameName];
+                this.saveCooldownsToStorage(cooldowns);
+                this.updateCooldownUI();
+            },
+
+            /**
+             * Format seconds to MM:SS
+             * @param {Number} seconds - Seconds to format
+             * @returns {String} Formatted time string
+             */
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            },
+
+            /**
+             * Update all cooldown button states and displays
+             */
+            updateCooldownUI() {
+                const games = {
+                    definitionMode: document.getElementById('hintDefinitionBtn'),
+                    hangman: document.getElementById('hintRevealBtn'),
+                    scramble: document.getElementById('hintScrambledBtn'),
+                    mixMatch: document.getElementById('hintMixMatchBtn')
+                };
+
+                Object.keys(games).forEach(gameName => {
+                    const button = games[gameName];
+                    if (!button) return;
+
+                    const remaining = this.getCooldownRemaining(gameName);
+                    const isOnCooldown = remaining > 0;
+
+                    if (isOnCooldown) {
+                        // Add cooldown class and disable
+                        button.classList.add('cooldown');
+                        button.disabled = true;
+
+                        // Update or create timer display
+                        let timerSpan = button.querySelector('.cooldown-timer');
+                        if (!timerSpan) {
+                            timerSpan = document.createElement('span');
+                            timerSpan.className = 'cooldown-timer';
+                            button.appendChild(timerSpan);
+                        }
+                        timerSpan.textContent = `⏱️ ${this.formatTime(remaining)}`;
+                    } else {
+                        // Remove cooldown class and enable
+                        button.classList.remove('cooldown');
+                        
+                        // Remove timer display
+                        const timerSpan = button.querySelector('.cooldown-timer');
+                        if (timerSpan) {
+                            timerSpan.remove();
+                        }
+
+                        // Only enable if not disabled for other reasons
+                        // (scramble is disabled by default)
+                        if (gameName !== 'scramble') {
+                            button.disabled = false;
+                        }
+                    }
+                });
+            },
+
+            /**
+             * Start interval to update cooldown UI every second
+             */
+            startCooldownUIUpdates() {
+                // Clear any existing interval
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                }
+
+                // Update immediately
+                this.updateCooldownUI();
+
+                // Update every second
+                this.updateInterval = setInterval(() => {
+                    this.updateCooldownUI();
+                }, 1000);
+
+                console.log('🔄 Cooldown UI updates started');
+            },
+
+            /**
+             * Stop cooldown UI updates
+             */
+            stopCooldownUIUpdates() {
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                    this.updateInterval = null;
+                }
+            },
+
+            /**
+             * Check if a game can be played (not on cooldown)
+             * Shows upgrade prompt if on cooldown for free users
+             * @param {String} gameName - Name of the game
+             * @returns {Boolean} True if game can be played
+             */
+            canPlayGame(gameName) {
+                if (this.isCooldownActive(gameName)) {
+                    const remaining = this.getCooldownRemaining(gameName);
+                    showUpgradePromptModal('cooldown', gameName, remaining);
+                    return false;
+                }
+                return true;
+            }
+        };
+
+        // ============================================================================
+        // END COOLDOWN TIMER SYSTEM
+        // ============================================================================
+
+        /**
+         * Global helper object for cooldown system debugging and testing
+         * Access in browser console: window.CooldownDebug
+         */
+        window.CooldownDebug = {
+            // Show current cooldown status
+            showStatus() {
+                console.log('═══════════════════════════════════════');
+                console.log('🕒 COOLDOWN SYSTEM STATUS');
+                console.log('═══════════════════════════════════════');
+                console.log(`Tier: ${TierSystem.getUserTier()}`);
+                
+                const games = ['definitionMode', 'hangman', 'scramble', 'mixMatch'];
+                games.forEach(gameName => {
+                    const remaining = CooldownSystem.getCooldownRemaining(gameName);
+                    const isActive = CooldownSystem.isCooldownActive(gameName);
+                    const status = isActive ? `⏱️ ${CooldownSystem.formatTime(remaining)} remaining` : '✅ Available';
+                    console.log(`${gameName}: ${status}`);
+                });
+                console.log('═══════════════════════════════════════');
+            },
+
+            // Test setting cooldown for a game
+            testSetCooldown(gameName, minutes = 2) {
+                console.log(`Setting ${minutes}-minute cooldown for ${gameName}...`);
+                CooldownSystem.setCooldown(gameName, minutes);
+                this.showStatus();
+            },
+
+            // Clear all cooldowns
+            clearAll() {
+                console.log('Clearing all cooldowns...');
+                const cooldowns = CooldownSystem.getCooldownsFromStorage();
+                Object.keys(cooldowns).forEach(gameName => {
+                    CooldownSystem.clearCooldown(gameName);
+                });
+                this.showStatus();
+            },
+
+            // Clear specific cooldown
+            clear(gameName) {
+                console.log(`Clearing cooldown for ${gameName}...`);
+                CooldownSystem.clearCooldown(gameName);
+                this.showStatus();
+            }
+        };
+
+        // ============================================================================
+        // TIER UI UPDATE FUNCTIONS
+        // ============================================================================
+        
+        /**
+         * Update the tier status UI based on current tier information
+         */
+        function updateTierStatusUI() {
+            const tierInfo = TierSystem.getTierInfo();
+            const stats = TierSystem.getTierStats();
+            
+            // Update tier badge
+            const tierBadge = document.getElementById('tierBadge');
+            const tierBadgeIcon = document.getElementById('tierBadgeIcon');
+            const tierBadgeName = document.getElementById('tierBadgeName');
+            const upgradeButton = document.getElementById('upgradeButton');
+            
+            // Remove all tier classes and add the current one
+            tierBadge.classList.remove('free', 'paid', 'lifetime');
+            tierBadge.classList.add(tierInfo.tier);
+            
+            // Update badge content based on tier
+            if (tierInfo.tier === 'free') {
+                tierBadgeIcon.textContent = '📋';
+                tierBadgeName.textContent = 'Free Tier';
+                upgradeButton.style.display = 'inline-block';
+            } else if (tierInfo.tier === 'paid') {
+                tierBadgeIcon.textContent = '💎';
+                tierBadgeName.textContent = 'Premium';
+                upgradeButton.style.display = 'inline-block';
+                upgradeButton.textContent = 'Manage Subscription';
+            } else if (tierInfo.tier === 'lifetime') {
+                tierBadgeIcon.textContent = '🏆';
+                tierBadgeName.textContent = 'Lifetime Premium';
+                upgradeButton.style.display = 'none';
+            }
+            
+            // Update daily progress
+            const dailyProgress = document.getElementById('dailyProgress');
+            const dailyProgressBar = document.getElementById('dailyProgressBar');
+            dailyProgress.textContent = stats.dailyProgress;
+            dailyProgressBar.style.width = stats.dailyPercentage + '%';
+            
+            // Update lifetime progress
+            const lifetimeProgress = document.getElementById('lifetimeProgress');
+            const lifetimeProgressBar = document.getElementById('lifetimeProgressBar');
+            lifetimeProgress.textContent = stats.lifetimeProgress;
+            lifetimeProgressBar.style.width = stats.lifetimePercentage + '%';
+            
+            // Render tier-based UI (word length selector vs universal input)
+            renderTierBasedUI(tierInfo.tier);
+        }
+
+        /**
+         * Render tier-based UI: Shows word-length dropdown for free tier,
+         * universal input for paid/lifetime tiers
+         * @param {String} tier - Current user tier ('free', 'paid', or 'lifetime')
+         */
+        function renderTierBasedUI(tier) {
+            const wordLengthSelector = document.getElementById('wordLengthSelector');
+            const wordInput = document.getElementById('wordInput');
+            
+            if (tier === 'free') {
+                // FREE TIER: Show word-length dropdown
+                wordLengthSelector.style.display = 'flex';
+                
+                // Update input placeholder based on selected length
+                const dropdown = document.getElementById('wordLengthDropdown');
+                const selectedLength = parseInt(dropdown.value) || 2;
+                wordInput.placeholder = `ENTER ${selectedLength}-LETTER WORD`;
+                wordInput.maxLength = selectedLength;
+                
+                // Add event listener to update placeholder when dropdown changes
+                dropdown.onchange = function() {
+                    const length = parseInt(this.value);
+                    wordInput.placeholder = `ENTER ${length}-LETTER WORD`;
+                    wordInput.maxLength = length;
+                    wordInput.value = ''; // Clear input when length changes
+                    updateFoundWordsDisplay();
+                    updateProgress();
+                };
+            } else {
+                // PAID/LIFETIME TIER: Hide dropdown, show universal input
+                wordLengthSelector.style.display = 'none';
+                wordInput.placeholder = 'ENTER ANY WORD (2-9 LETTERS)';
+                wordInput.maxLength = 9;
+            }
+        }
+
+        /**
+         * Initialize tier-based UI on page load
+         * Sets up the word length dropdown and displays initial state
+         */
+        function initializeTierBasedUI() {
+            const tier = TierSystem.getUserTier();
+            
+            if (tier === 'free') {
+                // FREE TIER: Initialize word length dropdown with default value
+                const dropdown = document.getElementById('wordLengthDropdown');
+                dropdown.value = '2'; // Default to 2-letter words
+                
+                // Show initial found words and progress for 2-letter words
+                updateFoundWordsDisplay();
+                updateProgress();
+                updateAttemptsList();
+            } else {
+                // PAID/LIFETIME TIER: No dropdown, show all words
+                updateFoundWordsDisplay();
+                updateProgress();
+                updateAttemptsList();
+            }
+        }
+
+        /**
+         * Helper function to get current word length based on tier
+         * Free tier: From dropdown selection
+         * Paid/Lifetime: From input field length or default
+         */
+        function getCurrentWordLength() {
+            const tier = TierSystem.getUserTier();
+            
+            if (tier === 'free') {
+                const dropdown = document.getElementById('wordLengthDropdown');
+                return parseInt(dropdown.value);
+            } else {
+                // For paid/lifetime, check if there's an input value, otherwise return default
+                const input = document.getElementById('wordInput');
+                const value = input.value.trim();
+                return value.length > 0 ? value.length : 2; // Default to 2 if no input
+            }
+        }
+
+        /**
+         * Show upgrade modal when user hits daily or lifetime cap
+         */
+        function showUpgradePrompt(reason = 'daily') {
+            showUpgradePromptModal(reason);
+        }
+
+        /**
+         * Show upgrade prompt modal with customized content
+         * @param {String} reason - Reason for showing prompt (daily, lifetime, cooldown)
+         * @param {String} gameName - Name of game (for cooldown prompts)
+         * @param {Number} remainingSeconds - Remaining cooldown time (for cooldown prompts)
+         */
+        function showUpgradePromptModal(reason = 'daily', gameName = '', remainingSeconds = 0) {
+            const modal = document.getElementById('upgradePromptModal');
+            const icon = document.getElementById('upgradePromptIcon');
+            const title = document.getElementById('upgradePromptTitle');
+            const message = document.getElementById('upgradePromptMessage');
+            
+            const tierInfo = TierSystem.getTierInfo();
+            
+            // Customize modal content based on reason
+            if (reason === 'daily') {
+                icon.textContent = '🎉';
+                title.textContent = `You've discovered ${tierInfo.dailyCap} words today!`;
+                message.innerHTML = `
+                    <p>Amazing progress! You've reached your daily limit.</p>
+                    <p style="margin-top: 15px;">
+                        <strong>Upgrade to Premium</strong> for 50 words/day and <strong>no cooldowns</strong> on mini-games!
+                    </p>
+                `;
+            } else if (reason === 'lifetime') {
+                icon.textContent = '🏆';
+                title.textContent = `Amazing! You've mastered ${tierInfo.lifetimeCap} words!`;
+                message.innerHTML = `
+                    <p>Incredible achievement! You've reached your lifetime limit.</p>
+                    <p style="margin-top: 15px;">
+                        <strong>Upgrade to Premium</strong> to continue your journey toward 58,535 words and earn <strong>lifetime free access!</strong>
+                    </p>
+                `;
+            } else if (reason === 'cooldown') {
+                const timeRemaining = CooldownSystem.formatTime(remainingSeconds);
+                const gameDisplayName = {
+                    definitionMode: 'Definition',
+                    hangman: 'Hangman',
+                    scramble: 'Scramble',
+                    mixMatch: 'Mix & Match'
+                }[gameName] || 'this game';
+                
+                icon.textContent = '⏱️';
+                title.textContent = 'Cooldown Active';
+                message.innerHTML = `
+                    <p><strong>${gameDisplayName}</strong> is on cooldown for <strong>${timeRemaining}</strong>.</p>
+                    <p style="margin-top: 15px;">
+                        Free tier has cooldowns between mini-games.
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <strong>Upgrade to Premium</strong> for <strong>instant access</strong> to all mini-games with <strong>no cooldowns!</strong>
+                    </p>
+                `;
+            }
+            
+            // Show modal
+            modal.classList.add('active');
+            
+            // Track that prompt was shown (to avoid spam)
+            const today = new Date().toDateString();
+            const promptKey = `upgradePromptShown_${reason}_${today}`;
+            sessionStorage.setItem(promptKey, 'true');
+        }
+
+        /**
+         * Close upgrade prompt modal
+         */
+        function closeUpgradePrompt() {
+            const modal = document.getElementById('upgradePromptModal');
+            modal.classList.remove('active');
+        }
+
+        /**
+         * Check if upgrade prompt was already shown today
+         * @param {String} reason - Reason for prompt
+         * @returns {Boolean} True if already shown today
+         */
+        function wasUpgradePromptShownToday(reason) {
+            const today = new Date().toDateString();
+            const promptKey = `upgradePromptShown_${reason}_${today}`;
+            return sessionStorage.getItem(promptKey) === 'true';
+        }
 
         // Grammar explanations
         const grammarInfo = {
@@ -2461,12 +3271,14 @@
                 // Load saved progress
                 loadProgress();
 
-                // Initialize UI
-                initializeLevelDropdown();
-                switchToLevel(currentLevel);
+                // Initialize UI - Tier-based (no level switching)
+                initializeTierBasedUI();
                 updateUnlockInfo();
                 updateHintButtons();
                 setupEventListeners();
+                
+                // Initialize tier status UI
+                updateTierStatusUI();
 
                 console.log('✅ Game ready to play!');
 
@@ -2555,7 +3367,7 @@
         }
 
         function updateHintButtons() {
-            const wordLength = currentLevel + 1;
+            const wordLength = getCurrentWordLength();
             const scrambledBtn = document.getElementById('hintScrambledBtn');
 
             // Enable scrambled letters hint only for 3+ letter words
@@ -2618,23 +3430,20 @@
         }
 
         async function showDefinitionHint() {
-            if (hintCooldown) {
-                showMessage('Hints are on cooldown. Try again in 30 seconds!', 'warning');
+            // Check cooldown first (will show upgrade prompt if on cooldown)
+            if (!CooldownSystem.canPlayGame('definitionMode')) {
                 return;
             }
 
-            const wordLength = currentLevel + 1;
+            const wordLength = getCurrentWordLength();
             const availableWords = gameWords[wordLength] || [];
             const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
             const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
 
             if (unfoundWords.length === 0) {
-                showMessage('No more words to find at this level!', 'warning');
+                showMessage('No more words to find at this word length!', 'warning');
                 return;
             }
-
-            // Start cooldown timer
-            startHintCooldown();
 
             try {
                 // Get random unfound word
@@ -2659,21 +3468,32 @@
                     ${posDisplay}
                 `;
                 hintDisplay.style.display = 'block';
+                
+                // Set cooldown after showing definition (only for free tier)
+                CooldownSystem.setCooldown('definitionMode');
             } catch (error) {
                 showMessage('❌ Could not fetch definition. Try again later!', 'error');
             }
         }
 
         function showScrambledHint() {
-            if (hintCooldown || currentLevel + 1 < 3) return;
+            // Check cooldown first (will show upgrade prompt if on cooldown)
+            if (!CooldownSystem.canPlayGame('scramble')) {
+                return;
+            }
 
-            const wordLength = currentLevel + 1;
+            const wordLength = getCurrentWordLength();
+            if (wordLength < 3) {
+                showMessage('Scrambled hints are only available for 3+ letter words', 'warning');
+                return;
+            }
+
             const availableWords = gameWords[wordLength] || [];
             const foundWordsSet = new Set((foundWords[wordLength] || []).map(w => w.word.toLowerCase()));
             const unfoundWords = availableWords.filter(w => !foundWordsSet.has(w.word.toLowerCase()));
 
             if (unfoundWords.length === 0) {
-                showMessage('No more words to find at this level!', 'warning');
+                showMessage('No more words to find at this word length!', 'warning');
                 return;
             }
 
@@ -2705,14 +3525,28 @@
                     <small style="color: #d4a953;">💡 These letters can make ${anagramCount} possible word${anagramCount === 1 ? '' : 's'}</small>
                 `;
                 hintDisplay.style.display = 'block';
+                
+                // Set cooldown after showing scrambled hint (only for free tier)
+                CooldownSystem.setCooldown('scramble');
             });
         }
 
         function updateFoundWordsDisplay() {
-            const wordLength = currentLevel + 1;
+            // Get current word length based on tier
+            const tier = TierSystem.getUserTier();
+            let wordLength;
+            
+            if (tier === 'free') {
+                const dropdown = document.getElementById('wordLengthDropdown');
+                wordLength = parseInt(dropdown.value);
+            } else {
+                // For paid/lifetime, show words from all lengths (or a default)
+                // For now, let's show 2-letter words by default, or all words
+                wordLength = 2; // Default display
+            }
+            
             const found = foundWords[wordLength] || [];
             const grid = document.getElementById('foundWordsGrid');
-            const foundWordsBox = document.querySelector('.found-words');
 
             // Keep the hidden count element updated  
             document.getElementById('foundWordsCount').textContent = found.length;
@@ -2740,22 +3574,46 @@
             document.getElementById('grammarInfoBtn').onclick = showGrammarInfo;
 
             grid.innerHTML = '';
-            found.forEach(wordData => {
-                const wordElement = document.createElement('div');
-                wordElement.className = 'word-item';
-                wordElement.textContent = wordData.word.toLowerCase();
-                wordElement.onclick = () => showDefinition(wordData);
-                grid.appendChild(wordElement);
-            });
-
-            // No locked words display in clean UX
+            
+            if (tier === 'free') {
+                // Free tier: Show words for selected length
+                found.forEach(wordData => {
+                    const wordElement = document.createElement('div');
+                    wordElement.className = 'word-item';
+                    wordElement.textContent = wordData.word.toLowerCase();
+                    wordElement.onclick = () => showDefinition(wordData);
+                    grid.appendChild(wordElement);
+                });
+            } else {
+                // Paid/lifetime tier: Show ALL found words across all lengths
+                Object.keys(foundWords).forEach(length => {
+                    const wordsAtLength = foundWords[length] || [];
+                    wordsAtLength.forEach(wordData => {
+                        const wordElement = document.createElement('div');
+                        wordElement.className = 'word-item';
+                        wordElement.textContent = wordData.word.toLowerCase();
+                        wordElement.onclick = () => showDefinition(wordData);
+                        grid.appendChild(wordElement);
+                    });
+                });
+            }
 
             // Check if should show add to home screen prompt
             setTimeout(showAddToHomeScreenPrompt, 1000);
         }
 
         function updateProgress() {
-            const wordLength = currentLevel + 1;
+            // Get current word length based on tier
+            const tier = TierSystem.getUserTier();
+            let wordLength;
+            
+            if (tier === 'free') {
+                const dropdown = document.getElementById('wordLengthDropdown');
+                wordLength = parseInt(dropdown.value);
+            } else {
+                wordLength = 2; // Default for paid/lifetime
+            }
+            
             const allWords = gameWords[wordLength] || [];
             const found = foundWords[wordLength] || [];
 
@@ -2838,15 +3696,47 @@
                 return;
             }
 
-            const wordLength = currentLevel + 1;
-            if (word.length !== wordLength) {
-                showMessage(`Word must be ${wordLength} letters long!`, 'error');
+            // Tier-based word length determination
+            const tier = TierSystem.getUserTier();
+            let wordLength;
+            
+            if (tier === 'free') {
+                // FREE TIER: Get length from dropdown
+                const dropdown = document.getElementById('wordLengthDropdown');
+                wordLength = parseInt(dropdown.value);
+                
+                // Validate word length matches dropdown
+                if (word.length !== wordLength) {
+                    showMessage(`Word must be ${wordLength} letters long!`, 'error');
+                    return;
+                }
+            } else {
+                // PAID/LIFETIME TIER: Auto-detect word length
+                wordLength = word.length;
+                
+                // Validate word length is within range
+                if (wordLength < 2 || wordLength > 9) {
+                    showMessage('Word must be between 2 and 9 letters!', 'error');
+                    return;
+                }
+            }
+
+            // Check tier limits BEFORE validating the word
+            if (!TierSystem.canDiscoverWord()) {
+                const tierInfo = TierSystem.getTierInfo();
+                if (tierInfo.dailyRemaining === 0) {
+                    showUpgradePrompt('daily');
+                } else if (tierInfo.lifetimeRemaining === 0) {
+                    showUpgradePrompt('lifetime');
+                }
+                showMessage('Daily or lifetime word limit reached!', 'error');
                 return;
             }
 
-            // Check if already attempted
+            // Check if already attempted (using actual word length, not currentLevel)
+            const levelIndex = wordLength - 1; // Convert length to level index for compatibility
             const alreadyAttempted = attemptedWords.some(attempt => 
-                attempt.word === word && attempt.level === currentLevel
+                attempt.word === word && attempt.level === levelIndex
             );
 
             if (alreadyAttempted) {
@@ -2868,7 +3758,7 @@
                 // Invalid word
                 showMessage('Not a valid word!', 'error');
                 showWordieFeedback(word, 'invalid');
-                addAttempt(word, 'invalid');
+                addAttempt(word, 'invalid', levelIndex);
             } else {
                 // Valid word
                 const found = foundWords[wordLength] || [];
@@ -2877,21 +3767,20 @@
                 if (alreadyFound) {
                     showMessage('You already found this word!', 'warning');
                     showWordieFeedback(word, 'duplicate');
-                    addAttempt(word, 'duplicate');
+                    addAttempt(word, 'duplicate', levelIndex);
                 } else {
-                    // New valid word found! But check if we can add it (for browser users with limits)
-                    const limitedWords = getLimitedWords(allValidWords);
-                    const isInLimitedSet = limitedWords.some(w => w.word.toLowerCase() === word);
-                    const currentFound = foundWords[wordLength] || [];
+                    // New valid word found!
+                    // Increment the tier word count
+                    const incrementResult = TierSystem.incrementWordCount();
                     
-                    // Check if hitting the limit (trying 11th word)
-                    if (shouldLimitWords() && currentFound.length >= WORDS_PER_LEVEL_LIMIT) {
-                        showMessage(`🎯 "${word.toUpperCase()}" is valid! Add to home screen to collect unlimited words!`, 'warning');
-                        showWordieFeedback(word, 'valid');
-                        addAttempt(word, 'valid');
-                        
-                        // Show popup for 11th word attempt
-                        showEleventhWordPopup();
+                    if (!incrementResult.success) {
+                        // Should not happen as we checked canDiscoverWord earlier, but handle it anyway
+                        showMessage(incrementResult.message || 'Cannot add more words!', 'error');
+                        if (incrementResult.reason === 'daily_cap') {
+                            showUpgradePrompt('daily');
+                        } else if (incrementResult.reason === 'lifetime_cap') {
+                            showUpgradePrompt('lifetime');
+                        }
                         return;
                     }
                     
@@ -2910,7 +3799,10 @@
                     }
                     
                     showWordieFeedback(word, 'valid');
-                    addAttempt(word, 'valid');
+                    addAttempt(word, 'valid', levelIndex);
+
+                    // Update tier UI
+                    updateTierStatusUI();
 
                     // Update displays
                     updateFoundWordsDisplay();
@@ -2921,7 +3813,7 @@
                     const limitedWordsForCompletion = getLimitedWords(allValidWords);
                     if (foundWords[wordLength].length === limitedWordsForCompletion.length) {
                         setTimeout(() => {
-                            showLevelCompleteModal(currentLevel, limitedWordsForCompletion.length);
+                            showLevelCompleteModal(levelIndex, limitedWordsForCompletion.length);
                         }, 1000);
                     }
                 }
@@ -2961,10 +3853,13 @@
             }
         }
 
-        function addAttempt(word, type) {
+        function addAttempt(word, type, levelIndex = null) {
+            // Use provided levelIndex or derive from word length
+            const level = levelIndex !== null ? levelIndex : (word.length - 1);
+            
             attemptedWords.unshift({
                 word: word,
-                level: currentLevel,
+                level: level,
                 type: type,
                 timestamp: Date.now()
             });
@@ -2979,17 +3874,33 @@
 
         function updateAttemptsList() {
             const list = document.getElementById('attemptedWordsList');
-            const levelAttempts = attemptedWords.filter(a => a.level === currentLevel);
+            
+            // Get current word length for filtering
+            const tier = TierSystem.getUserTier();
+            let currentWordLength;
+            
+            if (tier === 'free') {
+                const dropdown = document.getElementById('wordLengthDropdown');
+                currentWordLength = parseInt(dropdown.value);
+            } else {
+                // For paid/lifetime, show all recent attempts
+                currentWordLength = null;
+            }
+            
+            // Filter attempts by current word length (free tier only)
+            const relevantAttempts = currentWordLength 
+                ? attemptedWords.filter(a => a.level === (currentWordLength - 1))
+                : attemptedWords.slice(0, 20); // Show last 20 for paid/lifetime
 
             list.innerHTML = '';
-            levelAttempts.forEach(attempt => {
+            relevantAttempts.forEach(attempt => {
                 const div = document.createElement('div');
                 div.className = `attempt-item ${attempt.type}`;
                 div.textContent = attempt.word.toUpperCase();
 
                 // Add click handler for definitions
                 if (attempt.type === 'valid') {
-                    const wordLength = currentLevel + 1;
+                    const wordLength = attempt.level + 1;
                     const validWords = gameWords[wordLength] || [];
                     const wordData = validWords.find(w => w.word.toLowerCase() === attempt.word);
                     if (wordData) {
@@ -3063,8 +3974,8 @@
         }
 
         function showRevealWordHint() {
-            if (hangmanCooldown) {
-                showMessage('Hangman is on cooldown. Try again in a few minutes!', 'warning');
+            // Check cooldown first (will show upgrade prompt if on cooldown)
+            if (!CooldownSystem.canPlayGame('hangman')) {
                 return;
             }
 
@@ -3084,14 +3995,14 @@
         }
 
         function startNewHangmanGame() {
-            // Get word from current level
-            const wordLength = currentLevel + 1;
+            // Get word from current word length (tier-based)
+            const wordLength = getCurrentWordLength();
             const availableWords = gameWords[wordLength] || [];
             const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
             const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
 
             if (unfoundWords.length === 0) {
-                showMessage('No more words to find at this level!', 'warning');
+                showMessage('No more words to find at this word length!', 'warning');
                 return;
             }
 
@@ -3109,7 +4020,7 @@
             };
 
             // Update modal UI
-            document.getElementById('modal-level').textContent = currentLevel + 1;
+            document.getElementById('modal-level').textContent = wordLength;
             document.getElementById('modal-word-length').textContent = wordLength;
             
             // Show game screen, hide result screens
@@ -3324,11 +4235,8 @@
         function onHangmanWin() {
             closeHangmanModal();
             
-            // Start hangman cooldown
-            hangmanCooldown = true;
-            setTimeout(() => {
-                hangmanCooldown = false;
-            }, hangmanCooldownTime);
+            // Set cooldown using new system (only for free tier)
+            CooldownSystem.setCooldown('hangman');
         }
 
         function watchAdToRetry() {
@@ -3339,13 +4247,10 @@
         // ====== MIX AND MATCH GAME FUNCTIONS ======
 
         function showMixMatchHint() {
-            if (hintCooldown) {
-                showMessage('Hints are on cooldown. Try again in 30 seconds!', 'warning');
+            // Check cooldown first (will show upgrade prompt if on cooldown)
+            if (!CooldownSystem.canPlayGame('mixMatch')) {
                 return;
             }
-
-            // Start cooldown timer
-            startHintCooldown();
             
             // Open the Mix & Match modal
             openMixMatchModal();
@@ -3362,14 +4267,14 @@
         }
 
         async function startNewMixMatchGame() {
-            // Get words from current level
-            const wordLength = currentLevel + 1;
+            // Get words from current word length (tier-based)
+            const wordLength = getCurrentWordLength();
             const availableWords = gameWords[wordLength] || [];
             const foundWordsAtLevel = (foundWords[wordLength] || []).map(w => w.word.toLowerCase());
             const unfoundWords = availableWords.filter(w => !foundWordsAtLevel.includes(w.word.toLowerCase()));
 
             if (unfoundWords.length < 5) {
-                showMessage('Not enough words available for Mix and Match at this level!', 'warning');
+                showMessage('Not enough words available for Mix and Match at this word length!', 'warning');
                 return;
             }
 
@@ -3399,7 +4304,7 @@
             };
 
             // Update modal UI
-            document.getElementById('mixmatch-level').textContent = currentLevel + 1;
+            document.getElementById('mixmatch-level').textContent = wordLength;
             
             // Show game screen, hide result screens
             document.getElementById('mixmatch-game-screen').style.display = 'block';
@@ -3689,11 +4594,8 @@
         function onMixMatchWin() {
             closeMixMatchModal();
             
-            // Start mix and match cooldown
-            mixMatchCooldown = true;
-            setTimeout(() => {
-                mixMatchCooldown = false;
-            }, mixMatchCooldownTime);
+            // Set cooldown using new system (only for free tier)
+            CooldownSystem.setCooldown('mixMatch');
         }
 
         function watchAdToRetryMixMatch() {

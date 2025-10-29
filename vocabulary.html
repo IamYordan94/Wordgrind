@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-adsense-account" content="ca-pub-9007185070437670">
     <title>My Vocabulary Database - Progressive Word Grind</title>
     <meta name="description" content="View your complete vocabulary collection from Progressive Word Grind. Track your learning progress and review all discovered words with definitions.">
     
@@ -11,10 +10,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#6aaa64">
-    
-    <!-- Google AdSense Auto Ads -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9007185070437670"
-        crossorigin="anonymous"></script>
 
     <style>
         * {
@@ -361,6 +356,260 @@
             margin-bottom: 8px;
         }
 
+        /* Tier Badge Styles */
+        .tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .tier-badge.free {
+            background: rgba(150, 150, 150, 0.2);
+            border: 2px solid #888;
+            color: #ccc;
+        }
+
+        .tier-badge.paid {
+            background: rgba(106, 170, 100, 0.2);
+            border: 2px solid #6aaa64;
+            color: #6aaa64;
+        }
+
+        .tier-badge.lifetime {
+            background: rgba(212, 169, 83, 0.2);
+            border: 2px solid #d4a953;
+            color: #d4a953;
+        }
+
+        /* Word Count Display */
+        .word-count-info {
+            text-align: center;
+            padding: 15px;
+            background: rgba(106, 170, 100, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .word-count-number {
+            color: #6aaa64;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        /* Upgrade Banner for Free Users */
+        .upgrade-banner {
+            background: linear-gradient(135deg, rgba(212, 169, 83, 0.15) 0%, rgba(106, 170, 100, 0.15) 100%);
+            border: 2px solid #d4a953;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .upgrade-banner h3 {
+            color: #d4a953;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .upgrade-banner p {
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #d4a953 0%, #c49943 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .upgrade-btn:hover {
+            background: linear-gradient(135deg, #e4b963 0%, #d4a953 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 169, 83, 0.4);
+        }
+
+        /* Premium Feature Buttons */
+        .premium-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .premium-btn {
+            background: #6aaa64;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .premium-btn:hover {
+            background: #5a9954;
+            transform: translateY(-2px);
+        }
+
+        .premium-btn.disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .premium-btn.disabled:hover {
+            transform: none;
+            background: #555;
+        }
+
+        /* Word Notes */
+        .word-notes {
+            background: rgba(201, 180, 88, 0.1);
+            border-left: 3px solid #c9b458;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 0 5px 5px 0;
+            font-size: 0.9em;
+            font-style: italic;
+            color: #e0e0e0;
+        }
+
+        .add-note-btn {
+            background: rgba(201, 180, 88, 0.2);
+            color: #c9b458;
+            border: 1px solid #c9b458;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .add-note-btn:hover {
+            background: rgba(201, 180, 88, 0.3);
+        }
+
+        /* Lifetime Progress Display */
+        .lifetime-progress {
+            background: rgba(212, 169, 83, 0.1);
+            border: 2px solid #d4a953;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .lifetime-progress h3 {
+            color: #d4a953;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .progress-bar-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #6aaa64 0%, #d4a953 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .progress-text {
+            color: #e0e0e0;
+            font-size: 1.1em;
+        }
+
+        /* Advanced Filter Options (Premium) */
+        .advanced-filters {
+            background: rgba(106, 170, 100, 0.05);
+            border: 1px solid rgba(106, 170, 100, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .advanced-filters h4 {
+            color: #6aaa64;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .sort-btn {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .sort-btn:hover {
+            background: #555;
+        }
+
+        .sort-btn.active {
+            background: #6aaa64;
+            color: white;
+        }
+
+        /* Free Tier Word Limit Indicator */
+        .word-card.limit-indicator {
+            position: relative;
+            opacity: 0.6;
+        }
+
+        .word-card.limit-indicator::after {
+            content: '🔒';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2em;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -412,7 +661,16 @@
             </div>
             <h1>📚 My Vocabulary Database</h1>
             <p class="description">Track your learning progress and review all discovered words with definitions and grammar explanations!</p>
+            
+            <div id="tierBadgeContainer" style="margin-top: 15px;">
+            </div>
         </div>
+
+        <div id="lifetimeProgressContainer"></div>
+
+        <div id="upgradeBannerContainer"></div>
+
+        <div id="premiumActionsContainer"></div>
 
         <div class="stats-section">
             <h2 style="color: #6aaa64; margin-bottom: 20px;">🎯 Learning Progress</h2>
@@ -436,6 +694,8 @@
             </div>
         </div>
 
+        <div id="wordCountInfoContainer"></div>
+
         <div class="search-section">
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search your vocabulary collection...">
             <div class="filter-buttons">
@@ -448,6 +708,8 @@
                 <button class="filter-btn" onclick="filterByLength('7')">7 Letters</button>
             </div>
         </div>
+
+        <div id="advancedFiltersContainer"></div>
 
         <div id="vocabularyContent">
             <div class="empty-state">
@@ -467,6 +729,78 @@
     <script>
         console.log('📚 Vocabulary Database Page - Track your learning progress!');
         
+        const TierSystem = {
+            TIERS: {
+                FREE: {
+                    name: 'free',
+                    dailyCap: 20,
+                    lifetimeCap: 500,
+                    displayName: 'Free Tier'
+                },
+                PAID: {
+                    name: 'paid',
+                    dailyCap: 50,
+                    lifetimeCap: 58535,
+                    displayName: 'Premium'
+                },
+                LIFETIME: {
+                    name: 'lifetime',
+                    dailyCap: 50,
+                    lifetimeCap: null,
+                    displayName: 'Lifetime'
+                }
+            },
+            STORAGE_KEY: 'wordGrindTierData',
+            LEGACY_PROGRESS_KEY: 'wordleGrindProgress',
+            
+            getTierData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : null;
+                } catch (error) {
+                    console.error('Error reading tier data:', error);
+                    return null;
+                }
+            },
+            
+            getUserTier() {
+                const tierData = this.getTierData();
+                if (!tierData) return this.TIERS.FREE.name;
+                return tierData.tier || this.TIERS.FREE.name;
+            },
+            
+            getTierInfo() {
+                const tierData = this.getTierData();
+                if (!tierData) {
+                    return {
+                        tier: 'free',
+                        displayName: 'Free Tier',
+                        dailyWordCount: 0,
+                        dailyCap: 20,
+                        dailyRemaining: 20,
+                        lifetimeWordCount: 0,
+                        lifetimeCap: 500,
+                        lifetimeRemaining: 500,
+                        subscriptionExpiry: null
+                    };
+                }
+                const tier = this.getUserTier();
+                const tierConfig = Object.values(this.TIERS).find(t => t.name === tier);
+                
+                return {
+                    tier: tier,
+                    displayName: tierConfig.displayName,
+                    dailyWordCount: tierData.dailyWordCount,
+                    dailyCap: tierData.dailyCap,
+                    dailyRemaining: Math.max(0, tierData.dailyCap - tierData.dailyWordCount),
+                    lifetimeWordCount: tierData.lifetimeWordCount,
+                    lifetimeCap: tierData.lifetimeCap,
+                    lifetimeRemaining: tierData.lifetimeCap ? Math.max(0, tierData.lifetimeCap - tierData.lifetimeWordCount) : null,
+                    subscriptionExpiry: tierData.subscriptionExpiry
+                };
+            }
+        };
+
         // Educational grammar info
         const grammarInfo = {
             'noun': 'A word that names a person, place, thing, or idea (e.g., cat, house, love)',
@@ -485,9 +819,185 @@
         let allFoundWords = [];
         let filteredWords = [];
         let currentFilter = 'all';
+        let currentSortMethod = 'default';
+        let tierInfo = null;
+        let wordNotes = {};
+        
+        const NOTES_STORAGE_KEY = 'wordGrindWordNotes';
+        
+        function loadWordNotes() {
+            try {
+                const notes = localStorage.getItem(NOTES_STORAGE_KEY);
+                wordNotes = notes ? JSON.parse(notes) : {};
+            } catch (error) {
+                console.error('Error loading word notes:', error);
+                wordNotes = {};
+            }
+        }
+        
+        function saveWordNotes() {
+            try {
+                localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(wordNotes));
+            } catch (error) {
+                console.error('Error saving word notes:', error);
+            }
+        }
+        
+        function initializeTierUI() {
+            tierInfo = TierSystem.getTierInfo();
+            console.log('Tier Info:', tierInfo);
+            
+            displayTierBadge();
+            displayLifetimeProgress();
+            displayUpgradeBanner();
+            displayPremiumActions();
+            displayAdvancedFilters();
+            displayWordCountInfo();
+        }
+        
+        function displayTierBadge() {
+            const container = document.getElementById('tierBadgeContainer');
+            let icon = '';
+            let tierClass = '';
+            
+            if (tierInfo.tier === 'lifetime') {
+                icon = '🏆';
+                tierClass = 'lifetime';
+            } else if (tierInfo.tier === 'paid') {
+                icon = '💎';
+                tierClass = 'paid';
+            } else {
+                icon = '🆓';
+                tierClass = 'free';
+            }
+            
+            container.innerHTML = `
+                <div class="tier-badge ${tierClass}">
+                    <span>${icon}</span>
+                    <span>${tierInfo.displayName}</span>
+                </div>
+            `;
+        }
+        
+        function displayLifetimeProgress() {
+            if (tierInfo.tier === 'lifetime') {
+                document.getElementById('lifetimeProgressContainer').innerHTML = '';
+                return;
+            }
+            
+            const targetWords = 58535;
+            const currentWords = tierInfo.lifetimeWordCount;
+            const percentage = Math.min(100, (currentWords / targetWords) * 100);
+            
+            const container = document.getElementById('lifetimeProgressContainer');
+            container.innerHTML = `
+                <div class="lifetime-progress">
+                    <h3>🏆 Progress to Lifetime Unlock</h3>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${percentage}%">
+                            ${percentage.toFixed(1)}%
+                        </div>
+                    </div>
+                    <p class="progress-text">${currentWords.toLocaleString()} / ${targetWords.toLocaleString()} words discovered</p>
+                    <p class="progress-text" style="font-size: 0.9em; margin-top: 10px;">
+                        ${(targetWords - currentWords).toLocaleString()} words until lifetime access!
+                    </p>
+                </div>
+            `;
+        }
+        
+        function displayUpgradeBanner() {
+            const container = document.getElementById('upgradeBannerContainer');
+            
+            if (tierInfo.tier !== 'free') {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="upgrade-banner">
+                    <h3>📚 Unlock Your Complete Vocabulary History</h3>
+                    <p>Free tier shows your last 100 discovered words. Upgrade to Premium for unlimited access to your full vocabulary journal with notes, export, and advanced search features.</p>
+                    <a href="upgrade.html" class="upgrade-btn">✨ Upgrade to Premium - $1.50/month</a>
+                </div>
+            `;
+        }
+        
+        function displayPremiumActions() {
+            const container = document.getElementById('premiumActionsContainer');
+            const isPremium = tierInfo.tier === 'paid' || tierInfo.tier === 'lifetime';
+            
+            if (!isPremium) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="premium-actions">
+                    <button class="premium-btn" onclick="exportToCSV()">
+                        <span>📥</span>
+                        <span>Export to CSV</span>
+                    </button>
+                    <button class="premium-btn" onclick="toggleSortDropdown()">
+                        <span>📊</span>
+                        <span>Advanced Sort</span>
+                    </button>
+                </div>
+            `;
+        }
+        
+        function displayWordCountInfo() {
+            const container = document.getElementById('wordCountInfoContainer');
+            const totalWords = allFoundWords.length;
+            const displayedWords = filteredWords.length;
+            const isFree = tierInfo.tier === 'free';
+            
+            let message = '';
+            if (isFree && totalWords > 100) {
+                message = `<div class="word-count-info">
+                    Showing <span class="word-count-number">100</span> of <span class="word-count-number">${totalWords}</span> total words
+                    <div style="margin-top: 10px; font-size: 0.9em; color: #d4a953;">
+                        <a href="upgrade.html" style="color: #d4a953; text-decoration: underline;">Upgrade to Premium</a> to view all ${totalWords} words
+                    </div>
+                </div>`;
+            } else if (displayedWords !== totalWords) {
+                message = `<div class="word-count-info">
+                    Showing <span class="word-count-number">${displayedWords}</span> of <span class="word-count-number">${totalWords}</span> words
+                </div>`;
+            }
+            
+            container.innerHTML = message;
+        }
+        
+        function displayAdvancedFilters() {
+            const container = document.getElementById('advancedFiltersContainer');
+            const isPremium = tierInfo.tier === 'paid' || tierInfo.tier === 'lifetime';
+            
+            if (!isPremium) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="advanced-filters">
+                    <h4>🎯 Advanced Sorting</h4>
+                    <div class="sort-options">
+                        <button class="sort-btn ${currentSortMethod === 'default' ? 'active' : ''}" onclick="applySorting('default')">Default</button>
+                        <button class="sort-btn ${currentSortMethod === 'alphabetical' ? 'active' : ''}" onclick="applySorting('alphabetical')">A-Z</button>
+                        <button class="sort-btn ${currentSortMethod === 'reverse-alpha' ? 'active' : ''}" onclick="applySorting('reverse-alpha')">Z-A</button>
+                        <button class="sort-btn ${currentSortMethod === 'shortest' ? 'active' : ''}" onclick="applySorting('shortest')">Shortest First</button>
+                        <button class="sort-btn ${currentSortMethod === 'longest' ? 'active' : ''}" onclick="applySorting('longest')">Longest First</button>
+                        <button class="sort-btn ${currentSortMethod === 'pos' ? 'active' : ''}" onclick="applySorting('pos')">By Part of Speech</button>
+                    </div>
+                </div>
+            `;
+        }
 
         function loadVocabularyData() {
-            // Load found words from localStorage (same format as game)
+            if (!tierInfo) {
+                tierInfo = TierSystem.getTierInfo();
+            }
+            
             const gameProgressData = localStorage.getItem('wordleGrindProgress');
             
             if (!gameProgressData) {
@@ -511,13 +1021,12 @@
 
             try {
                 const foundWords = foundWordsData;
-                allFoundWords = [];
+                let wordsArray = [];
 
-                // Convert found words object to flat array
                 for (const [length, words] of Object.entries(foundWords)) {
                     if (Array.isArray(words)) {
                         words.forEach(wordData => {
-                            allFoundWords.push({
+                            wordsArray.push({
                                 ...wordData,
                                 length: parseInt(length)
                             });
@@ -525,20 +1034,28 @@
                     }
                 }
 
-                if (allFoundWords.length === 0) {
+                if (wordsArray.length === 0) {
                     showEmptyState();
                     return;
                 }
 
-                // Sort by length, then alphabetically
-                allFoundWords.sort((a, b) => {
+                wordsArray.sort((a, b) => {
                     if (a.length !== b.length) {
                         return a.length - b.length;
                     }
                     return a.word.localeCompare(b.word);
                 });
 
+                const isFree = tierInfo.tier === 'free';
+                if (isFree && wordsArray.length > 100) {
+                    allFoundWords = wordsArray.slice(-100);
+                    console.log(`Free tier: Showing last 100 of ${wordsArray.length} words`);
+                } else {
+                    allFoundWords = wordsArray;
+                }
+
                 updateStats();
+                displayWordCountInfo();
                 filterByLength(currentFilter);
 
             } catch (error) {
@@ -629,11 +1146,16 @@
 
                 words.forEach(wordData => {
                     const displayPos = (wordData.pos && wordData.pos !== 'unknown') ? wordData.pos : '';
+                    const isPremium = tierInfo.tier === 'paid' || tierInfo.tier === 'lifetime';
+                    const wordNote = wordNotes[wordData.word.toLowerCase()];
+                    
                     html += `
-                        <div class="word-card" onclick="showWordDetails('${wordData.word}', '${wordData.definition}', '${wordData.pos}')">
+                        <div class="word-card" onclick="showWordDetails('${wordData.word}', '${wordData.definition.replace(/'/g, "\\'")}', '${wordData.pos}')">
                             <div class="word-text">${wordData.word}</div>
                             <div class="word-pos">${displayPos}</div>
                             <div class="word-definition">${wordData.definition.substring(0, 80)}${wordData.definition.length > 80 ? '...' : ''}</div>
+                            ${wordNote ? `<div class="word-notes">📝 ${wordNote}</div>` : ''}
+                            ${isPremium ? `<button class="add-note-btn" onclick="event.stopPropagation(); addWordNote('${wordData.word}')">${wordNote ? 'Edit' : 'Add'} Note</button>` : ''}
                         </div>
                     `;
                 });
@@ -648,7 +1170,93 @@
         }
 
 
-        // Search functionality
+        function exportToCSV() {
+            const isPremium = tierInfo.tier === 'paid' || tierInfo.tier === 'lifetime';
+            if (!isPremium) {
+                alert('Export to CSV is a premium feature. Upgrade to access!');
+                return;
+            }
+            
+            let csvContent = 'Word,Part of Speech,Definition,Length,Notes\n';
+            
+            allFoundWords.forEach(wordData => {
+                const word = wordData.word;
+                const pos = wordData.pos || '';
+                const definition = (wordData.definition || '').replace(/"/g, '""');
+                const length = wordData.length;
+                const note = (wordNotes[word.toLowerCase()] || '').replace(/"/g, '""');
+                
+                csvContent += `"${word}","${pos}","${definition}",${length},"${note}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `vocabulary_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function addWordNote(word) {
+            const isPremium = tierInfo.tier === 'paid' || tierInfo.tier === 'lifetime';
+            if (!isPremium) {
+                alert('Adding notes is a premium feature. Upgrade to access!');
+                return;
+            }
+            
+            const currentNote = wordNotes[word.toLowerCase()] || '';
+            const newNote = prompt(`Add a note for "${word.toUpperCase()}":`, currentNote);
+            
+            if (newNote !== null) {
+                if (newNote.trim() === '') {
+                    delete wordNotes[word.toLowerCase()];
+                } else {
+                    wordNotes[word.toLowerCase()] = newNote.trim();
+                }
+                saveWordNotes();
+                displayVocabulary();
+            }
+        }
+        
+        function applySorting(method) {
+            currentSortMethod = method;
+            
+            switch (method) {
+                case 'alphabetical':
+                    filteredWords.sort((a, b) => a.word.localeCompare(b.word));
+                    break;
+                case 'reverse-alpha':
+                    filteredWords.sort((a, b) => b.word.localeCompare(a.word));
+                    break;
+                case 'shortest':
+                    filteredWords.sort((a, b) => a.length - b.length || a.word.localeCompare(b.word));
+                    break;
+                case 'longest':
+                    filteredWords.sort((a, b) => b.length - a.length || a.word.localeCompare(b.word));
+                    break;
+                case 'pos':
+                    filteredWords.sort((a, b) => {
+                        const posA = a.pos || 'zzz';
+                        const posB = b.pos || 'zzz';
+                        return posA.localeCompare(posB) || a.word.localeCompare(b.word);
+                    });
+                    break;
+                default:
+                    filteredWords.sort((a, b) => {
+                        if (a.length !== b.length) {
+                            return a.length - b.length;
+                        }
+                        return a.word.localeCompare(b.word);
+                    });
+            }
+            
+            displayAdvancedFilters();
+            displayVocabulary();
+        }
+
         document.getElementById('searchInput').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             
@@ -666,7 +1274,7 @@
                 );
             }
             
-            displayVocabulary();
+            applySorting(currentSortMethod);
         });
 
         // Centralized Definition Service with caching, deduplication, and error handling
@@ -851,11 +1459,14 @@
             };
         }
 
-        // Auto-refresh data every 5 seconds to sync with game progress
-        setInterval(loadVocabularyData, 5000);
-
-        // Initial load
+        loadWordNotes();
+        initializeTierUI();
         loadVocabularyData();
+        
+        setInterval(() => {
+            initializeTierUI();
+            loadVocabularyData();
+        }, 5000);
     </script>
 </body>
 </html>
