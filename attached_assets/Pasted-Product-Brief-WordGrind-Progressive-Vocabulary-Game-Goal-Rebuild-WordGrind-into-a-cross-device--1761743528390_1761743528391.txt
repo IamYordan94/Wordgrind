@@ -1,0 +1,150 @@
+Product Brief: WordGrind – Progressive Vocabulary Game
+Goal
+
+Rebuild WordGrind into a cross-device, monetized vocabulary game that replaces the old level-based structure with a progressive daily learning system.
+Players discover new words, learn definitions, and climb toward mastery while balancing free play limits and paid progression.
+The experience must run smoothly on mobile, tablet, and desktop browsers.
+
+Non-Goals
+
+No ads or third-party banners anywhere.
+
+No external login systems for free users (localStorage is enough).
+
+No new mini-games; only refine existing ones.
+
+No backend-heavy multiplayer features.
+
+Roles
+
+Free Player: can discover up to 20 new words/day, 500 total lifetime words.
+
+Paid Player: unlocked after 500 words; can discover 50/day; eventually earns lifetime access after mastering half the dictionary.
+
+Admin (optional): manages word data (JSON updates) and reviews definitions.
+
+Core Workflows
+
+Word Discovery Flow
+
+Player types a word in the discovery box (initially limited by dropdown to 2–9 letters).
+
+System validates word length, checks against JSON word bank, fetches definition, and stores result in localStorage.
+
+Word added to Vocabulary Journal with definition and part of speech.
+
+Mini-Games Flow
+
+User selects a mini-game (Word Grind, Definition Mode, Scramble, Hangman, Mix Match).
+
+Completing mini-game yields a valid word which can be claimed into the discovery system.
+
+Free players have cooldown timers (2 min normal / 5 min Mix Match). Paid players have no cooldowns.
+
+Progression Flow
+
+Free users capped at 20 new valid words/day, 500 lifetime.
+
+Upon reaching 500, prompt to subscribe.
+
+Paid users capped at 50/day.
+
+Once a user discovers 58,535 total words → automatic lifetime unlock (no further payment).
+
+Journal Flow
+
+Free: last 100 discovered words, read-only, definition + POS only.
+
+Paid: unlimited storage, notes, search/filter, export, stats.
+
+Data Model & API Surface
+
+Data Source: words_data.json (levels 2–9, each with {word, pos, definition}).
+
+Storage:
+
+Free players: localStorage only.
+
+Paid players: extendable to cloud or persistent ID if accounts added later.
+
+APIs:
+
+Definition fetcher (existing).
+
+Payment/subscription API (to add).
+
+UI Pages / Components
+
+Home Page:
+
+Intro to the app and CTA: “Start Grinding Words.”
+
+Clean layout, mobile-first design.
+
+Remove all ad spaces.
+
+Main Game Screen:
+
+Single discovery box + optional dropdown for word length (visible until 500 words or paid).
+
+Display: current streak, progress (20/50 words today), and lifetime total.
+
+Mini-game icons below with visible cooldown timers (for free users).
+
+Stats shortcut + Vocabulary Journal link.
+
+Vocabulary Journal Page:
+
+Free: 100 most recent words, definition + part of speech.
+
+Paid: full searchable and filterable list, with notes and export.
+
+Upgrade Page:
+
+Pricing info ($1.50/month).
+
+Explains “Lifetime Unlock at 58,535 words.”
+
+Clear CTA: “Continue Your Learning Journey.”
+
+Profile / Stats Page:
+
+Shows streaks, accuracy, hardest words, vocab size, lifetime progress toward 58,535.
+
+Offline & Device Strategy
+
+Must work seamlessly on mobile, tablet, and desktop.
+
+Fully responsive layout (mobile-first CSS).
+
+Use localStorage to retain progress offline; sync when reconnected (optional).
+
+No ads, no PWA install prompts unless explicitly added later.
+
+Security & Control
+
+Input validation to block offensive/profane words.
+
+Prevent word injection or repeated submission exploits.
+
+Cap enforced client-side with localStorage + server verification for paid tier later.
+
+Paid-tier logic should be tamper-resistant (local flags encrypted).
+
+Marketing & Brand Updates
+
+Remove all ad placements permanently.
+
+Update marketing copy to reflect the new structure:
+
+“Discover 20 new words a day, for free.”
+
+“Unlock 50 per day and master half the English language to earn lifetime access.”
+
+Add clear “Educational + Rewarding” framing.
+
+Redesign site visuals: focus on simplicity, learning motivation, and progress tracking (no clutter).
+
+Homepage banner idea:
+
+“Learn. Play. Earn your mastery. When you’ve learned half the dictionary, the journey’s on us.”
