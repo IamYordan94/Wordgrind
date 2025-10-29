@@ -1614,6 +1614,568 @@
         let isAddedToHomeScreen = false;
         let deferredPrompt = null;
 
+        // ============================================================================
+        // TIER SYSTEM MODULE - Subscription & Word Cap Management
+        // ============================================================================
+        
+        /**
+         * TIER SYSTEM DATA STRUCTURE (localStorage: 'wordGrindTierData')
+         * 
+         * Structure:
+         * {
+         *   tier: 'free' | 'paid' | 'lifetime',
+         *   dailyWordCount: number,           // Words discovered today
+         *   lifetimeWordCount: number,        // Total words discovered ever
+         *   lastResetTimestamp: timestamp,    // Last daily reset (midnight check)
+         *   subscriptionExpiry: timestamp,    // For paid tier (null if lifetime/free)
+         *   dailyCap: number,                 // Current daily word limit
+         *   lifetimeCap: number,              // Max total words allowed (null for unlimited)
+         *   migrated: boolean,                // Migration flag
+         *   createdAt: timestamp
+         * }
+         * 
+         * TIER CAPS:
+         * - FREE:     20 words/day, 500 lifetime max
+         * - PAID:     50 words/day, 58,535 lifetime (auto-upgrade to lifetime)
+         * - LIFETIME: 50 words/day, unlimited lifetime
+         */
+
+        const TierSystem = {
+            // Tier configuration constants
+            TIERS: {
+                FREE: {
+                    name: 'free',
+                    dailyCap: 20,
+                    lifetimeCap: 500,
+                    displayName: 'Free Tier'
+                },
+                PAID: {
+                    name: 'paid',
+                    dailyCap: 50,
+                    lifetimeCap: 58535, // Auto-unlock to lifetime at this point
+                    displayName: 'Paid Tier'
+                },
+                LIFETIME: {
+                    name: 'lifetime',
+                    dailyCap: 50, // Still has daily cap for fair play
+                    lifetimeCap: null, // Unlimited
+                    displayName: 'Lifetime Tier'
+                }
+            },
+
+            STORAGE_KEY: 'wordGrindTierData',
+            LEGACY_PROGRESS_KEY: 'wordleGrindProgress',
+
+            /**
+             * Initialize the tier system - checks for existing data or creates new
+             * Handles migration from legacy storage if needed
+             * @returns {Object} Current tier data
+             */
+            initializeTierSystem() {
+                console.log('🎮 Initializing Tier System...');
+                
+                let tierData = this.getTierData();
+                
+                // If no tier data exists, check for legacy data to migrate
+                if (!tierData) {
+                    console.log('📦 No tier data found, checking for legacy data...');
+                    tierData = this.migrateFromLegacyData();
+                } else if (!tierData.migrated) {
+                    // Tier data exists but migration flag not set - ensure migration
+                    console.log('🔄 Updating existing tier data with migration...');
+                    tierData = this.migrateFromLegacyData();
+                }
+                
+                // Check if daily reset is needed
+                this.checkDailyReset();
+                
+                // Check for lifetime unlock
+                this.checkLifetimeUnlock();
+                
+                console.log('✅ Tier System initialized:', tierData);
+                return tierData;
+            },
+
+            /**
+             * Retrieve tier data from localStorage
+             * @returns {Object|null} Tier data or null if not exists
+             */
+            getTierData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : null;
+                } catch (error) {
+                    console.error('❌ Error reading tier data:', error);
+                    return null;
+                }
+            },
+
+            /**
+             * Save tier data to localStorage
+             * @param {Object} tierData - Tier data to save
+             */
+            saveTierData(tierData) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(tierData));
+                    console.log('💾 Tier data saved:', tierData);
+                } catch (error) {
+                    console.error('❌ Error saving tier data:', error);
+                }
+            },
+
+            /**
+             * Migrate from legacy wordleGrindProgress to new tier system
+             * Counts all discovered words across all levels
+             * @returns {Object} New tier data with migrated counts
+             */
+            migrateFromLegacyData() {
+                console.log('🔄 Starting migration from legacy data...');
+                
+                let lifetimeCount = 0;
+                let legacyData = null;
+                
+                // Try to read legacy progress
+                try {
+                    const legacyJson = localStorage.getItem(this.LEGACY_PROGRESS_KEY);
+                    if (legacyJson) {
+                        legacyData = JSON.parse(legacyJson);
+                        console.log('📊 Legacy data found:', legacyData);
+                        
+                        // Count all discovered words from foundWords object
+                        if (legacyData.foundWords && typeof legacyData.foundWords === 'object') {
+                            for (const level in legacyData.foundWords) {
+                                const wordsArray = legacyData.foundWords[level];
+                                if (Array.isArray(wordsArray)) {
+                                    lifetimeCount += wordsArray.length;
+                                }
+                            }
+                        }
+                        console.log(`📈 Total words discovered in legacy data: ${lifetimeCount}`);
+                    }
+                } catch (error) {
+                    console.error('⚠️ Error reading legacy data:', error);
+                }
+                
+                // Create new tier data
+                const now = Date.now();
+                const tierData = {
+                    tier: this.TIERS.FREE.name,
+                    dailyWordCount: 0,
+                    lifetimeWordCount: lifetimeCount,
+                    lastResetTimestamp: this.getMidnightTimestamp(),
+                    subscriptionExpiry: null,
+                    dailyCap: this.TIERS.FREE.dailyCap,
+                    lifetimeCap: this.TIERS.FREE.lifetimeCap,
+                    migrated: true,
+                    createdAt: now
+                };
+                
+                // Check if user should start at a higher tier based on lifetime count
+                if (lifetimeCount >= this.TIERS.PAID.lifetimeCap) {
+                    // Automatically upgrade to lifetime
+                    tierData.tier = this.TIERS.LIFETIME.name;
+                    tierData.dailyCap = this.TIERS.LIFETIME.dailyCap;
+                    tierData.lifetimeCap = this.TIERS.LIFETIME.lifetimeCap;
+                    console.log('🎉 User auto-upgraded to LIFETIME tier based on word count!');
+                }
+                
+                this.saveTierData(tierData);
+                return tierData;
+            },
+
+            /**
+             * Get the current user's tier
+             * @returns {String} 'free', 'paid', or 'lifetime'
+             */
+            getUserTier() {
+                const tierData = this.getTierData();
+                if (!tierData) {
+                    this.initializeTierSystem();
+                    return this.TIERS.FREE.name;
+                }
+                
+                // Check if paid subscription has expired
+                if (tierData.tier === this.TIERS.PAID.name && tierData.subscriptionExpiry) {
+                    if (Date.now() > tierData.subscriptionExpiry) {
+                        console.log('⏰ Paid subscription expired, downgrading to free');
+                        this.downgradeToFree();
+                        return this.TIERS.FREE.name;
+                    }
+                }
+                
+                return tierData.tier;
+            },
+
+            /**
+             * Get complete tier information including caps and counts
+             * @returns {Object} Tier information object
+             */
+            getTierInfo() {
+                const tierData = this.getTierData() || this.initializeTierSystem();
+                const tier = this.getUserTier();
+                const tierConfig = Object.values(this.TIERS).find(t => t.name === tier);
+                
+                return {
+                    tier: tier,
+                    displayName: tierConfig.displayName,
+                    dailyWordCount: tierData.dailyWordCount,
+                    dailyCap: tierData.dailyCap,
+                    dailyRemaining: Math.max(0, tierData.dailyCap - tierData.dailyWordCount),
+                    lifetimeWordCount: tierData.lifetimeWordCount,
+                    lifetimeCap: tierData.lifetimeCap,
+                    lifetimeRemaining: tierData.lifetimeCap ? Math.max(0, tierData.lifetimeCap - tierData.lifetimeWordCount) : null,
+                    subscriptionExpiry: tierData.subscriptionExpiry
+                };
+            },
+
+            /**
+             * Calculate words remaining today
+             * @returns {Number} Number of words user can still discover today
+             */
+            getDailyWordsRemaining() {
+                this.checkDailyReset(); // Ensure we've checked for reset
+                const tierData = this.getTierData();
+                if (!tierData) {
+                    this.initializeTierSystem();
+                    return this.TIERS.FREE.dailyCap;
+                }
+                
+                return Math.max(0, tierData.dailyCap - tierData.dailyWordCount);
+            },
+
+            /**
+             * Get total lifetime word count
+             * @returns {Number} Total words discovered by user
+             */
+            getLifetimeWordCount() {
+                const tierData = this.getTierData();
+                if (!tierData) {
+                    this.initializeTierSystem();
+                    return 0;
+                }
+                return tierData.lifetimeWordCount;
+            },
+
+            /**
+             * Get midnight timestamp for today (00:00:00 local time)
+             * @returns {Number} Timestamp of today's midnight
+             */
+            getMidnightTimestamp() {
+                const now = new Date();
+                const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+                return midnight.getTime();
+            },
+
+            /**
+             * Check if we've crossed midnight and need to reset daily counter
+             * @returns {Boolean} True if reset occurred
+             */
+            checkDailyReset() {
+                const tierData = this.getTierData();
+                if (!tierData) return false;
+                
+                const currentMidnight = this.getMidnightTimestamp();
+                
+                // If last reset was before today's midnight, reset the counter
+                if (tierData.lastResetTimestamp < currentMidnight) {
+                    console.log('🌅 New day detected! Resetting daily word counter...');
+                    tierData.dailyWordCount = 0;
+                    tierData.lastResetTimestamp = currentMidnight;
+                    this.saveTierData(tierData);
+                    return true;
+                }
+                
+                return false;
+            },
+
+            /**
+             * Increment word count when user discovers a new word
+             * Updates both daily and lifetime counters
+             * @returns {Object} { success: boolean, message: string, counters: object }
+             */
+            incrementWordCount() {
+                this.checkDailyReset(); // Ensure counter is current
+                
+                const tierData = this.getTierData();
+                if (!tierData) {
+                    this.initializeTierSystem();
+                    return this.incrementWordCount(); // Retry after init
+                }
+                
+                // Check daily cap
+                if (tierData.dailyWordCount >= tierData.dailyCap) {
+                    return {
+                        success: false,
+                        message: `Daily limit reached! You've discovered ${tierData.dailyCap} words today. Come back tomorrow or upgrade your tier!`,
+                        counters: {
+                            daily: tierData.dailyWordCount,
+                            lifetime: tierData.lifetimeWordCount
+                        }
+                    };
+                }
+                
+                // Check lifetime cap (if exists)
+                if (tierData.lifetimeCap && tierData.lifetimeWordCount >= tierData.lifetimeCap) {
+                    return {
+                        success: false,
+                        message: `Lifetime limit reached! You've discovered ${tierData.lifetimeCap} words total. Upgrade to continue your journey!`,
+                        counters: {
+                            daily: tierData.dailyWordCount,
+                            lifetime: tierData.lifetimeWordCount
+                        }
+                    };
+                }
+                
+                // Increment counters
+                tierData.dailyWordCount++;
+                tierData.lifetimeWordCount++;
+                this.saveTierData(tierData);
+                
+                // Check for automatic lifetime unlock
+                this.checkLifetimeUnlock();
+                
+                return {
+                    success: true,
+                    message: 'Word counted!',
+                    counters: {
+                        daily: tierData.dailyWordCount,
+                        lifetime: tierData.lifetimeWordCount
+                    }
+                };
+            },
+
+            /**
+             * Check if user can discover a new word (pre-flight check)
+             * @returns {Boolean} True if user can discover more words
+             */
+            canDiscoverWord() {
+                this.checkDailyReset();
+                
+                const tierData = this.getTierData();
+                if (!tierData) {
+                    this.initializeTierSystem();
+                    return true; // New users can discover words
+                }
+                
+                // Check daily cap
+                if (tierData.dailyWordCount >= tierData.dailyCap) {
+                    return false;
+                }
+                
+                // Check lifetime cap (if exists)
+                if (tierData.lifetimeCap && tierData.lifetimeWordCount >= tierData.lifetimeCap) {
+                    return false;
+                }
+                
+                return true;
+            },
+
+            /**
+             * Check if user has reached 58,535 words and auto-upgrade to lifetime
+             * @returns {Boolean} True if upgrade occurred
+             */
+            checkLifetimeUnlock() {
+                const tierData = this.getTierData();
+                if (!tierData) return false;
+                
+                // Only check if user is not already lifetime tier
+                if (tierData.tier === this.TIERS.LIFETIME.name) {
+                    return false;
+                }
+                
+                // Check if they've hit the magic number
+                if (tierData.lifetimeWordCount >= this.TIERS.PAID.lifetimeCap) {
+                    console.log('🎉🎉🎉 LIFETIME TIER UNLOCKED! 🎉🎉🎉');
+                    console.log(`User discovered ${tierData.lifetimeWordCount} words!`);
+                    
+                    tierData.tier = this.TIERS.LIFETIME.name;
+                    tierData.dailyCap = this.TIERS.LIFETIME.dailyCap;
+                    tierData.lifetimeCap = this.TIERS.LIFETIME.lifetimeCap;
+                    tierData.subscriptionExpiry = null; // No longer needed
+                    
+                    this.saveTierData(tierData);
+                    
+                    // Show celebration to user
+                    this.showLifetimeUnlockCelebration();
+                    
+                    return true;
+                }
+                
+                return false;
+            },
+
+            /**
+             * Upgrade user to paid tier (called when they subscribe)
+             * @param {Number} durationMonths - Subscription duration in months
+             * @returns {Object} Updated tier data
+             */
+            upgradeToPaid(durationMonths = 1) {
+                console.log(`⬆️ Upgrading user to PAID tier for ${durationMonths} month(s)...`);
+                
+                const tierData = this.getTierData() || this.initializeTierSystem();
+                
+                // Don't downgrade lifetime users
+                if (tierData.tier === this.TIERS.LIFETIME.name) {
+                    console.log('ℹ️ User already has lifetime tier, no upgrade needed');
+                    return tierData;
+                }
+                
+                const now = Date.now();
+                const expiryDate = new Date(now);
+                expiryDate.setMonth(expiryDate.getMonth() + durationMonths);
+                
+                tierData.tier = this.TIERS.PAID.name;
+                tierData.dailyCap = this.TIERS.PAID.dailyCap;
+                tierData.lifetimeCap = this.TIERS.PAID.lifetimeCap;
+                tierData.subscriptionExpiry = expiryDate.getTime();
+                
+                this.saveTierData(tierData);
+                console.log('✅ Upgrade complete! Subscription expires:', new Date(tierData.subscriptionExpiry));
+                
+                return tierData;
+            },
+
+            /**
+             * Downgrade user to free tier (when subscription expires)
+             * @returns {Object} Updated tier data
+             */
+            downgradeToFree() {
+                console.log('⬇️ Downgrading user to FREE tier...');
+                
+                const tierData = this.getTierData();
+                if (!tierData) return this.initializeTierSystem();
+                
+                tierData.tier = this.TIERS.FREE.name;
+                tierData.dailyCap = this.TIERS.FREE.dailyCap;
+                tierData.lifetimeCap = this.TIERS.FREE.lifetimeCap;
+                tierData.subscriptionExpiry = null;
+                
+                this.saveTierData(tierData);
+                console.log('✅ Downgrade complete');
+                
+                return tierData;
+            },
+
+            /**
+             * Show celebration modal when lifetime tier is unlocked
+             */
+            showLifetimeUnlockCelebration() {
+                // This will be implemented with UI integration
+                console.log('🎊 Showing lifetime unlock celebration!');
+                alert('🎉 CONGRATULATIONS! 🎉\n\nYou\'ve discovered 58,535 words and unlocked LIFETIME TIER!\n\nYou now have unlimited word discovery! Keep grinding! 💪');
+            },
+
+            /**
+             * Reset tier data (for testing/debugging only)
+             */
+            resetTierData() {
+                if (confirm('⚠️ WARNING: This will reset all tier data. Are you sure?')) {
+                    localStorage.removeItem(this.STORAGE_KEY);
+                    console.log('🔄 Tier data reset');
+                    this.initializeTierSystem();
+                }
+            },
+
+            /**
+             * Get tier statistics for display
+             * @returns {Object} Formatted tier statistics
+             */
+            getTierStats() {
+                const info = this.getTierInfo();
+                return {
+                    tier: info.displayName,
+                    dailyProgress: `${info.dailyWordCount} / ${info.dailyCap}`,
+                    dailyPercentage: Math.round((info.dailyWordCount / info.dailyCap) * 100),
+                    lifetimeProgress: info.lifetimeCap ? `${info.lifetimeWordCount} / ${info.lifetimeCap}` : `${info.lifetimeWordCount} (Unlimited)`,
+                    lifetimePercentage: info.lifetimeCap ? Math.round((info.lifetimeWordCount / info.lifetimeCap) * 100) : 100,
+                    canDiscover: this.canDiscoverWord()
+                };
+            }
+        };
+
+        // ============================================================================
+        // TIER SYSTEM HELPER FUNCTIONS & DEBUGGING TOOLS
+        // ============================================================================
+
+        /**
+         * Global helper object for tier system debugging and testing
+         * Access in browser console: window.TierDebug
+         */
+        window.TierDebug = {
+            // Display current tier status
+            showStatus() {
+                const info = TierSystem.getTierInfo();
+                console.log('═══════════════════════════════════════');
+                console.log('📊 TIER SYSTEM STATUS');
+                console.log('═══════════════════════════════════════');
+                console.log(`Tier: ${info.displayName} (${info.tier})`);
+                console.log(`Daily Words: ${info.dailyWordCount} / ${info.dailyCap} (${info.dailyRemaining} remaining)`);
+                console.log(`Lifetime Words: ${info.lifetimeWordCount}${info.lifetimeCap ? ' / ' + info.lifetimeCap : ' (Unlimited)'}`);
+                if (info.subscriptionExpiry) {
+                    console.log(`Subscription Expires: ${new Date(info.subscriptionExpiry).toLocaleString()}`);
+                }
+                console.log(`Can Discover: ${TierSystem.canDiscoverWord() ? '✅ Yes' : '❌ No'}`);
+                console.log('═══════════════════════════════════════');
+            },
+
+            // Test word increment
+            testIncrement() {
+                console.log('Testing word increment...');
+                const result = TierSystem.incrementWordCount();
+                console.log('Result:', result);
+                this.showStatus();
+            },
+
+            // Simulate upgrading to paid tier
+            testUpgradePaid(months = 1) {
+                console.log(`Testing upgrade to PAID tier for ${months} month(s)...`);
+                TierSystem.upgradeToPaid(months);
+                this.showStatus();
+            },
+
+            // Simulate reaching lifetime threshold
+            testLifetimeUnlock() {
+                console.log('Testing lifetime unlock (setting count to 58,535)...');
+                const tierData = TierSystem.getTierData();
+                tierData.lifetimeWordCount = 58535;
+                TierSystem.saveTierData(tierData);
+                TierSystem.checkLifetimeUnlock();
+                this.showStatus();
+            },
+
+            // Reset to fresh state
+            reset() {
+                TierSystem.resetTierData();
+            },
+
+            // Get raw tier data
+            getRawData() {
+                const data = TierSystem.getTierData();
+                console.log('Raw tier data:', JSON.stringify(data, null, 2));
+                return data;
+            }
+        };
+
+        // Initialize tier system on page load
+        console.log('🚀 WordGrind Tier System loaded');
+        
+        // Auto-initialize tier system (creates/migrates data if needed)
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🔧 Auto-initializing Tier System...');
+            TierSystem.initializeTierSystem();
+            
+            // Log status for debugging
+            const tierInfo = TierSystem.getTierInfo();
+            console.log(`📊 Current Tier: ${tierInfo.displayName}`);
+            console.log(`📈 Daily Progress: ${tierInfo.dailyWordCount}/${tierInfo.dailyCap}`);
+            console.log(`🌟 Lifetime Progress: ${tierInfo.lifetimeWordCount}${tierInfo.lifetimeCap ? '/' + tierInfo.lifetimeCap : ' (Unlimited)'}`);
+            console.log('💡 Tip: Use window.TierDebug in console for testing');
+        });
+
+        // ============================================================================
+        // END TIER SYSTEM MODULE
+        // ============================================================================
+
         // Grammar explanations
         const grammarInfo = {
             'noun': 'A word that names a person, place, thing, or idea (e.g., cat, house, love)',

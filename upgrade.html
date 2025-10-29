@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade to Premium - WordGrind</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .game-logo {
+            width: 80px;
+            height: 80px;
+            border: 3px dashed #6aaa64;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #6aaa64;
+            background: rgba(106, 170, 100, 0.1);
+            margin: 0 auto 20px auto;
+        }
+
+        h1 {
+            color: #6aaa64;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+            border: 2px solid #6aaa64;
+            border-radius: 16px;
+            padding: 40px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(106, 170, 100, 0.2);
+        }
+
+        .price {
+            font-size: 4rem;
+            color: #6aaa64;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .price-period {
+            font-size: 1.5rem;
+            color: #888;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #6aaa64 0%, #5a9a54 100%);
+            color: white;
+            border: none;
+            padding: 18px 48px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 170, 100, 0.4);
+        }
+
+        .upgrade-btn:active {
+            transform: translateY(0);
+        }
+
+        .features-list {
+            text-align: left;
+            margin: 30px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(106, 170, 100, 0.05);
+            border-radius: 8px;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-weight: bold;
+            color: #6aaa64;
+            margin-bottom: 5px;
+        }
+
+        .feature-description {
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+
+        .lifetime-unlock {
+            background: linear-gradient(135deg, #d4a953 0%, #c49943 100%);
+            border: 2px solid #d4a953;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .lifetime-unlock h2 {
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+
+        .lifetime-unlock p {
+            color: #2a2a2a;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .milestone-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin: 15px 0;
+        }
+
+        .comparison-table {
+            margin: 40px 0;
+            background: #2a2a2a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2px;
+            background: #444;
+        }
+
+        .comparison-col {
+            padding: 20px;
+            text-align: center;
+            background: #2a2a2a;
+        }
+
+        .comparison-col.highlight {
+            background: linear-gradient(135deg, #2a3a2a 0%, #25302a 100%);
+            border: 2px solid #6aaa64;
+        }
+
+        .tier-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6aaa64;
+            margin-bottom: 10px;
+        }
+
+        .tier-price {
+            font-size: 1.2rem;
+            color: #888;
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2px;
+            background: #444;
+            border-top: 2px solid #444;
+        }
+
+        .comparison-cell {
+            padding: 15px;
+            background: #2a2a2a;
+            text-align: center;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .nav-link {
+            color: #6aaa64;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #7aba74;
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        .footer a {
+            color: #888;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .footer a:hover {
+            color: #6aaa64;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .price {
+                font-size: 3rem;
+            }
+
+            .pricing-card {
+                padding: 25px;
+            }
+
+            .comparison-header,
+            .comparison-row {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-col,
+            .comparison-cell {
+                border-bottom: 1px solid #444;
+            }
+
+            .upgrade-btn {
+                padding: 15px 35px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="game-logo">WG</div>
+            <h1>Continue Your Learning Journey</h1>
+            <p class="subtitle">Unlock unlimited word discovery and premium features</p>
+        </div>
+
+        <div class="pricing-card">
+            <h2>Premium Monthly</h2>
+            <div class="price">$1.50<span class="price-period">/month</span></div>
+            <p style="color: #aaa; margin-bottom: 20px;">Cancel anytime. No commitment required.</p>
+            
+            <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank" class="upgrade-btn">
+                🚀 Upgrade Now
+            </a>
+
+            <div class="features-list">
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-text">
+                        <div class="feature-title">50 Words Per Day</div>
+                        <div class="feature-description">More than double your daily learning capacity</div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🎮</div>
+                    <div class="feature-text">
+                        <div class="feature-title">No Cooldown Timers</div>
+                        <div class="feature-description">Play all mini-games instantly without waiting</div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">📖</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Unlimited Vocabulary Journal</div>
+                        <div class="feature-description">Access your complete word collection with search, notes, and export</div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🔓</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Universal Discovery Box</div>
+                        <div class="feature-description">No dropdown menus - type any word length directly</div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Advanced Statistics</div>
+                        <div class="feature-description">Track your progress with detailed analytics and insights</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lifetime-unlock">
+            <h2>🏆 Earn Lifetime Free Access</h2>
+            <p>Discover half the English language and unlock premium forever—on us!</p>
+            <div class="milestone-number">58,535 Words</div>
+            <p>When you reach this milestone, you'll automatically receive lifetime premium access at no additional cost. It's our way of celebrating your dedication to learning.</p>
+        </div>
+
+        <div class="comparison-table">
+            <div class="comparison-header">
+                <div class="comparison-col">
+                    <div class="tier-name">Free</div>
+                    <div class="tier-price">$0/month</div>
+                </div>
+                <div class="comparison-col highlight">
+                    <div class="tier-name">Premium</div>
+                    <div class="tier-price">$1.50/month</div>
+                </div>
+                <div class="comparison-col">
+                    <div class="tier-name">Lifetime</div>
+                    <div class="tier-price">Free at 58,535</div>
+                </div>
+            </div>
+            
+            <div class="comparison-row">
+                <div class="comparison-cell">20 words/day</div>
+                <div class="comparison-cell">✅ 50 words/day</div>
+                <div class="comparison-cell">✅ 50 words/day</div>
+            </div>
+            
+            <div class="comparison-row">
+                <div class="comparison-cell">500 word cap</div>
+                <div class="comparison-cell">✅ No cap</div>
+                <div class="comparison-cell">✅ Unlimited</div>
+            </div>
+            
+            <div class="comparison-row">
+                <div class="comparison-cell">2-5 min cooldowns</div>
+                <div class="comparison-cell">✅ No cooldowns</div>
+                <div class="comparison-cell">✅ No cooldowns</div>
+            </div>
+            
+            <div class="comparison-row">
+                <div class="comparison-cell">Last 100 words</div>
+                <div class="comparison-cell">✅ Full journal</div>
+                <div class="comparison-cell">✅ Full journal</div>
+            </div>
+            
+            <div class="comparison-row">
+                <div class="comparison-cell">Dropdown selection</div>
+                <div class="comparison-cell">✅ Universal box</div>
+                <div class="comparison-cell">✅ Universal box</div>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">← Back to Game</a>
+            <a href="home.html" class="nav-link">Home</a>
+            <a href="vocabulary.html" class="nav-link">Vocabulary Journal</a>
+        </div>
+
+        <div class="footer">
+            <a href="home.html#privacy">Privacy Policy</a>
+            <a href="https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03" target="_blank">Made by Yo ✌ 🥚</a>
+        </div>
+    </div>
+
+    <script>
+        console.log('💎 WordGrind Upgrade Page Loaded');
+        
+        // Track current tier status
+        function displayCurrentTier() {
+            if (typeof TierSystem !== 'undefined') {
+                const tierInfo = TierSystem.getTierInfo();
+                console.log('Current Tier:', tierInfo.tier);
+                console.log('Lifetime Words:', tierInfo.lifetimeWordCount);
+                console.log('Progress to Lifetime:', `${tierInfo.lifetimeWordCount}/58535`);
+                
+                // If already premium or lifetime, show different message
+                if (tierInfo.tier === 'paid' || tierInfo.tier === 'lifetime') {
+                    document.querySelector('.pricing-card h2').textContent = 
+                        tierInfo.tier === 'lifetime' ? 
+                        '🏆 Lifetime Premium Active!' : 
+                        '✅ Premium Active';
+                    
+                    document.querySelector('.price').style.color = '#d4a953';
+                }
+            }
+        }
+        
+        // Load tier info when available
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', displayCurrentTier);
+        } else {
+            displayCurrentTier();
+        }
+    </script>
+</body>
+</html>
