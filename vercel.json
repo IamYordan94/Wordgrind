@@ -7,7 +7,7 @@
   "framework": null,
   "headers": [
     {
-      "source": "/(.*\\.(html|js|css))",
+      "source": "/:path*",
       "headers": [
         {
           "key": "Cache-Control",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "source": "/:path*\\.(json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)",
       "headers": [
         {
           "key": "Cache-Control",
