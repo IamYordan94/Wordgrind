@@ -1415,16 +1415,37 @@
         // Initialize the definition service
         const definitionService = new DefinitionService();
 
-        // Enhanced word details function with live definition fetching
+        // Enhanced word details function with live definition fetching and premium features
         async function showWordDetails(word, definition, pos) {
+            const isPremium = tierInfo.tier === 'paid' || tierInfo.tier === 'lifetime';
+            
             const modal = document.createElement('div');
             modal.className = 'definition-modal';
             modal.innerHTML = `
                 <div class="modal-content">
                     <span class="close-modal">&times;</span>
-                    <div class="modal-word">${word}</div>
+                    <div class="modal-word">
+                        ${word}
+                        ${isPremium ? `<button onclick="pronounceWord('${word}')" style="background: #6aaa64; border: none; color: white; padding: 8px 15px; border-radius: 5px; margin-left: 15px; cursor: pointer;">🔊 Pronounce</button>` : ''}
+                    </div>
                     <div class="modal-pos">${pos !== 'unknown' ? pos : ''}</div>
                     <div class="modal-definition">Loading definition...</div>
+                    ${isPremium ? `
+                        <div class="premium-word-info" style="margin-top: 20px;">
+                            <div id="wordEtymology" style="display: none; background: rgba(106, 170, 100, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <h4 style="color: #6aaa64; margin-bottom: 10px;">📖 Etymology</h4>
+                                <p id="etymologyText" style="color: #ccc;"></p>
+                            </div>
+                            <div id="wordSynonyms" style="display: none; background: rgba(106, 170, 100, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <h4 style="color: #6aaa64; margin-bottom: 10px;">🔗 Synonyms</h4>
+                                <div id="synonymsList" style="color: #ccc;"></div>
+                            </div>
+                            <div id="wordExamples" style="display: none; background: rgba(106, 170, 100, 0.1); padding: 15px; border-radius: 8px;">
+                                <h4 style="color: #6aaa64; margin-bottom: 10px;">💬 Usage Examples</h4>
+                                <div id="examplesList" style="color: #ccc;"></div>
+                            </div>
+                        </div>
+                    ` : ''}
                     <div class="grammar-explanation">
                         <h4>📝 Grammar Explanation</h4>
                         <p>${grammarInfo[pos] || 'This word is a valuable addition to your vocabulary!'}</p>
@@ -1434,7 +1455,7 @@
             
             document.body.appendChild(modal);
             
-            // Fetch fresh definition if needed
+            // Fetch fresh definition and premium features if needed
             try {
                 const wordObj = { word, definition, pos };
                 const wordWithDef = await definitionService.ensureWordHasDefinition(wordObj);
@@ -1443,6 +1464,11 @@
                 const definitionElement = modal.querySelector('.modal-definition');
                 if (definitionElement) {
                     definitionElement.textContent = wordWithDef.definition;
+                }
+                
+                // Fetch premium features if user has premium
+                if (isPremium) {
+                    await fetchPremiumWordInfo(word, modal);
                 }
             } catch (error) {
                 console.error('Error fetching definition:', error);
@@ -1457,6 +1483,89 @@
                     document.body.removeChild(modal);
                 }
             };
+        }
+        
+        // Fetch premium word information (etymology, synonyms, examples)
+        async function fetchPremiumWordInfo(word, modal) {
+            try {
+                const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+                if (!response.ok) return;
+                
+                const data = await response.json();
+                if (!data || !data[0]) return;
+                
+                const entry = data[0];
+                
+                // Etymology (if available)
+                if (entry.etymologies && entry.etymologies.length > 0) {
+                    const etymologyDiv = modal.querySelector('#wordEtymology');
+                    const etymologyText = modal.querySelector('#etymologyText');
+                    if (etymologyDiv && etymologyText) {
+                        etymologyText.textContent = entry.etymologies[0];
+                        etymologyDiv.style.display = 'block';
+                    }
+                }
+                
+                // Synonyms
+                const synonyms = [];
+                if (entry.meanings) {
+                    entry.meanings.forEach(meaning => {
+                        if (meaning.synonyms) {
+                            synonyms.push(...meaning.synonyms);
+                        }
+                    });
+                }
+                if (synonyms.length > 0) {
+                    const synonymsDiv = modal.querySelector('#wordSynonyms');
+                    const synonymsList = modal.querySelector('#synonymsList');
+                    if (synonymsDiv && synonymsList) {
+                        const uniqueSynonyms = [...new Set(synonyms)].slice(0, 10);
+                        synonymsList.innerHTML = uniqueSynonyms.map(syn => 
+                            `<span style="background: rgba(106, 170, 100, 0.2); padding: 5px 10px; border-radius: 5px; margin: 5px; display: inline-block;">${syn}</span>`
+                        ).join('');
+                        synonymsDiv.style.display = 'block';
+                    }
+                }
+                
+                // Usage Examples
+                const examples = [];
+                if (entry.meanings) {
+                    entry.meanings.forEach(meaning => {
+                        if (meaning.definitions) {
+                            meaning.definitions.forEach(def => {
+                                if (def.example) {
+                                    examples.push(def.example);
+                                }
+                            });
+                        }
+                    });
+                }
+                if (examples.length > 0) {
+                    const examplesDiv = modal.querySelector('#wordExamples');
+                    const examplesList = modal.querySelector('#examplesList');
+                    if (examplesDiv && examplesList) {
+                        examplesList.innerHTML = examples.slice(0, 3).map(example => 
+                            `<p style="margin: 10px 0; font-style: italic; color: #aaa;">"${example}"</p>`
+                        ).join('');
+                        examplesDiv.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching premium word info:', error);
+            }
+        }
+        
+        // Pronounce word function
+        function pronounceWord(word) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Speech synthesis not supported in your browser');
+            }
         }
 
         loadWordNotes();

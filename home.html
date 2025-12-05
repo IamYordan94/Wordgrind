@@ -410,6 +410,21 @@
                 <span>Vocabulary</span>
             </a>
             
+            <a href="analytics.html" class="nav-item" style="display: none;" id="analyticsLink">
+                <span class="icon">📊</span>
+                <span>Analytics</span>
+            </a>
+            
+            <a href="achievements.html" class="nav-item" id="achievementsLink">
+                <span class="icon">🏆</span>
+                <span>Achievements</span>
+            </a>
+            
+            <a href="flashcards.html" class="nav-item" style="display: none;" id="flashcardsLinkHome">
+                <span class="icon">🃏</span>
+                <span>Flashcards</span>
+            </a>
+            
             <div class="nav-item" onclick="toggleAbout()">
                 <span class="icon">ℹ️</span>
                 <span>About</span>
@@ -550,6 +565,25 @@
         }
 
         console.log('🏠 WordGrind - Tier-Based Home Page Loaded');
+        
+        // Show premium links if user has premium
+        function updatePremiumLinks() {
+            try {
+                const tierData = JSON.parse(localStorage.getItem('wordGrindTierData') || '{}');
+                const isPremium = tierData.tier === 'paid' || tierData.tier === 'lifetime';
+                
+                if (isPremium) {
+                    const analyticsLink = document.getElementById('analyticsLink');
+                    const flashcardsLink = document.getElementById('flashcardsLinkHome');
+                    if (analyticsLink) analyticsLink.style.display = 'flex';
+                    if (flashcardsLink) flashcardsLink.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Error checking premium status:', error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', updatePremiumLinks);
     </script>
 </body>
 </html>

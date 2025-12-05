@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - WordGrind</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #6aaa64;
+            border-radius: 16px;
+            padding: 40px;
+        }
+
+        .success-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #6aaa64;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #cccccc;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6aaa64 0%, #5a9a54 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #7aba74 0%, #6aaa64 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 170, 100, 0.4);
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+            color: #6aaa64;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✅</div>
+        <h1>Payment Successful!</h1>
+        <p id="message">Upgrading your account to Premium...</p>
+        <div class="loading active" id="loading">Processing your subscription...</div>
+        <a href="index.html" class="btn" id="playBtn" style="display: none;">Start Playing</a>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const paymentStatus = urlParams.get('payment_status');
+
+        // Load TierSystem from localStorage or redirect to index
+        function upgradeUser() {
+            try {
+                // Import TierSystem logic (simplified version)
+                const TierSystem = {
+                    STORAGE_KEY: 'wordGrindTierData',
+                    TIERS: {
+                        PAID: {
+                            name: 'paid',
+                            dailyCap: 50,
+                            lifetimeCap: 58535
+                        }
+                    },
+                    
+                    getTierData() {
+                        try {
+                            const data = localStorage.getItem(this.STORAGE_KEY);
+                            return data ? JSON.parse(data) : null;
+                        } catch (error) {
+                            return null;
+                        }
+                    },
+                    
+                    upgradeToPaid(durationMonths = 1) {
+                        const tierData = this.getTierData() || {
+                            tier: 'free',
+                            dailyWordCount: 0,
+                            lifetimeWordCount: 0,
+                            lastResetTimestamp: Date.now(),
+                            dailyCap: 20,
+                            lifetimeCap: 500,
+                            createdAt: Date.now()
+                        };
+                        
+                        const now = Date.now();
+                        const expiryDate = new Date(now);
+                        expiryDate.setMonth(expiryDate.getMonth() + durationMonths);
+                        
+                        tierData.tier = this.TIERS.PAID.name;
+                        tierData.dailyCap = this.TIERS.PAID.dailyCap;
+                        tierData.lifetimeCap = this.TIERS.PAID.lifetimeCap;
+                        tierData.subscriptionExpiry = expiryDate.getTime();
+                        tierData.paymentSessionId = sessionId; // Store session ID for reference
+                        tierData.subscriptionDate = now;
+                        
+                        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(tierData));
+                        return tierData;
+                    }
+                };
+
+                // Upgrade user
+                TierSystem.upgradeToPaid(1); // 1 month subscription
+                
+                // Show success
+                document.getElementById('message').textContent = 
+                    'Your account has been upgraded to Premium! Enjoy unlimited word discovery.';
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('playBtn').style.display = 'inline-block';
+                
+                // Store payment confirmation
+                localStorage.setItem('wordGrindPaymentSuccess', JSON.stringify({
+                    sessionId: sessionId,
+                    timestamp: Date.now(),
+                    status: 'success'
+                }));
+                
+            } catch (error) {
+                console.error('Upgrade error:', error);
+                document.getElementById('message').textContent = 
+                    'There was an error processing your payment. Please contact support.';
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('playBtn').style.display = 'inline-block';
+            }
+        }
+
+        // Auto-upgrade on page load
+        if (paymentStatus === 'success' || sessionId) {
+            upgradeUser();
+        } else {
+            // If no payment info, just show message
+            document.getElementById('message').textContent = 
+                'Thank you for your interest in WordGrind Premium!';
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('playBtn').style.display = 'inline-block';
+        }
+    </script>
+</body>
+</html>
+
