@@ -45,7 +45,7 @@ Then open `http://localhost:8000` in your browser.
 - 2-5 minute cooldowns on mini-games
 - Last 100 words in vocabulary journal
 
-### Premium Tier ($1.50/month)
+### Premium Tier ($0.50/month)
 - 50 words per day
 - No daily or lifetime caps
 - Zero cooldowns—play instantly
@@ -98,7 +98,7 @@ Update the Stripe payment link in:
 - `home.html` (line 497)
 - `vocabulary.html` (line 724)
 
-Replace `https://buy.stripe.com/6oUeVe2rO4MV9b9f8M2wU03` with your own Stripe payment link.
+Stripe Payment Link: `https://buy.stripe.com/9B64gA3vSbbj8755yc2wU04`
 
 ## 🧪 Testing
 
@@ -127,7 +127,7 @@ This project is private and proprietary.
 
 ## 👤 Author
 
-Made by Yo ✌ 🥚
+Made by Yo ✌
 
 ---
 

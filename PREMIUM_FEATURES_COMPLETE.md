@@ -142,7 +142,7 @@ Premium users get:
 
 **ALL 25 PREMIUM FEATURES HAVE BEEN IMPLEMENTED!**
 
-The app now has a comprehensive premium feature set that provides significant value for the $1.50/month subscription:
+The app now has a comprehensive premium feature set that provides significant value for the $0.50/month subscription:
 
 - **Engagement**: Streaks, achievements, daily challenges
 - **Analytics**: Complete dashboard with visualizations
