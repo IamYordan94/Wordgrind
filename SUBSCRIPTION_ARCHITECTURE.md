@@ -14,7 +14,7 @@
 **Cons**: Less secure, can be bypassed
 
 **How it works**:
-- Configure Stripe Payment Link to redirect to `yoursite.com/success?session_id={CHECKOUT_SESSION_ID}`
+- Configure Stripe Payment Link to redirect to `https://wordgrind.app/success.html?session_id={CHECKOUT_SESSION_ID}`
 - On success page, verify payment and call `upgradeToPaid()`
 - Store subscription in localStorage with expiry
 
